@@ -330,7 +330,6 @@ function addWebDragEvents(el,dateKey){
     d.forEach((item, i) => {
   batch.set(doc(schedulesCol, item.id), { ...item, order: i });
 });
-});
     await batch.commit();
   });
 }
