@@ -86,7 +86,9 @@ header { background:#140bb6; color:white; padding:16px 15px; text-align:center; 
   <label>유형</label>
   <select id="typeInput">
     <option value="기타">기타</option>
-    <option value="공연">공연</option>
+    <option value="콘서트">콘서트</option>
+    <option value="행사">행사</option>
+    <option value="기념일">기념일</option>
     <option value="방송">방송</option>
     <option value="팬사인회">팬사인회</option>
     <option value="SNS">SNS</option>
@@ -118,13 +120,15 @@ header { background:#140bb6; color:white; padding:16px 15px; text-align:center; 
     <label>기간</label><div class="date-row"><input id="editStartDateInput" type="date"><input id="editEndDateInput" type="date"></div>
     <label>유형</label>
     <select id="editTypeInput">
-      <option value="기타">기타</option>
-      <option value="공연">공연</option>
-      <option value="방송">방송</option>
-      <option value="팬사인회">팬사인회</option>
-      <option value="SNS">SNS</option>
-      <option value="유튜브">유튜브</option>
-    </select>
+  <option value="기타">기타</option>
+  <option value="콘서트">콘서트</option>
+  <option value="행사">행사</option>
+  <option value="기념일">기념일</option>
+  <option value="방송">방송</option>
+  <option value="팬사인회">팬사인회</option>
+  <option value="SNS">SNS</option>
+  <option value="유튜브">유튜브</option>
+</select>
     <label>일정 내용</label><input id="editDescInput">
     <button id="saveEditBtn">저장</button>
     <button id="cancelEditBtn">취소</button>
@@ -190,7 +194,16 @@ const todayBtn=document.getElementById("todayBtn");
 const addBtn=document.getElementById("addBtn");
 const closeInputBtn=document.getElementById("closeInputBtn");
 
-const typeColors={ 공연:"#fecaca", 방송:"#bbf7d0", 팬사인회:"#bfdbfe", 기타:"#e0e7ff", SNS:"#fde68a", 유튜브:"#fca5a5" };
+const typeColors = {
+  콘서트: "#fecaca",
+  행사: "#ddd6fe",
+  기념일: "#fde68a",
+  방송: "#bbf7d0",
+  팬사인회: "#bfdbfe",
+  SNS: "#fef08a",
+  유튜브: "#fca5a5",
+  기타: "#e0e7ff"
+};
 
 let currentDate=new Date(), selectedDateKey=null, activeGroupId=null, dragSrcEl=null, firestoreData={};
 
@@ -507,6 +520,10 @@ cancelMonthBtn.onclick = () => {
 
 </body>
 </html>
+
+
+
+
 
 
 
