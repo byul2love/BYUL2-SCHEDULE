@@ -79,12 +79,13 @@ header { background:#140bb6; color:white; padding:16px 15px; text-align:center; 
 
 #pasteBtn {
   border: none;
-  background: #eef2ff;
-  color: #3730a3;
-  border-radius: 6px;
-  padding: 4px 8px;
+  background: #f1f3f5;
+  border-radius: 8px;
   font-size: 12px;
   cursor: pointer;
+  padding: 0 8px;
+  height: 32px;
+  line-height: 32px;
 }
 
 #closeInputBtn {
@@ -92,6 +93,20 @@ header { background:#140bb6; color:white; padding:16px 15px; text-align:center; 
   background: none;
   font-size: 18px;
   cursor: pointer;
+}
+
+button {
+  border: none;
+  outline: none;
+  background: #f1f3f5;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+    line-height: normal; 
+     display: flex;
+     height: 32px;
 }
 
 
@@ -117,6 +132,13 @@ header { background:#140bb6; color:white; padding:16px 15px; text-align:center; 
     overflow-y: auto;          /* ⭐ 내부 스크롤 */
     -webkit-overflow-scrolling: touch;
     z-index:1000;
+  }
+  
+   #prevBtn, #nextBtn, #todayBtn {
+  height: 30px;        /* ⭐ 세로 줄이기 */
+  padding: 0 8px;
+  font-size: 13px;
+}
   
 }
   #addBtn { float:right; margin-top:6px; }        
@@ -127,8 +149,14 @@ header { background:#140bb6; color:white; padding:16px 15px; text-align:center; 
   #editModal .modal-content label { font-size:12px; }        
   #editModal .modal-content input, #editModal .modal-content select { font-size:12px; padding:4px; }        
   #editModal .modal-content button { font-size:12px; padding:6px 0; margin-top:4px; }        
-}        
+       
 @media (min-width:601px){ .schedule { font-size:13px; padding:4px 6px; } }        
+@media (max-width:600px) {
+  #todayBtn {
+    right: 3px;   /* 기존 10px → 살짝 오른쪽 */
+  }
+}
+
 </style>        
 </head>        
 <body>        
@@ -177,8 +205,8 @@ header { background:#140bb6; color:white; padding:16px 15px; text-align:center; 
 <div id="actionModal" class="modal">        
   <div class="modal-content">        
     <div id="modalTitle" style="font-weight:bold; margin-bottom:4px;"></div>        
-    <div id="modalDate" style="font-size:12.5px; margin-bottom:6px;"></div>        
-    <div id="modalContent" style="font-size:12px; margin-bottom:6px;"></div>        
+    <div id="modalDate" style="font-size:12.5px; margin-bottom:4px;"></div>        
+    <div id="modalContent" style="font-size:12.5px; margin-bottom:6px;"></div>        
     <a id="modalLink" href="#" target="_blank" style="display:none; margin-bottom:6px;">🔗 링크</a>        
     <div id="modalType" style="font-size:11px; margin-bottom:8px;"></div>        
     <button id="actionCopyBtn">📋 복사</button>
