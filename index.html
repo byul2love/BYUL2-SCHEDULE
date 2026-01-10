@@ -11,13 +11,54 @@ header { background:#140bb6; color:white; padding:16px 15px; text-align:center; 
 #siteTitle { font-size:40px; font-weight:bold; margin-bottom:6px; }        
 #navControls { display:flex; justify-content:center; align-items:center; gap:8px; position:relative; }        
 #todayBtn { position:absolute; right:10px; }        
-#weekdays,#calendar { display:grid; grid-template-columns:repeat(7,1fr); }        
-#weekdays { gap:6px; padding:6px 10px; }        
-#calendar { gap:6px; padding:6px 10px; margin-bottom:400px; }        
-.weekday { text-align:center; font-weight:bold; background:#eee; border-radius:6px; padding:5px 0; font-size:12px; }        
-.day { background:white; border-radius:10px; padding:6px; min-height:140px; display:flex; flex-direction:column; border:2px solid transparent; overflow:hidden; cursor:pointer; user-select: none; -webkit-tap-highlight-color: transparent; }        
-.day.today { border-color:#4f46e5; background:#eef2ff; }        
-.day.selected { border-color:#181818; }        
+#weekdays,#calendar { 
+  display:grid; 
+  grid-template-columns:repeat(7,1fr); 
+  gap:0;              /* ⭐ 간격 제거 */
+  padding:0;          /* ⭐ 바깥 여백 제거 */
+}
+
+#weekdays { }
+#calendar { margin-bottom:400px;background:#f7f7f7; }      
+.weekday { 
+  text-align:center; 
+  font-weight:bold; 
+  background:#ffffff; 
+  border-radius:0;            /* ⭐ 네모 */
+  padding:5px 0; 
+  font-size:13px; 
+}   
+.day { 
+  background:white; 
+  border-radius:0;            /* ⭐ 둥근 모서리 제거 */
+  padding:4px; 
+  min-height:140px; 
+  display:flex; 
+  flex-direction:column; 
+
+  border-bottom:1px solid #ccc;  /* ⭐ 가로선 */
+
+  cursor:pointer; 
+}  
+.empty-day {
+  pointer-events: none; 
+  background: #f7f7f7;
+}
+#calendar {
+    margin-bottom:450px;
+  border-left:1px solid #ccc;
+  border-top:1px solid #ccc;
+}
+.day.today {
+  background: #eef2ff;     /* 은은한 배경 */
+}     
+
+.day.selected {
+  outline: 2px solid #181818;   /* ⭐ 선택 표시 */
+  outline-offset: -2px;         /* ⭐ 칸 안쪽으로 */
+  z-index: 2;
+}     
+
 .day-number { font-size:12px; font-weight:bold; text-align:center; height:20px; }        
 .schedule-container { flex:1; overflow-y:auto; }        
 .schedule {        
@@ -109,11 +150,14 @@ button {
      height: 32px;
 }
 
+* {
+  -webkit-tap-highlight-color: transparent;
+}
 
 @media (max-width:600px){        
   #siteTitle { font-size:32px; }        
-  #calendar { gap:2px; padding:2px 4px; margin-bottom:260px; }        
-  #weekdays { gap:2px; padding:2px 4px; }        
+  #calendar { gap:0; padding:0 2px; margin-bottom:260px; }        
+  #weekdays { gap:0; padding:0 2px; }   
   .day { min-height:110px; padding:4px 2px; }        
   .schedule { font-size:8.5px; padding:2px 2px; width:100%; box-sizing:border-box; }        
   #inputBox {
@@ -351,7 +395,7 @@ function renderCalendar(){
   for(let i=0;i<first;i++){        
     const e=document.createElement("div");        
     e.className="day";        
-    e.style.visibility="hidden";        
+    e.classList.add("empty-day");        
     calendar.appendChild(e);        
   }        
         
