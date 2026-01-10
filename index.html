@@ -162,7 +162,8 @@ header { background:#140bb6; color:white; padding:16px 15px; text-align:center; 
   <select id="typeInput">        
     <option value="기타">기타</option>        
     <option value="콘서트">콘서트</option>        
-    <option value="행사">행사</option>        
+    <option value="행사">행사</option>
+    <option value="발매">발매</option>        
     <option value="기념일">기념일</option>        
     <option value="방송">방송</option>        
     <option value="팬사인회">팬사인회</option>        
@@ -196,7 +197,8 @@ header { background:#140bb6; color:white; padding:16px 15px; text-align:center; 
     <select id="editTypeInput">        
       <option value="기타">기타</option>        
       <option value="콘서트">콘서트</option>        
-      <option value="행사">행사</option>        
+      <option value="행사">행사</option> 
+      <option value="발매">발매</option>       
       <option value="기념일">기념일</option>        
       <option value="방송">방송</option>        
       <option value="팬사인회">팬사인회</option>        
@@ -272,16 +274,17 @@ const closeInputBtn=document.getElementById("closeInputBtn");
 const pasteBtn=document.getElementById("pasteBtn");
 
 
-const typeColors = {        
-  콘서트: "#fecaca",        
-  행사: "#ddd6fe",        
-  기념일: "#fde68a",        
-  방송: "#bbf7d0",        
-  팬사인회: "#bfdbfe",        
-  SNS: "#fef08a",        
-  유튜브: "#fca5a5",        
-  기타: "#e0e7ff"        
-};        
+const typeColors = {
+  콘서트: "#fb7185",   
+  유튜브: "#fca5a5",   
+  행사: "#D6C9FF",     
+  방송: "#BEEAD6",     
+  팬사인회: "#c8edfd", 
+  발매: "#6190fe",     
+  기념일: "#FFD59E",   
+  SNS: "#fef08a",
+  기타: "#e0e7ff"     
+};       
         
 let currentDate=new Date(), selectedDateKey=null, activeGroupId=null, dragSrcEl=null, firestoreData={};        
 let copiedSchedule = null;
