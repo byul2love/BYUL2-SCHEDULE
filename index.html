@@ -526,7 +526,9 @@ function addMobileTouchDrag(el, container, dateKey) {
     moved = false;
     canDrag = false;
 
-    // 250ms 후 드래그 가능
+    // 선택 효과 제거
+    el.classList.remove("selected");
+
     pressTimer = setTimeout(() => {
       canDrag = true;
       el.classList.add("dragging");
@@ -536,40 +538,44 @@ function addMobileTouchDrag(el, container, dateKey) {
   el.addEventListener("touchmove", e => {
     const deltaY = e.touches[0].clientY - startY;
 
-    if (!canDrag) return; // 아직 드래그 불가면 스크롤 허용
+    if (!canDrag) return; // 드래그 전엔 그냥 스크롤
     e.preventDefault();   // 드래그 중 스크롤 방지
     el.style.transform = `translateY(${deltaY}px) scale(0.95)`;
     moved = true;
   }, { passive: false });
 
-el.addEventListener("touchend", async e => {
+  el.addEventListener("touchend", async e => {
     clearTimeout(pressTimer);
 
-    // ⭐ 여기서 항상 초기화
+    // 항상 초기화
     el.style.transform = "";
     el.classList.remove("dragging");
 
-    if (!canDrag) return; // 드래그 안 했으면 종료
+    if (!canDrag) {
+      // ⭐ 드래그 안했으면 선택도 해제
+      dragSrcEl = null;
+      return;
+    }
 
-    // 드래그 완료 후 순서 재정렬 처리
     const rects = Array.from(container.children).map(c => c.getBoundingClientRect());
     const centerY = rects[startIndex].top + rects[startIndex].height / 2 + (e.changedTouches[0].clientY - startY);
     let newIndex = rects.findIndex(r => centerY < r.top + r.height / 2);
     if (newIndex === -1) newIndex = container.children.length - 1;
 
     if (newIndex !== startIndex) {
-        const d = firestoreData[dateKey];
-        d.splice(newIndex, 0, d.splice(startIndex, 1)[0]);
-        const batch = writeBatch(db);
-        d.forEach((item, i) => {
-            batch.set(doc(schedulesCol, item.id), { ...item, order: i });
-        });
-        await batch.commit();
+      const d = firestoreData[dateKey];
+      d.splice(newIndex, 0, d.splice(startIndex, 1)[0]);
+      const batch = writeBatch(db);
+      d.forEach((item, i) => {
+        batch.set(doc(schedulesCol, item.id), { ...item, order: i });
+      });
+      await batch.commit();
     }
 
     dragSrcEl = null;
-});
+  });
 }
+
 // ⭐ 뒤로가기용 history 처리
 function pushModalState() {
   history.pushState({ modal: true }, "");
