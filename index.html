@@ -515,9 +515,7 @@ function addWebDragEvents(el,dateKey){
 }        
         
 function addMobileTouchDrag(el, container, dateKey) {
-  let startY = 0;
-  let startIndex = 0;
-  let moved = false;
+  let startY = 0, startIndex = 0, moved = false;
   let pressTimer = null;
   let canDrag = false;
 
@@ -526,9 +524,49 @@ function addMobileTouchDrag(el, container, dateKey) {
     startY = e.touches[0].clientY;
     startIndex = +el.dataset.index;
     moved = false;
- el.classList.remove("dragging");
+    canDrag = false;
+
+    // 250ms 후 드래그 가능
+    pressTimer = setTimeout(() => {
+      canDrag = true;
+      el.classList.add("dragging");
+    }, 250);
   });
-}   
+
+  el.addEventListener("touchmove", e => {
+    const deltaY = e.touches[0].clientY - startY;
+
+    if (!canDrag) return; // 아직 드래그 불가면 스크롤 허용
+    e.preventDefault();   // 드래그 중 스크롤 방지
+    el.style.transform = `translateY(${deltaY}px) scale(0.95)`;
+    moved = true;
+  }, { passive: false });
+
+  el.addEventListener("touchend", async e => {
+    clearTimeout(pressTimer);
+    el.style.transform = "";
+    el.classList.remove("dragging");
+
+    if (!canDrag) return; // 드래그 안 했으면 종료
+
+    const rects = Array.from(container.children).map(c => c.getBoundingClientRect());
+    const centerY = rects[startIndex].top + rects[startIndex].height / 2 + (e.changedTouches[0].clientY - startY);
+    let newIndex = rects.findIndex(r => centerY < r.top + r.height / 2);
+    if (newIndex === -1) newIndex = container.children.length - 1;
+
+    if (newIndex !== startIndex) {
+      const d = firestoreData[dateKey];
+      d.splice(newIndex, 0, d.splice(startIndex, 1)[0]);
+      const batch = writeBatch(db);
+      d.forEach((item, i) => {
+        batch.set(doc(schedulesCol, item.id), { ...item, order: i });
+      });
+      await batch.commit();
+    }
+
+    dragSrcEl = null;
+  });
+}
 // ⭐ 뒤로가기용 history 처리
 function pushModalState() {
   history.pushState({ modal: true }, "");
