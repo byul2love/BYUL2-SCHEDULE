@@ -50,9 +50,12 @@ header { background:#140bb6; color:white; padding:16px 15px; text-align:center; 
   border-top:1px solid #ccc;
 }
 .day.today {
-  background: #f3f3ff;    
-}     
-
+  background: #f9fafb;
+}
+.day.today .day-number {
+  color: #6366f1;
+  font-weight: 600;
+}
 .day.selected {
   outline: 2px solid #181818;   /* ⭐ 선택 표시 */
   outline-offset: -2px;         /* ⭐ 칸 안쪽으로 */
@@ -508,51 +511,21 @@ function addWebDragEvents(el,dateKey){
   });        
 }        
         
-function addMobileTouchDrag(el, container, dateKey) {        
-  let startY = 0, startIndex = 0, moved = false;        
-        
-  el.addEventListener("touchstart", e => {        
-    dragSrcEl = el;        
-    startY = e.touches[0].clientY;        
-    startIndex = +el.dataset.index;        
-    moved = false;        
-    el.classList.add("dragging");        
-  });        
-        
-  el.addEventListener("touchmove", e => {        
-    const deltaY = e.touches[0].clientY - startY;        
-    if (Math.abs(deltaY) > 5) moved = true;        
-        
-    if (moved) {        
-      e.preventDefault(); // 화면 스크롤 방지        
-      el.style.transform = `translateY(${deltaY}px) scale(0.95)`;        
-    }        
-  }, { passive: false }); // passive:false 필수!        
-        
-  el.addEventListener("touchend", async e => {        
-    el.style.transform = "";        
-    el.classList.remove("dragging");        
-        
-    if (moved) {        
-      const rects = Array.from(container.children).map(c => c.getBoundingClientRect());        
-      const centerY = rects[startIndex].top + rects[startIndex].height / 2 + (e.changedTouches[0].clientY - startY);        
-      let newIndex = rects.findIndex(r => centerY < r.top + r.height / 2);        
-      if (newIndex === -1) newIndex = container.children.length - 1;        
-        
-      if (newIndex !== startIndex) {        
-        const d = firestoreData[dateKey];        
-        d.splice(newIndex, 0, d.splice(startIndex, 1)[0]);        
-        const batch = writeBatch(db);        
-        d.forEach((item, i) => {        
-          batch.set(doc(schedulesCol, item.id), { ...item, order: i });        
-        });        
-        await batch.commit();        
-      }        
-    }        
-        
-    dragSrcEl = null;        
-  });        
-}        
+function addMobileTouchDrag(el, container, dateKey) {
+  let startY = 0;
+  let startIndex = 0;
+  let moved = false;
+  let pressTimer = null;
+  let canDrag = false;
+
+  el.addEventListener("touchstart", e => {
+    dragSrcEl = el;
+    startY = e.touches[0].clientY;
+    startIndex = +el.dataset.index;
+    moved = false;
+ el.classList.remove("dragging");
+  });
+}   
 // ⭐ 뒤로가기용 history 처리
 function pushModalState() {
   history.pushState({ modal: true }, "");
