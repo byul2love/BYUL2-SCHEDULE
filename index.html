@@ -544,36 +544,30 @@ function addMobileTouchDrag(el, container, dateKey) {
     moved = true;
   }, { passive: false });
 
-  el.addEventListener("touchend", async e => {
-    clearTimeout(pressTimer);
+ el.addEventListener("touchend", async e => {
+  clearTimeout(pressTimer);       // 타이머 취소
+  el.style.transform = "";         // transform 초기화
+  el.classList.remove("dragging"); // dragging 클래스 제거
+  dragSrcEl = null;
 
-    // 항상 초기화
-    el.style.transform = "";
-    el.classList.remove("dragging");
+  if (!canDrag) return;           // 드래그 안했으면 그냥 종료
 
-    if (!canDrag) {
-      // ⭐ 드래그 안했으면 선택도 해제
-      dragSrcEl = null;
-      return;
-    }
+  // 실제 순서 변경 로직
+  const rects = Array.from(container.children).map(c => c.getBoundingClientRect());
+  const centerY = rects[startIndex].top + rects[startIndex].height / 2 + (e.changedTouches[0].clientY - startY);
+  let newIndex = rects.findIndex(r => centerY < r.top + r.height / 2);
+  if (newIndex === -1) newIndex = container.children.length - 1;
 
-    const rects = Array.from(container.children).map(c => c.getBoundingClientRect());
-    const centerY = rects[startIndex].top + rects[startIndex].height / 2 + (e.changedTouches[0].clientY - startY);
-    let newIndex = rects.findIndex(r => centerY < r.top + r.height / 2);
-    if (newIndex === -1) newIndex = container.children.length - 1;
-
-    if (newIndex !== startIndex) {
-      const d = firestoreData[dateKey];
-      d.splice(newIndex, 0, d.splice(startIndex, 1)[0]);
-      const batch = writeBatch(db);
-      d.forEach((item, i) => {
-        batch.set(doc(schedulesCol, item.id), { ...item, order: i });
-      });
-      await batch.commit();
-    }
-
-    dragSrcEl = null;
-  });
+  if (newIndex !== startIndex) {
+    const d = firestoreData[dateKey];
+    d.splice(newIndex, 0, d.splice(startIndex, 1)[0]);
+    const batch = writeBatch(db);
+    d.forEach((item, i) => {
+      batch.set(doc(schedulesCol, item.id), { ...item, order: i });
+    });
+    await batch.commit();
+  }
+});
 }
 
 // ⭐ 뒤로가기용 history 처리
