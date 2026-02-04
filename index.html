@@ -63,7 +63,10 @@ header { background:#140bb6; color:white; padding:16px 15px; text-align:center; 
 }     
 
 .day-number { font-size:12px; font-weight:bold; text-align:center; height:20px; }        
-.schedule-container { flex:1; overflow-y:auto; }        
+.schedule-container {
+  flex:1;
+  overflow: visible;   /* 또는 그냥 삭제 */
+}     
 .schedule {        
   display: flex;        
   flex-direction: column; /* 추가: row -> column */        
