@@ -515,60 +515,68 @@ function addWebDragEvents(el,dateKey){
 }        
         
 function addMobileTouchDrag(el, container, dateKey) {
-  let startY = 0, startIndex = 0, moved = false;
-  let pressTimer = null;
-  let canDrag = false;
+  let startY = 0, startX = 0, startIndex = 0;
+  let pressTimer = null, canDrag = false;
+  let moved = false;
 
   el.addEventListener("touchstart", e => {
-    dragSrcEl = el;
     startY = e.touches[0].clientY;
+    startX = e.touches[0].clientX;
     startIndex = +el.dataset.index;
-    moved = false;
     canDrag = false;
+    moved = false;
 
-    // 선택 효과 제거
     el.classList.remove("selected");
 
     pressTimer = setTimeout(() => {
-      canDrag = true;
-      el.classList.add("dragging");
+      if (!moved) { 
+        canDrag = true;
+        el.classList.add("dragging");
+      }
     }, 250);
   });
 
   el.addEventListener("touchmove", e => {
     const deltaY = e.touches[0].clientY - startY;
+    const deltaX = e.touches[0].clientX - startX;
 
-    if (!canDrag) return; // 드래그 전엔 그냥 스크롤
-    e.preventDefault();   // 드래그 중 스크롤 방지
+    // 5px 이상 움직이면 스크롤로 간주
+    if (!canDrag && Math.abs(deltaY) > 5) {
+      moved = true;
+      clearTimeout(pressTimer); // 드래그 전환 취소
+    }
+
+    if (!canDrag) return; // 아직 드래그 모드 아님
+    e.preventDefault();
+
     el.style.transform = `translateY(${deltaY}px) scale(0.95)`;
-    moved = true;
   }, { passive: false });
 
- el.addEventListener("touchend", async e => {
-  clearTimeout(pressTimer);       // 타이머 취소
-  el.style.transform = "";         // transform 초기화
-  el.classList.remove("dragging"); // dragging 클래스 제거
-  dragSrcEl = null;
+  el.addEventListener("touchend", async e => {
+    clearTimeout(pressTimer);
 
-  if (!canDrag) return;           // 드래그 안했으면 그냥 종료
+    // 항상 초기화
+    el.style.transform = "";
+    el.classList.remove("dragging");
 
-  // 실제 순서 변경 로직
-  const rects = Array.from(container.children).map(c => c.getBoundingClientRect());
-  const centerY = rects[startIndex].top + rects[startIndex].height / 2 + (e.changedTouches[0].clientY - startY);
-  let newIndex = rects.findIndex(r => centerY < r.top + r.height / 2);
-  if (newIndex === -1) newIndex = container.children.length - 1;
+    if (!canDrag) return; // 드래그가 아니면 그냥 종료
 
-  if (newIndex !== startIndex) {
-    const d = firestoreData[dateKey];
-    d.splice(newIndex, 0, d.splice(startIndex, 1)[0]);
-    const batch = writeBatch(db);
-    d.forEach((item, i) => {
-      batch.set(doc(schedulesCol, item.id), { ...item, order: i });
-    });
-    await batch.commit();
-  }
-});
+    const rects = Array.from(container.children).map(c => c.getBoundingClientRect());
+    const centerY = rects[startIndex].top + rects[startIndex].height / 2 + (e.changedTouches[0].clientY - startY);
+    let newIndex = rects.findIndex(r => centerY < r.top + r.height / 2);
+    if (newIndex === -1) newIndex = container.children.length - 1;
+
+    if (newIndex !== startIndex) {
+      const d = firestoreData[dateKey];
+      d.splice(newIndex, 0, d.splice(startIndex, 1)[0]);
+      const batch = writeBatch(db);
+      d.forEach((item, i) => batch.set(doc(schedulesCol, item.id), { ...item, order: i }));
+      await batch.commit();
+    }
+  });
 }
+
+
 
 // ⭐ 뒤로가기용 history 처리
 function pushModalState() {
