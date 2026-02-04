@@ -456,7 +456,8 @@ function renderCalendar(){
         if(it.url) modalLink.href=it.url;        
         
         document.getElementById("modalDate").textContent=startDate===endDate?startDate:`${startDate} ~ ${endDate}`;        
-        actionModal.style.display="flex";        
+        actionModal.style.display="flex";  
+        pushModalState();      
       };        
         
       addWebDragEvents(s,key);        
@@ -477,6 +478,7 @@ function renderCalendar(){
     typeInput.value = "기타";
 
     inputBox.style.display = "block";
+    pushModalState();
     return;
   }
 
@@ -551,6 +553,16 @@ function addMobileTouchDrag(el, container, dateKey) {
     dragSrcEl = null;        
   });        
 }        
+// ⭐ 뒤로가기용 history 처리
+function pushModalState() {
+  history.pushState({ modal: true }, "");
+}
+
+function closeAllOverlays() {
+  inputBox.style.display = "none";
+  actionModal.style.display = "none";
+  editModal.style.display = "none";
+}
         
 /******** 일정 추가 ********/ 
 pasteBtn.onclick = () => {
@@ -657,7 +669,8 @@ actionEditBtn.onclick=()=>{
   editStartDateInput.value=formatDate(first.date);        
   editEndDateInput.value=formatDate(last.date);        
   actionModal.style.display="none";        
-  editModal.style.display="flex";        
+  editModal.style.display="flex";       
+  pushModalState(); 
 };        
         
 saveEditBtn.onclick=async ()=>{        
@@ -693,19 +706,60 @@ actionDeleteBtn.onclick=async ()=>{
 };        
         
 /******** 모달 닫기 ********/        
-closeInputBtn.onclick=()=>inputBox.style.display="none";        
-actionCancelBtn.onclick=()=>actionModal.style.display="none";        
-cancelEditBtn.onclick=()=>editModal.style.display="none";        
-        
+closeInputBtn.onclick = () => {
+  inputBox.style.display = "none";
+  history.back();
+};      
+actionCancelBtn.onclick = () => {
+  actionModal.style.display = "none";
+  history.back();
+};      
+cancelEditBtn.onclick = () => {
+  editModal.style.display = "none";
+  history.back();
+};     
+
+// ⭐ 모바일 뒤로가기 처리
+window.addEventListener("popstate", () => {
+  if (
+    inputBox.style.display === "block" ||
+    actionModal.style.display === "flex" ||
+    editModal.style.display === "flex"
+  ) {
+    closeAllOverlays();
+  }
+});
+
 /******** 이전/다음/Today ********/        
 prevBtn.onclick=()=>{ currentDate.setMonth(currentDate.getMonth()-1); renderCalendar(); };        
 nextBtn.onclick=()=>{ currentDate.setMonth(currentDate.getMonth()+1); renderCalendar(); };        
-todayBtn.onclick=()=>{        
-  const t=new Date();        
-  currentDate=new Date(t.getFullYear(),t.getMonth(),1);        
-  selectedDateKey=`${t.getFullYear()}-${t.getMonth()+1}-${t.getDate()}`;        
-  renderCalendar();        
-};        
+todayBtn.onclick = () => {
+  const t = new Date();
+
+  // 1️⃣ 오늘이 있는 월로 이동
+  currentDate = new Date(t.getFullYear(), t.getMonth(), 1);
+  selectedDateKey = `${t.getFullYear()}-${t.getMonth()+1}-${t.getDate()}`;
+
+  renderCalendar();
+
+  // 2️⃣ 오늘 날짜 선택 + 3️⃣ 스크롤 이동
+  requestAnimationFrame(() => {
+    const todayEl = document.querySelector(".day.today");
+    if (!todayEl) return;
+
+    // 선택 표시
+    document.querySelectorAll(".day").forEach(d =>
+      d.classList.remove("selected")
+    );
+    todayEl.classList.add("selected");
+
+    // 중앙으로 스크롤
+    todayEl.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  });
+};     
         
 /******** 연/월 선택 모달 ********/        
 const monthPickerModal=document.getElementById("monthPickerModal");        
