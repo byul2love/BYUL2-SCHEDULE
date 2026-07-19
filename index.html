@@ -9,8 +9,25 @@
 body { margin:0; font-family:sans-serif; background:#f5f5f5; }        
 header { background:#140bb6; color:white; padding:16px 15px; text-align:center; position:relative; }        
 #siteTitle { font-size:40px; font-weight:bold; margin-bottom:6px; }        
-#navControls { display:flex; justify-content:center; align-items:center; gap:8px; position:relative; }        
-#todayBtn { position:absolute; right:10px; }        
+#navControls {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  position:relative;
+}
+#todayBtn {
+  margin-left:auto;
+}     
+#typeFilter {
+  height:30px;
+  padding:0 8px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:13px;
+
+  margin-right:auto;
+}
 #weekdays,#calendar { 
   display:grid; 
   grid-template-columns:repeat(7,1fr); 
@@ -164,7 +181,23 @@ button {
 
 @media (max-width:600px){        
   #siteTitle { font-size:32px; }        
-  #calendar { gap:0; padding:0 2px; margin-bottom:260px; }        
+  #calendar { gap:0; padding:0 2px; margin-bottom:260px; } 
+  #typeFilter{
+   max-width:65px;
+  font-size:11px;
+  #navControls {
+  padding-left:5px;
+}
+
+#typeFilter {
+  order:-1;
+  margin-right:5px;
+  max-width:65px;
+  font-size:11px;
+    position:absolute;
+  left:5px;
+}
+}       
   #weekdays { gap:0; padding:0 2px; }   
   .day { min-height:110px; padding:4px 2px; }        
   .schedule { font-size:8.5px; padding:2px 2px; width:100%; box-sizing:border-box; }        
@@ -208,6 +241,25 @@ button {
     right: 3px;   /* 기존 10px → 살짝 오른쪽 */
   }
 }
+.schedule-more {
+
+  font-size:10px;
+
+  color:#666;
+
+  text-align:center;
+
+  margin-top:4px;
+
+  padding:3px;
+
+  border-radius:5px;
+
+  background:#f1f3f5;
+
+  cursor:pointer;
+
+}
 
 </style>        
 </head>        
@@ -215,12 +267,28 @@ button {
         
 <header>        
   <div id="siteTitle">🌙MOONBYUL SCHEDULE🌟</div>        
-  <div id="navControls">        
-    <button id="prevBtn">◀</button>        
-    <span id="monthText"></span>        
-    <button id="nextBtn">▶</button>        
-    <button id="todayBtn">Today</button>        
-  </div>        
+<div id="navControls">        
+
+  <select id="typeFilter">
+    <option value="전체">전체</option>
+    <option value="버블">버블</option>
+    <option value="기타">기타</option>
+    <option value="콘서트">콘서트</option>
+    <option value="행사">행사</option>
+    <option value="발매">발매</option>
+    <option value="기념일">기념일</option>
+    <option value="방송">방송</option>
+    <option value="팬사인회">팬사인회</option>
+    <option value="SNS">SNS</option>
+    <option value="유튜브">유튜브</option>
+  </select>
+
+  <button id="prevBtn">◀</button>        
+  <span id="monthText"></span>        
+  <button id="nextBtn">▶</button>        
+  <button id="todayBtn">Today</button>
+
+</div>  
 </header>        
         
 <div id="weekdays"></div>        
@@ -241,6 +309,7 @@ button {
   <div class="date-row"><input id="startDateInput" type="date"><input id="endDateInput" type="date"></div>        
   <label>유형</label>        
   <select id="typeInput">        
+    <option value="버블">버블</option>   
     <option value="기타">기타</option>        
     <option value="콘서트">콘서트</option>        
     <option value="행사">행사</option>
@@ -250,6 +319,7 @@ button {
     <option value="팬사인회">팬사인회</option>        
     <option value="SNS">SNS</option>        
     <option value="유튜브">유튜브</option> 
+   
   </select>        
     <button id="addBtn">추가</button>            
      
@@ -276,7 +346,8 @@ button {
     <label>링크 (선택)</label><input id="editUrlInput">        
     <label>기간</label><div class="date-row"><input id="editStartDateInput" type="date"><input id="editEndDateInput" type="date"></div>        
     <label>유형</label>        
-    <select id="editTypeInput">        
+    <select id="editTypeInput">       
+      <option value="버블">버블</option>   
       <option value="기타">기타</option>        
       <option value="콘서트">콘서트</option>        
       <option value="행사">행사</option> 
@@ -285,7 +356,8 @@ button {
       <option value="방송">방송</option>        
       <option value="팬사인회">팬사인회</option>        
       <option value="SNS">SNS</option>        
-      <option value="유튜브">유튜브</option>        
+      <option value="유튜브">유튜브</option>   
+        
     </select>               
     <button id="saveEditBtn">저장</button>        
     <button id="cancelEditBtn">취소</button>        
@@ -353,23 +425,30 @@ const todayBtn=document.getElementById("todayBtn");
 const addBtn=document.getElementById("addBtn");        
 const closeInputBtn=document.getElementById("closeInputBtn");        
 const pasteBtn=document.getElementById("pasteBtn");
+const typeFilter=document.getElementById("typeFilter");
 
 
 const typeColors = {
-  콘서트: "#fb7185",   
-  유튜브: "#fca5a5",   
-  행사: "#D6C9FF",     
-  방송: "#BEEAD6",     
-  팬사인회: "#c8edfd", 
-  발매: "#6190fe",     
-  기념일: "#FFD59E",   
-  SNS: "#fef08a",
-  기타: "#d2d8fe"     
+  콘서트: "#FFB3D1",   
+  유튜브: "#FFC2C2",   
+  행사: "#DCC2FF",     
+  방송: "#B8F2D0",     
+  팬사인회: "#BDEBFF", 
+  발매: "#C2D1FF",     
+  기념일: "#FFE0A3",   
+  SNS: "#FFF3A3",     
+  버블: "#EED1FF",     
+  기타: "#d6e3ff"      
 };       
         
-let currentDate=new Date(), selectedDateKey=null, activeGroupId=null, dragSrcEl=null, firestoreData={};        
-let copiedSchedule = null;
-        
+let currentDate=new Date(),
+selectedDateKey=null,
+activeGroupId=null,
+dragSrcEl=null,
+firestoreData={},
+selectedTypeFilter="전체";
+let expandedDates = {};
+
 /******** Firestore 실시간 ********/        
 onSnapshot(schedulesCol, snapshot=>{        
   firestoreData={};        
@@ -422,54 +501,199 @@ function renderCalendar(){
     const cont=document.createElement("div");        
     cont.className="schedule-container";        
         
-    (firestoreData[key] || []).sort((a,b)=>(a.order??0)-(b.order??0)).forEach((it,idx)=>{        
-      const s=document.createElement("div");        
-      s.className="schedule";        
-      s.dataset.index=idx;        
-      s.dataset.dateKey=key;        
-      s.style.background=typeColors[it.type]||"#e0e7ff";        
-        
-      if(it.url){        
-        const linkIcon=document.createElement("span");        
-        linkIcon.className="link-icon";        
-        linkIcon.textContent="🔗";        
-        linkIcon.onclick=e=>{ e.stopPropagation(); window.open(it.url,"_blank"); };        
-        s.appendChild(linkIcon);        
-      }        
-      const titleSpan=document.createElement("span");        
-      titleSpan.className="title";        
-      titleSpan.textContent=it.title;        
-      s.appendChild(titleSpan);        
-        
-      // 클릭 시 모달 표시        
-      s.onclick = e=>{        
-        e.stopPropagation();        
-        selectedDateKey=key;        
-        activeGroupId=it.groupId;        
-        
-        const dates=[];        
-        for(const k in firestoreData){        
-          firestoreData[k].forEach(item=>{ if(item.groupId===it.groupId) dates.push(k); });        
-        }        
-        dates.sort((a,b)=>new Date(a)-new Date(b));        
-        const startDate=dates[0];        
-        const endDate=dates[dates.length-1];        
-        
-        modalTitle.textContent=it.title;        
-        modalContent.textContent=it.content||"(내용 없음)";        
-        modalType.textContent=`유형: ${it.type}`;        
-        modalLink.style.display=it.url?"block":"none";        
-        if(it.url) modalLink.href=it.url;        
-        
-        document.getElementById("modalDate").textContent=startDate===endDate?startDate:`${startDate} ~ ${endDate}`;        
-        actionModal.style.display="flex";  
-        pushModalState();      
-      };        
-        
-      addWebDragEvents(s,key);        
-      addMobileTouchDrag(s,cont,key);        
-      cont.appendChild(s);        
-    });        
+   const daySchedules = (firestoreData[key] || [])
+  .filter(item =>
+    selectedTypeFilter==="전체" ||
+    item.type===selectedTypeFilter
+  )
+  .sort((a,b)=>(a.order??0)-(b.order??0));
+
+const visibleSchedules = expandedDates[key]
+  ? daySchedules
+  : daySchedules.slice(0,4);
+
+
+visibleSchedules.forEach((it,idx)=>{
+
+  const s=document.createElement("div");
+
+  s.className="schedule";
+
+  s.dataset.index=idx;
+  s.dataset.dateKey=key;
+
+  s.style.background =
+    typeColors[it.type] || "#e0e7ff";
+
+
+  if(it.url){
+
+    const linkIcon=document.createElement("span");
+
+    linkIcon.className="link-icon";
+
+    linkIcon.textContent="🔗";
+
+
+    linkIcon.onclick=e=>{
+
+      e.stopPropagation();
+
+      window.open(it.url,"_blank");
+
+    };
+
+
+    s.appendChild(linkIcon);
+
+  }
+
+
+  const titleSpan=document.createElement("span");
+
+  titleSpan.className="title";
+
+  titleSpan.textContent=it.title;
+
+  s.appendChild(titleSpan);
+
+
+
+  s.onclick=e=>{
+
+    e.stopPropagation();
+
+    selectedDateKey=key;
+
+    activeGroupId=it.groupId;
+
+
+    const dates=[];
+
+
+    for(const k in firestoreData){
+
+      firestoreData[k].forEach(item=>{
+
+        if(item.groupId===it.groupId)
+
+          dates.push(k);
+
+      });
+
+    }
+
+
+    dates.sort((a,b)=>new Date(a)-new Date(b));
+
+
+    modalTitle.textContent=it.title;
+
+    modalContent.textContent=
+      it.content || "(내용 없음)";
+
+
+    modalType.textContent=
+      `유형: ${it.type}`;
+
+
+    modalLink.style.display =
+      it.url ? "block" : "none";
+
+
+    if(it.url)
+
+      modalLink.href=it.url;
+
+
+
+    document.getElementById("modalDate").textContent =
+      dates[0]===dates[dates.length-1]
+      ? dates[0]
+      : `${dates[0]} ~ ${dates[dates.length-1]}`;
+
+
+    actionModal.style.display="flex";
+
+    pushModalState();
+
+  };
+
+
+  addWebDragEvents(s,key);
+
+  addMobileTouchDrag(s,cont,key);
+
+
+  cont.appendChild(s);
+
+
+});
+
+
+// ⭐ 더보기 버튼
+
+if(daySchedules.length > 4 && !expandedDates[key]){
+
+
+  const more=document.createElement("div");
+
+
+  more.className="schedule-more";
+
+
+  more.textContent =
+    `+ ${daySchedules.length-4}개 더보기`;
+
+
+
+  more.onclick=e=>{
+
+    e.stopPropagation();
+
+    expandedDates[key]=true;
+
+    renderCalendar();
+
+  };
+
+
+  cont.appendChild(more);
+
+
+}
+
+
+
+// ⭐ 접기 버튼
+
+if(expandedDates[key]){
+
+
+  const close=document.createElement("div");
+
+
+  close.className="schedule-more";
+
+
+  close.textContent="▲ 접기";
+
+
+  close.onclick=e=>{
+
+    e.stopPropagation();
+
+    expandedDates[key]=false;
+
+    renderCalendar();
+
+  };
+
+
+  cont.appendChild(close);
+
+
+}
         
     day.appendChild(cont);        
     day.onclick = () => {
@@ -785,7 +1009,15 @@ todayBtn.onclick = () => {
     });
   });
 };     
-        
+ typeFilter.onchange = () => {
+
+  selectedTypeFilter = typeFilter.value;
+
+  expandedDates = {};
+
+  renderCalendar();
+
+};       
 /******** 연/월 선택 모달 ********/        
 const monthPickerModal=document.getElementById("monthPickerModal");        
 const yearSelect=document.getElementById("yearSelect");        
