@@ -521,6 +521,7 @@ visibleSchedules.forEach((it,idx)=>{
 
   s.dataset.index=idx;
   s.dataset.dateKey=key;
+  s.dataset.id=it.id;
 
   s.style.background =
     typeColors[it.type] || "#e0e7ff";
@@ -722,82 +723,250 @@ if(expandedDates[key]){
 }        
         
 /******** 드래그/터치 구현 ********/        
-function addWebDragEvents(el,dateKey){        
-  el.setAttribute("draggable","true");        
-  el.addEventListener("dragstart",()=>{ dragSrcEl=el; el.classList.add("dragging"); });        
-  el.addEventListener("dragend",()=>{ el.classList.remove("dragging"); dragSrcEl=null; });        
-  el.addEventListener("dragover",e=>e.preventDefault());        
-  el.addEventListener("drop",async e=>{        
-    e.preventDefault(); if(!dragSrcEl||dragSrcEl===el) return;        
-    const d=firestoreData[dateKey];        
-    const from=+dragSrcEl.dataset.index, to=+el.dataset.index;        
-    d.splice(to,0,d.splice(from,1)[0]);        
-    const batch = writeBatch(db);        
-    d.forEach((item,i)=>{ batch.set(doc(schedulesCol,item.id),{...item,order:i}); });        
-    await batch.commit();        
-  });        
-}        
+function addWebDragEvents(el,dateKey){
+
+  if(selectedTypeFilter !== "전체") return;
+
+  el.setAttribute("draggable","true");
+
+  el.addEventListener("dragstart",()=>{
+    dragSrcEl=el;
+    el.classList.add("dragging");
+  });
+
+
+  el.addEventListener("dragend",()=>{
+    el.classList.remove("dragging");
+    dragSrcEl=null;
+  });
+
+
+  el.addEventListener("dragover",e=>{
+    e.preventDefault();
+  });
+
+
+  el.addEventListener("drop",async e=>{
+
+    e.preventDefault();
+
+    if(!dragSrcEl || dragSrcEl===el) return;
+
+
+    const list = firestoreData[dateKey]
+      .sort((a,b)=>(a.order??0)-(b.order??0));
+
+
+    const fromId = dragSrcEl.dataset.id;
+    const toId = el.dataset.id;
+
+
+    const fromIndex = list.findIndex(
+      x=>x.id===fromId
+    );
+
+    const toIndex = list.findIndex(
+      x=>x.id===toId
+    );
+
+
+    const moved = list.splice(fromIndex,1)[0];
+
+    list.splice(toIndex,0,moved);
+
+
+
+    const batch = writeBatch(db);
+
+
+    list.forEach((item,i)=>{
+
+      batch.update(
+        doc(schedulesCol,item.id),
+        {order:i}
+      );
+
+    });
+
+
+    await batch.commit();
+
+  });
+}       
         
 function addMobileTouchDrag(el, container, dateKey) {
-  let startY = 0, startX = 0, startIndex = 0;
-  let pressTimer = null, canDrag = false;
+
+  if(selectedTypeFilter !== "전체") return;
+
+  let startY = 0;
+  let startX = 0;
+  let startId = null;
+  let pressTimer = null;
+  let canDrag = false;
   let moved = false;
 
+
   el.addEventListener("touchstart", e => {
+
     startY = e.touches[0].clientY;
     startX = e.touches[0].clientX;
-    startIndex = +el.dataset.index;
+
+    startId = el.dataset.id;
+
     canDrag = false;
     moved = false;
 
-    el.classList.remove("selected");
 
-    pressTimer = setTimeout(() => {
-      if (!moved) { 
+    pressTimer = setTimeout(()=>{
+
+      if(!moved){
+
         canDrag = true;
         el.classList.add("dragging");
+
       }
-    }, 250);
+
+    },250);
+
   });
+
+
 
   el.addEventListener("touchmove", e => {
-    const deltaY = e.touches[0].clientY - startY;
-    const deltaX = e.touches[0].clientX - startX;
 
-    // 5px 이상 움직이면 스크롤로 간주
-    if (!canDrag && Math.abs(deltaY) > 5) {
-      moved = true;
-      clearTimeout(pressTimer); // 드래그 전환 취소
+    const deltaY =
+      e.touches[0].clientY - startY;
+
+    const deltaX =
+      e.touches[0].clientX - startX;
+
+
+    if(!canDrag &&
+       Math.abs(deltaY)>5){
+
+      moved=true;
+      clearTimeout(pressTimer);
+
     }
 
-    if (!canDrag) return; // 아직 드래그 모드 아님
+
+    if(!canDrag) return;
+
+
     e.preventDefault();
 
-    el.style.transform = `translateY(${deltaY}px) scale(0.95)`;
-  }, { passive: false });
 
-  el.addEventListener("touchend", async e => {
+    el.style.transform =
+      `translateY(${deltaY}px) scale(0.95)`;
+
+
+  },{passive:false});
+
+
+
+
+  el.addEventListener("touchend", async e=>{
+
     clearTimeout(pressTimer);
 
-    // 항상 초기화
-    el.style.transform = "";
+
+    el.style.transform="";
     el.classList.remove("dragging");
 
-    if (!canDrag) return; // 드래그가 아니면 그냥 종료
 
-    const rects = Array.from(container.children).map(c => c.getBoundingClientRect());
-    const centerY = rects[startIndex].top + rects[startIndex].height / 2 + (e.changedTouches[0].clientY - startY);
-    let newIndex = rects.findIndex(r => centerY < r.top + r.height / 2);
-    if (newIndex === -1) newIndex = container.children.length - 1;
+    if(!canDrag) return;
 
-    if (newIndex !== startIndex) {
-      const d = firestoreData[dateKey];
-      d.splice(newIndex, 0, d.splice(startIndex, 1)[0]);
+
+
+    const list =
+      firestoreData[dateKey]
+      .sort((a,b)=>
+        (a.order??0)-(b.order??0)
+      );
+
+
+    const fromIndex =
+      list.findIndex(
+        x=>x.id===startId
+      );
+
+
+    if(fromIndex===-1) return;
+
+
+
+    const touchY =
+      e.changedTouches[0].clientY;
+
+
+
+    const items =
+      Array.from(container.children)
+      .filter(x=>x.dataset.id);
+
+
+
+    let targetIndex = items.findIndex(item=>{
+
+      const rect =
+        item.getBoundingClientRect();
+
+      return touchY <
+        rect.top + rect.height/2;
+
+    });
+
+
+
+    if(targetIndex===-1)
+      targetIndex=items.length-1;
+
+
+
+    const toId =
+      items[targetIndex]?.dataset.id;
+
+
+    const toIndex =
+      list.findIndex(
+        x=>x.id===toId
+      );
+
+
+
+    if(
+      toIndex!==-1 &&
+      fromIndex!==toIndex
+    ){
+
+      const moved =
+        list.splice(fromIndex,1)[0];
+
+
+      list.splice(toIndex,0,moved);
+
+
+
       const batch = writeBatch(db);
-      d.forEach((item, i) => batch.set(doc(schedulesCol, item.id), { ...item, order: i }));
+
+
+      list.forEach((item,i)=>{
+
+        batch.update(
+          doc(schedulesCol,item.id),
+          {order:i}
+        );
+
+      });
+
+
       await batch.commit();
+
     }
+
+
   });
+
 }
 
 
