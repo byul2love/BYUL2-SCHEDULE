@@ -1,0 +1,1073 @@
+   
+<!DOCTYPE html>        
+<html lang="ko">        
+<head>        
+<meta charset="UTF-8">        
+<meta name="viewport" content="width=device-width, initial-scale=1.0">        
+<title>MOONBYUL SCHEDULE</title>        
+<style>        
+body { margin:0; font-family:sans-serif; background:#f5f5f5; }        
+header { background:#140bb6; color:white; padding:16px 15px; text-align:center; position:relative; }        
+#siteTitle { font-size:40px; font-weight:bold; margin-bottom:6px; }        
+#navControls {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  position:relative;
+}
+#todayBtn {
+  margin-left:auto;
+}     
+#typeFilter {
+  height:30px;
+  padding:0 8px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:13px;
+
+  margin-right:auto;
+}
+#weekdays,#calendar { 
+  display:grid; 
+  grid-template-columns:repeat(7,1fr); 
+  gap:0;              /* ⭐ 간격 제거 */
+  padding:0;          /* ⭐ 바깥 여백 제거 */
+}
+
+
+#calendar { margin-bottom:400px;background:#f7f7f7; }      
+.weekday { 
+  text-align:center; 
+  font-weight:bold; 
+  background:#ffffff; 
+  border-radius:0;            /* ⭐ 네모 */
+  padding:5px 0; 
+  font-size:13px; 
+}   
+.day { 
+  background:white; 
+  border-radius:0;            /* ⭐ 둥근 모서리 제거 */
+  padding:4px; 
+  min-height:140px; 
+  display:flex; 
+  flex-direction:column; 
+
+  border-bottom:1px solid #ccc;  /* ⭐ 가로선 */
+
+  cursor:pointer; 
+}  
+.empty-day {
+  pointer-events: none; 
+  background: #f7f7f7;
+}
+#calendar {
+    margin-bottom:450px;
+  border-left:1px solid #ccc;
+  border-top:1px solid #ccc;
+}
+.day.today {
+  background: #f9fafb;
+}
+.day.today .day-number {
+  color: #6366f1;
+  font-weight: 600;
+}
+.day.selected {
+  outline: 2px solid #181818;   /* ⭐ 선택 표시 */
+  outline-offset: -2px;         /* ⭐ 칸 안쪽으로 */
+  z-index: 2;
+}     
+
+.day-number { font-size:12px; font-weight:bold; text-align:center; height:20px; }        
+.schedule-container {
+  flex:1;
+  overflow: visible;   /* 또는 그냥 삭제 */
+}     
+.schedule {        
+  display: flex;        
+  flex-direction: column; /* 추가: row -> column */        
+  align-items: flex-start; /* 왼쪽 정렬 */        
+  font-size: 8.5px;        
+  border-radius: 4px;        
+  padding: 2px 4px;        
+  margin-bottom: 3px;        
+  cursor: pointer;        
+  user-select: none;        
+  box-sizing: border-box;        
+  white-space: normal;        
+  word-break: break-word;        
+  /* 추가: 영어 단어도 글자 단위로 줄바꿈 */        
+  overflow-wrap: break-word;   /* 긴 단어 줄바꿈 허용 */        
+  word-break: break-all;       /* 모든 글자 단위 줄바꿈 */        
+  overflow: visible; 
+    margin-left: 1px;  /* 일정 박스 좌우 살짝 간격 */
+    margin-right: 1px;       
+}        
+        
+.schedule .link-icon {        
+  margin: 0 0 4px 0; /* 아래쪽 여백 */        
+  cursor: pointer;        
+}        
+.schedule.dragging { opacity:0.5; transform:scale(0.95); }        
+        
+.schedule .title { flex:1; }        
+#inputBox { position:fixed; bottom:0; left:0; right:0; height:auto; background:white; padding:10px; border-top:1px solid #ddd; display:none; z-index:1000; overflow-y:auto; box-sizing:border-box; }        
+#inputBox label { display:block; margin-top:6px; font-size:12px; font-weight:bold; }        
+#inputBox input, #inputBox select { width:100%; padding:6px; margin-top:2px; margin-bottom:6px; box-sizing:border-box; }        
+#typeInput, #editTypeInput { -webkit-appearance: none; -moz-appearance: none; appearance: none; background: #fff url('data:image/svg+xml;utf8,<svg fill="black" height="12" viewBox="0 0 24 24" width="12" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 8px center; padding-right: 24px; border:1px solid #ccc; border-radius:6px; cursor:pointer; }        
+#closeInputBtn { float:right; border:none; background:none; font-size:18px; margin-bottom:4px; }        
+#addBtn { float:right; }        
+#modalLink { font-size:13px; margin-bottom:6px; }        
+.date-row { display:flex; gap:6px; margin-bottom:6px; }        
+.date-row input { flex:1; box-sizing:border-box; }        
+.modal { position:fixed; inset:0; background:rgba(0,0,0,0.4); display:none; justify-content:center; align-items:center; z-index:1000; overflow-y:auto; }        
+.modal-content { background:white; padding:18px; border-radius:12px; width:85%; max-width:320px; box-sizing:border-box; }        
+.modal-content label { display:block; margin-top:6px; font-size:12px; font-weight:bold; }        
+.modal-content input, .modal-content select { width:95%; padding:6px; margin-top:2px; margin-bottom:6px; box-sizing:border-box; }        
+.modal-content button { width:100%; margin-top:8px; }       
+.input-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+#selectedDate {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.input-actions {
+  display: flex;
+  gap: 6px;
+}
+
+#pasteBtn {
+  border: none;
+  background: #f1f3f5;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0 8px;
+  height: 32px;
+  line-height: 32px;
+}
+
+#closeInputBtn {
+  border: none;
+  background: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+button {
+  border: none;
+  outline: none;
+  background: #f1f3f5;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+    line-height: normal; 
+     display: flex;
+     height: 32px;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width:600px){        
+  #siteTitle { font-size:32px; }        
+  #calendar { gap:0; padding:0 2px; margin-bottom:260px; } 
+  #typeFilter{
+   max-width:65px;
+  font-size:11px;
+  #navControls {
+  padding-left:5px;
+}
+
+#typeFilter {
+  order:-1;
+  margin-right:5px;
+  max-width:65px;
+  font-size:11px;
+    position:absolute;
+  left:5px;
+}
+}       
+  #weekdays { gap:0; padding:0 2px; }   
+  .day { min-height:110px; padding:4px 2px; }        
+  .schedule { font-size:8.5px; padding:2px 2px; width:100%; box-sizing:border-box; }        
+  #inputBox {
+    position: fixed;
+    bottom: env(safe-area-inset-bottom); /* iOS 대응 */
+    left: 0;
+    width: 100%;
+    height: 40vh;              /* ⭐ 핵심 */
+    max-height: 40vh;
+    padding:10px 10px 12px;    /* 아래 여백 */
+    box-sizing:border-box;
+    border-top-left-radius:12px;
+    border-top-right-radius:12px;
+    background:white;
+    box-shadow:0 -4px 12px rgba(0,0,0,0.15);
+    overflow-y: auto;          /* ⭐ 내부 스크롤 */
+    -webkit-overflow-scrolling: touch;
+    z-index:1000;
+  }
+  
+   #prevBtn, #nextBtn, #todayBtn {
+  height: 30px;        /* ⭐ 세로 줄이기 */
+  padding: 0 8px;
+  font-size: 13px;
+}
+  
+}
+  #addBtn { float:right; margin-top:6px; }        
+  #inputBox input, #inputBox select { width:100%; padding:6px; box-sizing:border-box; }        
+  #inputBox label { font-size:12px; }        
+  #closeInputBtn { font-size:18px; }        
+  #editModal .modal-content { max-height:none; overflow-y:visible; padding:10px; }        
+  #editModal .modal-content label { font-size:12px; }        
+  #editModal .modal-content input, #editModal .modal-content select { font-size:12px; padding:4px; }        
+  #editModal .modal-content button { font-size:12px; padding:6px 0; margin-top:4px; }        
+       
+@media (min-width:601px){ .schedule { font-size:13px; padding:4px 6px; } }        
+@media (max-width:600px) {
+  #todayBtn {
+    right: 3px;   /* 기존 10px → 살짝 오른쪽 */
+  }
+}
+.schedule-more {
+
+  font-size:10px;
+
+  color:#666;
+
+  text-align:center;
+
+  margin-top:4px;
+
+  padding:3px;
+
+  border-radius:5px;
+
+  background:#f1f3f5;
+
+  cursor:pointer;
+
+}
+
+</style>        
+</head>        
+<body>        
+        
+<header>        
+  <div id="siteTitle">🌙MOONBYUL SCHEDULE🌟</div>        
+<div id="navControls">        
+
+  <select id="typeFilter">
+    <option value="전체">전체</option>
+    <option value="버블">버블</option>
+    <option value="기타">기타</option>
+    <option value="콘서트">콘서트</option>
+    <option value="행사">행사</option>
+    <option value="발매">발매</option>
+    <option value="기념일">기념일</option>
+    <option value="방송">방송</option>
+    <option value="팬사인회">팬사인회</option>
+    <option value="SNS">SNS</option>
+    <option value="유튜브">유튜브</option>
+  </select>
+
+  <button id="prevBtn">◀</button>        
+  <span id="monthText"></span>        
+  <button id="nextBtn">▶</button>        
+  <button id="todayBtn">Today</button>
+
+</div>  
+</header>        
+        
+<div id="weekdays"></div>        
+<div id="calendar"></div>        
+        
+<div id="inputBox">        
+  <div class="input-header">
+  <div id="selectedDate"></div>  
+  <div class="input-actions">
+  <button id="pasteBtn"> 붙여넣기</button>
+  <button id="closeInputBtn">✖</button> 
+    </div>   
+  </div>    
+  <label>일정 제목</label><input id="titleInput" placeholder="일정 제목">        
+  <label>일정 내용 (선택)</label><input id="descInput" placeholder="상세 내용">         
+  <label>링크 (선택)</label><input id="urlInput" placeholder="https://...">        
+  <label>기간</label>        
+  <div class="date-row"><input id="startDateInput" type="date"><input id="endDateInput" type="date"></div>        
+  <label>유형</label>        
+  <select id="typeInput">        
+    <option value="버블">버블</option>   
+    <option value="기타">기타</option>        
+    <option value="콘서트">콘서트</option>        
+    <option value="행사">행사</option>
+    <option value="발매">발매</option>        
+    <option value="기념일">기념일</option>        
+    <option value="방송">방송</option>        
+    <option value="팬사인회">팬사인회</option>        
+    <option value="SNS">SNS</option>        
+    <option value="유튜브">유튜브</option> 
+   
+  </select>        
+    <button id="addBtn">추가</button>            
+     
+</div>        
+        
+<div id="actionModal" class="modal">        
+  <div class="modal-content">        
+    <div id="modalTitle" style="font-weight:bold; margin-bottom:4px;"></div>        
+    <div id="modalDate" style="font-size:12.5px; margin-bottom:4px;"></div>        
+    <div id="modalContent" style="font-size:12.5px; margin-bottom:6px;"></div>        
+    <a id="modalLink" href="#" target="_blank" style="display:none; margin-bottom:6px;">🔗 링크</a>        
+    <div id="modalType" style="font-size:11px; margin-bottom:8px;"></div>        
+    <button id="actionCopyBtn">📋 복사</button>
+    <button id="actionEditBtn">✏️ 수정</button>        
+    <button id="actionDeleteBtn">🗑️ 삭제</button>        
+    <button id="actionCancelBtn">✖️ 취소</button>        
+  </div>        
+</div>        
+        
+<div id="editModal" class="modal">        
+  <div class="modal-content">        
+    <label>일정 제목</label><input id="editTitleInput">  
+    <label>일정 내용 (선택)</label><input id="editDescInput">         
+    <label>링크 (선택)</label><input id="editUrlInput">        
+    <label>기간</label><div class="date-row"><input id="editStartDateInput" type="date"><input id="editEndDateInput" type="date"></div>        
+    <label>유형</label>        
+    <select id="editTypeInput">       
+      <option value="버블">버블</option>   
+      <option value="기타">기타</option>        
+      <option value="콘서트">콘서트</option>        
+      <option value="행사">행사</option> 
+      <option value="발매">발매</option>       
+      <option value="기념일">기념일</option>        
+      <option value="방송">방송</option>        
+      <option value="팬사인회">팬사인회</option>        
+      <option value="SNS">SNS</option>        
+      <option value="유튜브">유튜브</option>   
+        
+    </select>               
+    <button id="saveEditBtn">저장</button>        
+    <button id="cancelEditBtn">취소</button>        
+  </div>        
+</div>        
+        
+<script type="module">        
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";        
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";        
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";        
+        
+/******** Firebase 초기화 ********/        
+const firebaseConfig = {        
+    apiKey: "AIzaSyAqCsyAWQ-5wDYEqUuJWgZKCGRyMwDg-ds",        
+    authDomain: "schedule-fc512.firebaseapp.com",        
+    projectId: "schedule-fc512",        
+    storageBucket: "schedule-fc512.firebasestorage.app",        
+    messagingSenderId: "940626479946",        
+    appId: "1:940626479946:web:a05efe8ed77b96cd30cfb3",        
+    measurementId: "G-L6DES7RMV2"        
+};        
+const app = initializeApp(firebaseConfig);        
+const analytics = getAnalytics(app);        
+const db = getFirestore(app);        
+const schedulesCol = collection(db, "schedules");        
+        
+/******** 캘린더 변수 ********/        
+const calendar=document.getElementById("calendar");        
+const weekdaysDiv=document.getElementById("weekdays");        
+const monthText=document.getElementById("monthText");        
+const inputBox=document.getElementById("inputBox");        
+const selectedDateText=document.getElementById("selectedDate");        
+        
+const titleInput=document.getElementById("titleInput");        
+const urlInput=document.getElementById("urlInput");        
+const startDateInput=document.getElementById("startDateInput");        
+const endDateInput=document.getElementById("endDateInput");        
+const typeInput=document.getElementById("typeInput");        
+const descInput=document.getElementById("descInput");        
+        
+const actionModal=document.getElementById("actionModal");        
+const modalTitle=document.getElementById("modalTitle");        
+const modalContent=document.getElementById("modalContent");        
+const modalLink=document.getElementById("modalLink");        
+const modalType=document.getElementById("modalType");        
+const actionEditBtn=document.getElementById("actionEditBtn");        
+const actionDeleteBtn=document.getElementById("actionDeleteBtn");        
+const actionCancelBtn=document.getElementById("actionCancelBtn");        
+const actionCopyBtn=document.getElementById("actionCopyBtn");
+
+
+const editModal=document.getElementById("editModal");        
+const editTitleInput=document.getElementById("editTitleInput");        
+const editUrlInput=document.getElementById("editUrlInput");        
+const editStartDateInput=document.getElementById("editStartDateInput");        
+const editEndDateInput=document.getElementById("editEndDateInput");        
+const editTypeInput=document.getElementById("editTypeInput");        
+const editDescInput=document.getElementById("editDescInput");        
+const saveEditBtn=document.getElementById("saveEditBtn");        
+const cancelEditBtn=document.getElementById("cancelEditBtn");        
+        
+const prevBtn=document.getElementById("prevBtn");        
+const nextBtn=document.getElementById("nextBtn");        
+const todayBtn=document.getElementById("todayBtn");        
+const addBtn=document.getElementById("addBtn");        
+const closeInputBtn=document.getElementById("closeInputBtn");        
+const pasteBtn=document.getElementById("pasteBtn");
+const typeFilter=document.getElementById("typeFilter");
+
+
+const typeColors = {
+  콘서트: "#FFB3D1",   
+  유튜브: "#FFC2C2",   
+  행사: "#DCC2FF",     
+  방송: "#B8F2D0",     
+  팬사인회: "#BDEBFF", 
+  발매: "#C2D1FF",     
+  기념일: "#FFE0A3",   
+  SNS: "#FFF3A3",     
+  버블: "#EED1FF",     
+  기타: "#d6e3ff"      
+};       
+        
+let currentDate=new Date(),
+selectedDateKey=null,
+activeGroupId=null,
+dragSrcEl=null,
+firestoreData={},
+selectedTypeFilter="전체";
+let expandedDates = {};
+
+/******** Firestore 실시간 ********/        
+onSnapshot(schedulesCol, snapshot=>{        
+  firestoreData={};        
+  snapshot.docs.forEach(docSnap=>{        
+    const d=docSnap.data();        
+    if(!firestoreData[d.date]) firestoreData[d.date]=[];        
+    firestoreData[d.date].push({...d,id:docSnap.id});        
+  });        
+  renderCalendar();        
+});        
+        
+/******** 헬퍼 ********/        
+const gid=()=>Math.random().toString(36).slice(2);        
+const formatDate=k=>{ const [y,m,d]=k.split("-"); return `${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`; };        
+/******** 캘린더 렌더링, 드래그 포함 ********/        
+function renderCalendar(){        
+  calendar.innerHTML=""; weekdaysDiv.innerHTML="";        
+  const y=currentDate.getFullYear(), m=currentDate.getMonth();        
+  monthText.textContent=`${y}년 ${m+1}월`;        
+  ["일","월","화","수","목","금","토"].forEach(d=>{        
+    const w=document.createElement("div");        
+    w.className="weekday";        
+    w.textContent=d;        
+    weekdaysDiv.appendChild(w);        
+  });        
+        
+  const first=new Date(y,m,1).getDay();        
+  const last=new Date(y,m+1,0).getDate();        
+  const todayKey=`${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`;        
+        
+  for(let i=0;i<first;i++){        
+    const e=document.createElement("div");        
+    e.className="day";        
+    e.classList.add("empty-day");        
+    calendar.appendChild(e);        
+  }        
+        
+  for(let d=1; d<=last; d++){        
+    const key=`${y}-${m+1}-${d}`;        
+    const day=document.createElement("div");        
+    day.className="day";        
+    if(key===todayKey) day.classList.add("today");        
+    if(key===selectedDateKey) day.classList.add("selected");        
+        
+    const num=document.createElement("div");        
+    num.className="day-number";        
+    num.textContent=d;        
+    day.appendChild(num);        
+        
+    const cont=document.createElement("div");        
+    cont.className="schedule-container";        
+        
+   const daySchedules = (firestoreData[key] || [])
+  .filter(item =>
+    selectedTypeFilter==="전체" ||
+    item.type===selectedTypeFilter
+  )
+  .sort((a,b)=>(a.order??0)-(b.order??0));
+
+const visibleSchedules = expandedDates[key]
+  ? daySchedules
+  : daySchedules.slice(0,4);
+
+
+visibleSchedules.forEach((it,idx)=>{
+
+  const s=document.createElement("div");
+
+  s.className="schedule";
+
+  s.dataset.index=idx;
+  s.dataset.dateKey=key;
+
+  s.style.background =
+    typeColors[it.type] || "#e0e7ff";
+
+
+  if(it.url){
+
+    const linkIcon=document.createElement("span");
+
+    linkIcon.className="link-icon";
+
+    linkIcon.textContent="🔗";
+
+
+    linkIcon.onclick=e=>{
+
+      e.stopPropagation();
+
+      window.open(it.url,"_blank");
+
+    };
+
+
+    s.appendChild(linkIcon);
+
+  }
+
+
+  const titleSpan=document.createElement("span");
+
+  titleSpan.className="title";
+
+  titleSpan.textContent=it.title;
+
+  s.appendChild(titleSpan);
+
+
+
+  s.onclick=e=>{
+
+    e.stopPropagation();
+
+    selectedDateKey=key;
+
+    activeGroupId=it.groupId;
+
+
+    const dates=[];
+
+
+    for(const k in firestoreData){
+
+      firestoreData[k].forEach(item=>{
+
+        if(item.groupId===it.groupId)
+
+          dates.push(k);
+
+      });
+
+    }
+
+
+    dates.sort((a,b)=>new Date(a)-new Date(b));
+
+
+    modalTitle.textContent=it.title;
+
+    modalContent.textContent=
+      it.content || "(내용 없음)";
+
+
+    modalType.textContent=
+      `유형: ${it.type}`;
+
+
+    modalLink.style.display =
+      it.url ? "block" : "none";
+
+
+    if(it.url)
+
+      modalLink.href=it.url;
+
+
+
+    document.getElementById("modalDate").textContent =
+      dates[0]===dates[dates.length-1]
+      ? dates[0]
+      : `${dates[0]} ~ ${dates[dates.length-1]}`;
+
+
+    actionModal.style.display="flex";
+
+    pushModalState();
+
+  };
+
+
+  addWebDragEvents(s,key);
+
+  addMobileTouchDrag(s,cont,key);
+
+
+  cont.appendChild(s);
+
+
+});
+
+
+// ⭐ 더보기 버튼
+
+if(daySchedules.length > 4 && !expandedDates[key]){
+
+
+  const more=document.createElement("div");
+
+
+  more.className="schedule-more";
+
+
+  more.textContent =
+    `+ ${daySchedules.length-4}개 더보기`;
+
+
+
+  more.onclick=e=>{
+
+    e.stopPropagation();
+
+    expandedDates[key]=true;
+
+    renderCalendar();
+
+  };
+
+
+  cont.appendChild(more);
+
+
+}
+
+
+
+// ⭐ 접기 버튼
+
+if(expandedDates[key]){
+
+
+  const close=document.createElement("div");
+
+
+  close.className="schedule-more";
+
+
+  close.textContent="▲ 접기";
+
+
+  close.onclick=e=>{
+
+    e.stopPropagation();
+
+    expandedDates[key]=false;
+
+    renderCalendar();
+
+  };
+
+
+  cont.appendChild(close);
+
+
+}
+        
+    day.appendChild(cont);        
+    day.onclick = () => {
+  if (selectedDateKey === key) {
+    selectedDateText.textContent = `${m+1}월 ${d}일`;
+    startDateInput.value = endDateInput.value = formatDate(key);
+
+    // ⭐⭐⭐ 여기 추가 ⭐⭐⭐
+    titleInput.value = "";
+    urlInput.value = "";
+    descInput.value = "";
+    typeInput.value = "기타";
+
+    inputBox.style.display = "block";
+    pushModalState();
+    return;
+  }
+
+  selectedDateKey = key;
+  inputBox.style.display = "none";
+  document.querySelectorAll(".day").forEach(x => x.classList.remove("selected"));
+  day.classList.add("selected");
+};    
+    calendar.appendChild(day);        
+  }        
+}        
+        
+/******** 드래그/터치 구현 ********/        
+function addWebDragEvents(el,dateKey){        
+  el.setAttribute("draggable","true");        
+  el.addEventListener("dragstart",()=>{ dragSrcEl=el; el.classList.add("dragging"); });        
+  el.addEventListener("dragend",()=>{ el.classList.remove("dragging"); dragSrcEl=null; });        
+  el.addEventListener("dragover",e=>e.preventDefault());        
+  el.addEventListener("drop",async e=>{        
+    e.preventDefault(); if(!dragSrcEl||dragSrcEl===el) return;        
+    const d=firestoreData[dateKey];        
+    const from=+dragSrcEl.dataset.index, to=+el.dataset.index;        
+    d.splice(to,0,d.splice(from,1)[0]);        
+    const batch = writeBatch(db);        
+    d.forEach((item,i)=>{ batch.set(doc(schedulesCol,item.id),{...item,order:i}); });        
+    await batch.commit();        
+  });        
+}        
+        
+function addMobileTouchDrag(el, container, dateKey) {
+  let startY = 0, startX = 0, startIndex = 0;
+  let pressTimer = null, canDrag = false;
+  let moved = false;
+
+  el.addEventListener("touchstart", e => {
+    startY = e.touches[0].clientY;
+    startX = e.touches[0].clientX;
+    startIndex = +el.dataset.index;
+    canDrag = false;
+    moved = false;
+
+    el.classList.remove("selected");
+
+    pressTimer = setTimeout(() => {
+      if (!moved) { 
+        canDrag = true;
+        el.classList.add("dragging");
+      }
+    }, 250);
+  });
+
+  el.addEventListener("touchmove", e => {
+    const deltaY = e.touches[0].clientY - startY;
+    const deltaX = e.touches[0].clientX - startX;
+
+    // 5px 이상 움직이면 스크롤로 간주
+    if (!canDrag && Math.abs(deltaY) > 5) {
+      moved = true;
+      clearTimeout(pressTimer); // 드래그 전환 취소
+    }
+
+    if (!canDrag) return; // 아직 드래그 모드 아님
+    e.preventDefault();
+
+    el.style.transform = `translateY(${deltaY}px) scale(0.95)`;
+  }, { passive: false });
+
+  el.addEventListener("touchend", async e => {
+    clearTimeout(pressTimer);
+
+    // 항상 초기화
+    el.style.transform = "";
+    el.classList.remove("dragging");
+
+    if (!canDrag) return; // 드래그가 아니면 그냥 종료
+
+    const rects = Array.from(container.children).map(c => c.getBoundingClientRect());
+    const centerY = rects[startIndex].top + rects[startIndex].height / 2 + (e.changedTouches[0].clientY - startY);
+    let newIndex = rects.findIndex(r => centerY < r.top + r.height / 2);
+    if (newIndex === -1) newIndex = container.children.length - 1;
+
+    if (newIndex !== startIndex) {
+      const d = firestoreData[dateKey];
+      d.splice(newIndex, 0, d.splice(startIndex, 1)[0]);
+      const batch = writeBatch(db);
+      d.forEach((item, i) => batch.set(doc(schedulesCol, item.id), { ...item, order: i }));
+      await batch.commit();
+    }
+  });
+}
+
+
+
+// ⭐ 뒤로가기용 history 처리
+function pushModalState() {
+  history.pushState({ modal: true }, "");
+}
+
+function closeAllOverlays() {
+  inputBox.style.display = "none";
+  actionModal.style.display = "none";
+  editModal.style.display = "none";
+}
+        
+/******** 일정 추가 ********/ 
+pasteBtn.onclick = () => {
+  if (!copiedSchedule || !selectedDateKey) {
+    alert("복사된 일정이 없습니다.");
+    return;
+  }
+
+  // 1️⃣ 복사된 일정 날짜순 정렬
+  const sorted = [...copiedSchedule].sort(
+    (a, b) => new Date(a.date) - new Date(b.date)
+  );
+
+  const first = sorted[0];
+  const last = sorted[sorted.length - 1];
+
+  // 2️⃣ 입력창에 값 채우기
+  titleInput.value = first.title || "";
+  urlInput.value = first.url || "";
+  descInput.value = first.content || "";
+  typeInput.value = first.type || "기타";
+
+  // 3️⃣ ⭐ 날짜 보정 (선택한 날짜 기준)
+  const base = new Date(selectedDateKey);
+  const duration = sorted.length - 1;
+
+  startDateInput.value = formatDate(
+    `${base.getFullYear()}-${base.getMonth()+1}-${base.getDate()}`
+  );
+
+  const end = new Date(base);
+  end.setDate(base.getDate() + duration);
+
+  endDateInput.value = formatDate(
+    `${end.getFullYear()}-${end.getMonth()+1}-${end.getDate()}`
+  );
+
+  // 4️⃣ 입력창 열기
+const [y, m, d] = selectedDateKey.split("-");
+selectedDateText.textContent = `${m}월 ${d}일`;
+inputBox.style.display = "block";
+
+};
+
+
+addBtn.onclick=async ()=>{        
+  if(!titleInput.value||!startDateInput.value) return;        
+  const batch = writeBatch(db);        
+  const groupId=gid();        
+  let start=new Date(startDateInput.value), end=endDateInput.value?new Date(endDateInput.value):new Date(start);        
+  if(start>end)[start,end]=[end,start];        
+  let cur=new Date(start);        
+  while(cur<=end){        
+    const key=`${cur.getFullYear()}-${cur.getMonth()+1}-${cur.getDate()}`;        
+    const docRef=doc(schedulesCol);        
+    const order=(firestoreData[key]?.length||0);        
+    batch.set(docRef,{        
+      title:titleInput.value,        
+      url:urlInput.value||"",        
+      type:typeInput.value,        
+      content:descInput.value||"",        
+      date:key,        
+      groupId,        
+      order        
+    });        
+    cur.setDate(cur.getDate()+1);        
+  }        
+  await batch.commit();        
+  inputBox.style.display="none"; titleInput.value=urlInput.value=descInput.value=""; startDateInput.value=endDateInput.value=""; typeInput.value="";        
+};        
+        
+/******** 수정/삭제 ********/  
+actionCopyBtn.onclick = () => {
+  const items = [];
+
+  for (const k in firestoreData) {
+    firestoreData[k].forEach(it => {
+      if (it.groupId === activeGroupId) {
+        items.push({ ...it });
+      }
+    });
+  }
+
+  if (items.length === 0) return;
+
+  copiedSchedule = items;
+
+  alert("일정이 복사되었습니다!");
+  actionModal.style.display = "none";
+};
+
+actionEditBtn.onclick=()=>{        
+  const items=[];        
+  for(const k in firestoreData){        
+    firestoreData[k].forEach(it=>{ if(it.groupId===activeGroupId) items.push({...it,date:k}); });        
+  }        
+  if(items.length===0) return;        
+  items.sort((a,b)=>new Date(a.date)-new Date(b.date));        
+  const first=items[0], last=items[items.length-1];        
+  editTitleInput.value=first.title;        
+  editUrlInput.value=first.url||"";        
+  editTypeInput.value=first.type;        
+  editDescInput.value=first.content||"";        
+  editStartDateInput.value=formatDate(first.date);        
+  editEndDateInput.value=formatDate(last.date);        
+  actionModal.style.display="none";        
+  editModal.style.display="flex";       
+  pushModalState(); 
+};        
+        
+saveEditBtn.onclick=async ()=>{        
+  const groupItems=[];        
+  for(const k in firestoreData) firestoreData[k].forEach(it=>{ if(it.groupId===activeGroupId) groupItems.push(it); });        
+  const batch=writeBatch(db);        
+  groupItems.forEach(it=>{ batch.delete(doc(schedulesCol,it.id)); });        
+  let start=new Date(editStartDateInput.value), end=new Date(editEndDateInput.value);        
+  if(start>end)[start,end]=[end,start];        
+  const groupId=activeGroupId;        
+  let cur=new Date(start);        
+  while(cur<=end){        
+    const key=`${cur.getFullYear()}-${cur.getMonth()+1}-${cur.getDate()}`;        
+    const docRef=doc(schedulesCol);        
+    batch.set(docRef,{        
+      title:editTitleInput.value,        
+      url:editUrlInput.value||"",        
+      type:editTypeInput.value,        
+      content:editDescInput.value||"",        
+      date:key,        
+      groupId        
+    });        
+    cur.setDate(cur.getDate()+1);        
+  }        
+  await batch.commit(); editModal.style.display="none";        
+};        
+        
+actionDeleteBtn.onclick=async ()=>{        
+  if(!confirm("연속 일정 전체를 삭제할까요?")) return;        
+  const batch=writeBatch(db);        
+  for(const k in firestoreData) firestoreData[k].forEach(it=>{ if(it.groupId===activeGroupId) batch.delete(doc(schedulesCol,it.id)); });        
+  await batch.commit(); actionModal.style.display="none";        
+};        
+        
+/******** 모달 닫기 ********/        
+closeInputBtn.onclick = () => {
+  inputBox.style.display = "none";
+  history.back();
+};      
+actionCancelBtn.onclick = () => {
+  actionModal.style.display = "none";
+  history.back();
+};      
+cancelEditBtn.onclick = () => {
+  editModal.style.display = "none";
+  history.back();
+};     
+
+// ⭐ 모바일 뒤로가기 처리
+window.addEventListener("popstate", () => {
+  if (
+    inputBox.style.display === "block" ||
+    actionModal.style.display === "flex" ||
+    editModal.style.display === "flex"
+  ) {
+    closeAllOverlays();
+  }
+});
+
+/******** 이전/다음/Today ********/        
+prevBtn.onclick=()=>{ currentDate.setMonth(currentDate.getMonth()-1); renderCalendar(); };        
+nextBtn.onclick=()=>{ currentDate.setMonth(currentDate.getMonth()+1); renderCalendar(); };        
+todayBtn.onclick = () => {
+  const t = new Date();
+
+  // 1️⃣ 오늘이 있는 월로 이동
+  currentDate = new Date(t.getFullYear(), t.getMonth(), 1);
+  selectedDateKey = `${t.getFullYear()}-${t.getMonth()+1}-${t.getDate()}`;
+
+  renderCalendar();
+
+  // 2️⃣ 오늘 날짜 선택 + 3️⃣ 스크롤 이동
+  requestAnimationFrame(() => {
+    const todayEl = document.querySelector(".day.today");
+    if (!todayEl) return;
+
+    // 선택 표시
+    document.querySelectorAll(".day").forEach(d =>
+      d.classList.remove("selected")
+    );
+    todayEl.classList.add("selected");
+
+    // 중앙으로 스크롤
+    todayEl.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  });
+};     
+ typeFilter.onchange = () => {
+
+  selectedTypeFilter = typeFilter.value;
+
+  expandedDates = {};
+
+  renderCalendar();
+
+};       
+/******** 연/월 선택 모달 ********/        
+const monthPickerModal=document.getElementById("monthPickerModal");        
+const yearSelect=document.getElementById("yearSelect");        
+const monthSelect=document.getElementById("monthSelect");        
+const applyMonthBtn=document.getElementById("applyMonthBtn");        
+const cancelMonthBtn=document.getElementById("cancelMonthBtn");        
+        
+function fillYearOptions(){        
+  yearSelect.innerHTML="";        
+  const currentYear=new Date().getFullYear();        
+  for(let y=currentYear-50; y<=currentYear+50; y++){        
+    const opt=document.createElement("option");        
+    opt.value=y; opt.textContent=`${y}년`; yearSelect.appendChild(opt);        
+  }        
+}        
+        
+monthText.style.cursor="pointer";        
+monthText.onclick=()=>{        
+  fillYearOptions();        
+  yearSelect.value=currentDate.getFullYear();        
+  monthSelect.value=currentDate.getMonth();        
+  monthPickerModal.style.display="flex";        
+};        
+        
+applyMonthBtn.onclick=()=>{        
+  const y=parseInt(yearSelect.value);        
+  const m=parseInt(monthSelect.value);        
+  currentDate=new Date(y,m,1);        
+  selectedDateKey=null;        
+  monthPickerModal.style.display="none";        
+  renderCalendar();        
+};        
+        
+cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; };        
+</script>        
+        
+<div id="monthPickerModal" class="modal">        
+  <div class="modal-content">        
+    <label>연도</label>        
+    <select id="yearSelect"></select>        
+    <label>월</label>        
+    <select id="monthSelect">        
+      <option value="0">1월</option><option value="1">2월</option><option value="2">3월</option><option value="3">4월</option>        
+      <option value="4">5월</option><option value="5">6월</option><option value="6">7월</option><option value="7">8월</option>        
+      <option value="8">9월</option><option value="9">10월</option><option value="10">11월</option><option value="11">12월</option>        
+    </select>        
+    <button id="applyMonthBtn">이동</button>        
+    <button id="cancelMonthBtn">취소</button>        
+  </div>        
+</div>        
+        
+</body>        
+</html>
