@@ -1044,6 +1044,45 @@ button:active {
   }
 
 }
+@media (max-width: 600px) {
+
+  #inputBox {
+    height: 45vh;
+    max-height: 45vh;
+  }
+
+}
+
+
+/* ⭐ 일정 내용 여러 줄 입력 */
+#inputBox textarea,
+.modal-content textarea {
+  width: 100%;
+  min-height: 90px;
+  padding: 10px;
+
+  border: 1px solid #E5E1F3;
+  border-radius: 9px;
+
+  background: #FAF9FD;
+
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+
+  resize: vertical;
+  outline: none;
+}
+
+#inputBox textarea:focus,
+.modal-content textarea:focus {
+  border-color: #A29BFE;
+
+  box-shadow:
+    0 0 0 3px rgba(108,92,231,.1);
+}
+
+</style>
 </style>      
 </head>        
 <body>        
@@ -1086,7 +1125,8 @@ button:active {
     </div>   
   </div>    
   <label>일정 제목</label><input id="titleInput" placeholder="일정 제목">        
-  <label>일정 내용 (선택)</label><input id="descInput" placeholder="상세 내용">         
+  <label>일정 내용 (선택)</label>
+<textarea id="descInput" placeholder="상세 내용을 입력하세요"></textarea>
   <label>링크 (선택)</label><input id="urlInput" placeholder="https://...">        
   <label>기간</label>        
   <div class="date-row"><input id="startDateInput" type="date"><input id="endDateInput" type="date"></div>        
@@ -1125,7 +1165,8 @@ button:active {
 <div id="editModal" class="modal">        
   <div class="modal-content">        
     <label>일정 제목</label><input id="editTitleInput">  
-    <label>일정 내용 (선택)</label><input id="editDescInput">         
+    <label>일정 내용 (선택)</label>
+<textarea id="editDescInput" placeholder="상세 내용을 입력하세요"></textarea>        
     <label>링크 (선택)</label><input id="editUrlInput">        
     <label>기간</label><div class="date-row"><input id="editStartDateInput" type="date"><input id="editEndDateInput" type="date"></div>        
     <label>유형</label>        
