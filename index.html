@@ -1081,8 +1081,19 @@ button:active {
   box-shadow:
     0 0 0 3px rgba(108,92,231,.1);
 }
+.datetime-row {
+  display: flex;
+  gap: 8px;
+}
 
-</style>
+.datetime-row input[type="date"] {
+  flex: 1.4;
+}
+
+.datetime-row input[type="time"] {
+  flex: 1;
+}
+
 </style>      
 </head>        
 <body>        
@@ -1128,8 +1139,13 @@ button:active {
   <label>일정 내용 (선택)</label>
 <textarea id="descInput" placeholder="상세 내용을 입력하세요"></textarea>
   <label>링크 (선택)</label><input id="urlInput" placeholder="https://...">        
-  <label>기간</label>        
-  <div class="date-row"><input id="startDateInput" type="date"><input id="endDateInput" type="date"></div>        
+<label>날짜 및 시간</label>
+
+<div class="datetime-row">
+  <input id="dateInput" type="date">
+  <input id="timeInput" type="time">
+</div>
+
   <label>유형</label>        
   <select id="typeInput">        
     <option value="기타">기타</option>        
@@ -1168,7 +1184,12 @@ button:active {
     <label>일정 내용 (선택)</label>
 <textarea id="editDescInput" placeholder="상세 내용을 입력하세요"></textarea>        
     <label>링크 (선택)</label><input id="editUrlInput">        
-    <label>기간</label><div class="date-row"><input id="editStartDateInput" type="date"><input id="editEndDateInput" type="date"></div>        
+<label>날짜 및 시간</label>
+
+<div class="datetime-row">
+  <input id="editDateInput" type="date">
+  <input id="editTimeInput" type="time">
+</div>
     <label>유형</label>        
     <select id="editTypeInput">       
     
@@ -1218,8 +1239,8 @@ const selectedDateText=document.getElementById("selectedDate");
         
 const titleInput=document.getElementById("titleInput");        
 const urlInput=document.getElementById("urlInput");        
-const startDateInput=document.getElementById("startDateInput");        
-const endDateInput=document.getElementById("endDateInput");        
+const dateInput=document.getElementById("dateInput");
+const timeInput=document.getElementById("timeInput");     
 const typeInput=document.getElementById("typeInput");        
 const descInput=document.getElementById("descInput");        
         
@@ -1237,8 +1258,8 @@ const actionCopyBtn=document.getElementById("actionCopyBtn");
 const editModal=document.getElementById("editModal");        
 const editTitleInput=document.getElementById("editTitleInput");        
 const editUrlInput=document.getElementById("editUrlInput");        
-const editStartDateInput=document.getElementById("editStartDateInput");        
-const editEndDateInput=document.getElementById("editEndDateInput");        
+const editDateInput=document.getElementById("editDateInput");
+const editTimeInput=document.getElementById("editTimeInput");
 const editTypeInput=document.getElementById("editTypeInput");        
 const editDescInput=document.getElementById("editDescInput");        
 const saveEditBtn=document.getElementById("saveEditBtn");        
@@ -1300,7 +1321,28 @@ function renderCalendar(){
     w.textContent=d;        
     weekdaysDiv.appendChild(w);        
   });        
-        
+function formatDate(date) {
+  // 기존 코드
+}
+
+
+/* 시간 오전/오후 변환 */
+function formatTimeKorean(time) {
+  if (!time) return "";
+
+  const [hourStr, minute] = time.split(":");
+  let hour = parseInt(hourStr, 10);
+
+  if (isNaN(hour)) return time;
+
+  const ampm = hour < 12 ? "오전" : "오후";
+
+  hour = hour % 12;
+
+  if (hour === 0) hour = 12;
+
+  return `${ampm} ${hour}:${minute}`;
+}        
   const first=new Date(y,m,1).getDay();        
   const last=new Date(y,m+1,0).getDate();        
   const todayKey=`${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`;        
@@ -1434,10 +1476,10 @@ visibleSchedules.forEach((it,idx)=>{
 
 
 
-    document.getElementById("modalDate").textContent =
-      dates[0]===dates[dates.length-1]
-      ? dates[0]
-      : `${dates[0]} ~ ${dates[dates.length-1]}`;
+ document.getElementById("modalDate").textContent =
+  it.time
+    ? `${it.date} ${formatTimeKorean(it.time)}`
+    : it.date;
 
 
     actionModal.style.display="flex";
@@ -1526,8 +1568,8 @@ if(expandedDates[key]){
     day.onclick = () => {
   if (selectedDateKey === key) {
     selectedDateText.textContent = `${m+1}월 ${d}일`;
-    startDateInput.value = endDateInput.value = formatDate(key);
-
+dateInput.value = formatDate(key);
+timeInput.value = "";
     // ⭐⭐⭐ 여기 추가 ⭐⭐⭐
     titleInput.value = "";
     urlInput.value = "";
@@ -1833,17 +1875,7 @@ pasteBtn.onclick = () => {
   const base = new Date(selectedDateKey);
   const duration = sorted.length - 1;
 
-  startDateInput.value = formatDate(
-    `${base.getFullYear()}-${base.getMonth()+1}-${base.getDate()}`
-  );
-
-  const end = new Date(base);
-  end.setDate(base.getDate() + duration);
-
-  endDateInput.value = formatDate(
-    `${end.getFullYear()}-${end.getMonth()+1}-${end.getDate()}`
-  );
-
+  dateInput.value = formatDate(key);
   // 4️⃣ 입력창 열기
 const [y, m, d] = selectedDateKey.split("-");
 selectedDateText.textContent = `${m}월 ${d}일`;
@@ -1852,31 +1884,46 @@ inputBox.style.display = "block";
 };
 
 
-addBtn.onclick=async ()=>{        
-  if(!titleInput.value||!startDateInput.value) return;        
-  const batch = writeBatch(db);        
-  const groupId=gid();        
-  let start=new Date(startDateInput.value), end=endDateInput.value?new Date(endDateInput.value):new Date(start);        
-  if(start>end)[start,end]=[end,start];        
-  let cur=new Date(start);        
-  while(cur<=end){        
-    const key=`${cur.getFullYear()}-${cur.getMonth()+1}-${cur.getDate()}`;        
-    const docRef=doc(schedulesCol);        
-    const order=(firestoreData[key]?.length||0);        
-    batch.set(docRef,{        
-      title:titleInput.value,        
-      url:urlInput.value||"",        
-      type:typeInput.value,        
-      content:descInput.value||"",        
-      date:key,        
-      groupId,        
-      order        
-    });        
-    cur.setDate(cur.getDate()+1);        
-  }        
-  await batch.commit();        
-  inputBox.style.display="none"; titleInput.value=urlInput.value=descInput.value=""; startDateInput.value=endDateInput.value=""; typeInput.value="";        
-};        
+addBtn.onclick = async () => {
+
+  if (!titleInput.value || !dateInput.value) return;
+
+  const key = `${new Date(dateInput.value).getFullYear()}-${new Date(dateInput.value).getMonth()+1}-${new Date(dateInput.value).getDate()}`;
+
+  const docRef = doc(schedulesCol);
+
+  const order = (firestoreData[key]?.length || 0);
+
+  await setDoc(docRef, {
+
+    title: titleInput.value,
+
+    url: urlInput.value || "",
+
+    type: typeInput.value,
+
+    content: descInput.value || "",
+
+    date: key,
+
+ time: timeInput.value || "",
+
+    groupId: gid(),
+
+    order: order
+
+  });
+
+  inputBox.style.display = "none";
+
+  titleInput.value = "";
+  urlInput.value = "";
+  descInput.value = "";
+  dateInput.value = "";
+  timeInput.value = "";
+  typeInput.value = "기타";
+
+};      
         
 /******** 수정/삭제 ********/  
 actionCopyBtn.onclick = () => {
@@ -1910,37 +1957,82 @@ actionEditBtn.onclick=()=>{
   editUrlInput.value=first.url||"";        
   editTypeInput.value=first.type;        
   editDescInput.value=first.content||"";        
-  editStartDateInput.value=formatDate(first.date);        
-  editEndDateInput.value=formatDate(last.date);        
+editDateInput.value = formatDate(first.date);
+editTimeInput.value = first.time || "";
   actionModal.style.display="none";        
   editModal.style.display="flex";       
   pushModalState(); 
 };        
         
-saveEditBtn.onclick=async ()=>{        
-  const groupItems=[];        
-  for(const k in firestoreData) firestoreData[k].forEach(it=>{ if(it.groupId===activeGroupId) groupItems.push(it); });        
-  const batch=writeBatch(db);        
-  groupItems.forEach(it=>{ batch.delete(doc(schedulesCol,it.id)); });        
-  let start=new Date(editStartDateInput.value), end=new Date(editEndDateInput.value);        
-  if(start>end)[start,end]=[end,start];        
-  const groupId=activeGroupId;        
-  let cur=new Date(start);        
-  while(cur<=end){        
-    const key=`${cur.getFullYear()}-${cur.getMonth()+1}-${cur.getDate()}`;        
-    const docRef=doc(schedulesCol);        
-    batch.set(docRef,{        
-      title:editTitleInput.value,        
-      url:editUrlInput.value||"",        
-      type:editTypeInput.value,        
-      content:editDescInput.value||"",        
-      date:key,        
-      groupId        
-    });        
-    cur.setDate(cur.getDate()+1);        
-  }        
-  await batch.commit(); editModal.style.display="none";        
-};        
+saveEditBtn.onclick = async () => {
+
+  const groupItems = [];
+
+  for (const k in firestoreData) {
+
+    firestoreData[k].forEach(it => {
+
+      if (it.groupId === activeGroupId)
+        groupItems.push(it);
+
+    });
+
+  }
+
+  if (!editDateInput.value) return;
+
+
+  const batch = writeBatch(db);
+
+
+  /* 기존 일정 삭제 */
+
+  groupItems.forEach(it => {
+
+    batch.delete(
+      doc(schedulesCol, it.id)
+    );
+
+  });
+
+
+  /* 새 일정 생성 */
+
+  const dateObj = new Date(editDateInput.value);
+
+  const key =
+    `${dateObj.getFullYear()}-${dateObj.getMonth()+1}-${dateObj.getDate()}`;
+
+
+  const docRef = doc(schedulesCol);
+
+
+  batch.set(docRef, {
+
+    title: editTitleInput.value,
+
+    url: editUrlInput.value || "",
+
+    type: editTypeInput.value,
+
+    content: editDescInput.value || "",
+
+    date: key,
+
+    time: editTimeInput.value || "",
+
+    groupId: activeGroupId,
+
+    order: firestoreData[key]?.length || 0
+
+  });
+
+
+  await batch.commit();
+
+  editModal.style.display = "none";
+
+};       
         
 actionDeleteBtn.onclick=async ()=>{        
   if(!confirm("연속 일정 전체를 삭제할까요?")) return;        
