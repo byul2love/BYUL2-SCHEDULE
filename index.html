@@ -1568,7 +1568,9 @@ if(expandedDates[key]){
     day.onclick = () => {
   if (selectedDateKey === key) {
     selectedDateText.textContent = `${m+1}월 ${d}일`;
-dateInput.value = formatDate(key);
+dateInput.value =
+  `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+
 timeInput.value = "";
     // ⭐⭐⭐ 여기 추가 ⭐⭐⭐
     titleInput.value = "";
@@ -1875,7 +1877,8 @@ pasteBtn.onclick = () => {
   const base = new Date(selectedDateKey);
   const duration = sorted.length - 1;
 
-  dateInput.value = formatDate(key);
+  dateInput.value = formatDate(selectedDateKey);
+timeInput.value = "";
   // 4️⃣ 입력창 열기
 const [y, m, d] = selectedDateKey.split("-");
 selectedDateText.textContent = `${m}월 ${d}일`;
