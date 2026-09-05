@@ -293,6 +293,8 @@ button:active {
 }
 
 .upcoming-card {
+  position: relative;
+  overflow: hidden;
   flex: 1 1 128px;
   scroll-snap-align: start;
   min-width: 128px;
@@ -303,6 +305,18 @@ button:active {
   border: 1px solid #ECE7F9;
   cursor: pointer;
   transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.upcoming-ribbon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #FFA45B;
+  color: #4A2600;
+  font-size: 8px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 0 0 0 8px;
 }
 
 .upcoming-card:hover {
@@ -462,13 +476,43 @@ button:active {
 
   justify-content: center;
 
-  margin: 0 auto 5px;
-
   border-radius: 50%;
 
   font-size: 12px;
 
   font-weight: 700;
+
+}
+
+.day-number-wrap {
+
+  position: relative;
+
+  width: 27px;
+
+  height: 27px;
+
+  margin: 0 auto 5px;
+
+}
+
+.day-number-wrap .day-number {
+
+  margin: 0;
+
+}
+
+.anniversary-star {
+
+  position: absolute;
+
+  top: -4px;
+
+  right: -6px;
+
+  font-size: 11px;
+
+  line-height: 1;
 
 }
 
@@ -1244,6 +1288,14 @@ button:active {
 
   }
 
+  .day-number-wrap {
+
+    width: 24px;
+
+    height: 24px;
+
+  }
+
   .day-number {
 
     width: 24px;
@@ -1277,7 +1329,6 @@ button:active {
     max-height: 45vh;
 
   }
-
 }
 
 
@@ -1541,6 +1592,9 @@ const gid=()=>Math.random().toString(36).slice(2);
 // 날짜 키를 항상 "YYYY-MM-DD" 형태로 통일 (예전에 저장된 "2026-9-3" 같은 값도 정규화)
 const formatDate=k=>{ if(!k) return k; const [y,m,d]=String(k).split("-"); return `${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`; };
 
+// ⭐ 매년 12월 22일 - 특별 기념일 (연도 상관없이 월/일만 체크)
+const isSpecialAnniversary = key => { const [,m,d]=String(key).split("-").map(Number); return m===12 && d===22; };
+
 /* 시간 오전/오후 변환 */
 function formatTimeKorean(time) {
   if (!time) return "";
@@ -1602,10 +1656,22 @@ function renderCalendar(){
     if(key===todayKey) day.classList.add("today");
     if(key===selectedDateKey) day.classList.add("selected");
 
+    const numWrap=document.createElement("div");
+    numWrap.className="day-number-wrap";
+
     const num=document.createElement("div");
     num.className="day-number";
     num.textContent=d;
-    day.appendChild(num);
+    numWrap.appendChild(num);
+
+    if(isSpecialAnniversary(key)){
+      const star=document.createElement("span");
+      star.className="anniversary-star";
+      star.textContent="⭐";
+      numWrap.appendChild(star);
+    }
+
+    day.appendChild(numWrap);
 
     const cont=document.createElement("div");
     cont.className="schedule-container";
@@ -1635,6 +1701,10 @@ visibleSchedules.forEach((it,idx)=>{
   const typeColor = typeColors[it.type] || "#e0e7ff";
   s.style.background = `color-mix(in srgb, ${typeColor} 30%, white)`;
   s.style.borderLeft = `3px solid ${typeColor}`;
+
+  if(isSpecialAnniversary(key)){
+    s.style.border = `1.5px dashed ${typeColor}`;
+  }
 
 
   if(it.url){
@@ -2103,6 +2173,13 @@ function renderUpcoming(){
 
     const card = document.createElement("div");
     card.className = "upcoming-card";
+
+    if(isSpecialAnniversary(it.date)){
+      const ribbon = document.createElement("span");
+      ribbon.className = "upcoming-ribbon";
+      ribbon.textContent = "HAPPY DAY";
+      card.appendChild(ribbon);
+    }
 
     const dday = document.createElement("span");
     dday.className = "upcoming-dday";
