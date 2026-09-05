@@ -1132,6 +1132,47 @@ button:active {
   border-radius: 10px;
 }
 
+#deleteConfirmModal .modal-content {
+  padding: 22px 26px 32px;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 40px;
+  transform: translate(-50%, 12px);
+  z-index: 2000;
+  padding: 12px 20px;
+  border-radius: 30px;
+  background: rgba(45,42,58,.92);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(30,25,55,.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.confirm-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.confirm-actions button {
+  flex: 1;
+  width: auto;
+  height: 38px;
+  margin-top: 0;
+}
+
 .action-icon {
   font-size: 14px;
   line-height: 1;
@@ -1520,8 +1561,8 @@ button:active {
 
 <div id="deleteConfirmModal" class="modal">
   <div class="modal-content">
-    <div class="modal-title-text" style="margin-bottom:18px;">일정을 삭제할까요?</div>
-    <div class="modal-actions">
+    <div class="modal-title-text" style="margin-bottom:40px;">일정을 삭제할까요?</div>
+    <div class="confirm-actions">
       <button id="confirmDeleteBtn" style="background:#FFF3F4;border:1px solid #FAD8DD;color:#E35D6A;">삭제</button>
       <button id="cancelDeleteBtn">취소</button>
     </div>
@@ -1627,6 +1668,16 @@ const formatDate=k=>{ if(!k) return k; const [y,m,d]=String(k).split("-"); retur
 
 // ⭐ 매년 12월 22일 - 특별 기념일 (연도 상관없이 월/일만 체크)
 const isSpecialAnniversary = key => { const [,m,d]=String(key).split("-").map(Number); return m===12 && d===22; };
+
+// ⭐ 사이트 주소 없이 뜨는 자체 알림 토스트
+const toast = document.getElementById("toast");
+let toastTimer = null;
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toast.classList.remove("show"), 1800);
+}
 
 /* 시간 오전/오후 변환 */
 function formatTimeKorean(time) {
@@ -2258,7 +2309,7 @@ function renderUpcoming(){
 /******** 일정 추가 ********/
 pasteBtn.onclick = () => {
   if (!copiedSchedule || !selectedDateKey) {
-    alert("복사된 일정이 없습니다.");
+    showToast("복사된 일정이 없습니다.");
     return;
   }
 
@@ -2343,7 +2394,7 @@ actionCopyBtn.onclick = () => {
 
   copiedSchedule = items;
 
-  alert("일정이 복사되었습니다!");
+  showToast("일정이 복사되었습니다!");
   actionModal.style.display = "none";
   history.back();
 };
@@ -2571,6 +2622,8 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; };
     <button id="cancelMonthBtn">취소</button>
   </div>
 </div>
+
+<div id="toast" class="toast"></div>
 
 </body>
 </html>
