@@ -1449,7 +1449,7 @@ button:active {
     <option value="발매">발매</option>
     <option value="기념일">기념일</option>
     <option value="방송">방송</option>
-    <option value="팬사인회">팬사인회</option>
+    <option value="팬사인회/팬미팅">팬사인회/팬미팅</option>
     <option value="SNS">SNS</option>
     <option value="유튜브">유튜브</option>
   </select>
@@ -1499,7 +1499,7 @@ button:active {
     <option value="발매">발매</option>
     <option value="기념일">기념일</option>
     <option value="방송">방송</option>
-    <option value="팬사인회">팬사인회</option>
+    <option value="팬사인회/팬미팅">팬사인회/팬미팅</option>
     <option value="SNS">SNS</option>
     <option value="유튜브">유튜브</option>
 
@@ -1549,7 +1549,7 @@ button:active {
       <option value="발매">발매</option>
       <option value="기념일">기념일</option>
       <option value="방송">방송</option>
-      <option value="팬사인회">팬사인회</option>
+      <option value="팬사인회/팬미팅">팬사인회/팬미팅</option>
       <option value="SNS">SNS</option>
       <option value="유튜브">유튜브</option>
 
@@ -1644,7 +1644,7 @@ const typeColors = {
   유튜브: "#FFC2C2",
   행사: "#DCC2FF",
   방송: "#B8F2D0",
-  팬사인회: "#BDEBFF",
+  "팬사인회/팬미팅": "#BDEBFF",
   발매: "#C2D1FF",
   기념일: "#FFE0A3",
   SNS: "#FFF3A3",
@@ -1709,6 +1709,14 @@ onSnapshot(schedulesCol, snapshot=>{
   });
   renderCalendar();
   renderUpcoming();
+
+  // ⭐ "팬사인회" -> "팬사인회/팬미팅" 이름 변경 전에 저장된 일정 자동 이관
+  const legacyFanItems = snapshot.docs.filter(d=>d.data().type==="팬사인회");
+  if(legacyFanItems.length > 0){
+    const migrateBatch = writeBatch(db);
+    legacyFanItems.forEach(d=>migrateBatch.update(doc(schedulesCol,d.id),{type:"팬사인회/팬미팅"}));
+    migrateBatch.commit();
+  }
 });
 
 /******** 캘린더 렌더링, 드래그 포함 ********/
@@ -2572,6 +2580,7 @@ todayBtn.onclick = () => {
   renderUpcoming();
 
 };
+
 /******** 연/월 선택 모달 ********/
 const monthPickerModal=document.getElementById("monthPickerModal");
 const yearSelect=document.getElementById("yearSelect");
@@ -2627,3 +2636,4 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; };
 
 </body>
 </html>
+
