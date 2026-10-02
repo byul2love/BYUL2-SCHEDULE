@@ -1711,6 +1711,18 @@ onSnapshot(schedulesCol, snapshot=>{
 });
 
 /******** 캘린더 렌더링, 드래그 포함 ********/
+// ⭐ 선택된 날짜 칸으로 부드럽게 스크롤
+function scrollToSelectedDay(){
+  requestAnimationFrame(() => {
+    const selectedEl = document.querySelector(".day.selected");
+    if (!selectedEl) return;
+    selectedEl.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  });
+}
+
 function renderCalendar(){
   calendar.innerHTML=""; weekdaysDiv.innerHTML="";
   const y=currentDate.getFullYear(), m=currentDate.getMonth();
@@ -1823,6 +1835,7 @@ visibleSchedules.forEach((it,idx)=>{
       currentDate = new Date(y, m, 1);
       selectedDateKey = key;
       renderCalendar();
+      scrollToSelectedDay();
     }
     openScheduleModal(it,key);
   };
@@ -1909,6 +1922,7 @@ if(expandedDates[key]){
     currentDate = new Date(y, m, 1);
     selectedDateKey = key;
     renderCalendar();
+    scrollToSelectedDay();
     return;
   }
   if (selectedDateKey === key) {
@@ -2653,3 +2667,4 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; };
 
 </body>
 </html>
+
