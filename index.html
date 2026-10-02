@@ -453,11 +453,10 @@ button:active {
 
 }
 
-.empty-day {
+.day.other-month .day-number-wrap,
+.day.other-month .schedule-container {
 
-  pointer-events: none;
-
-  background: #FAF9FD;
+  opacity: .5;
 
 }
 
@@ -1709,14 +1708,6 @@ onSnapshot(schedulesCol, snapshot=>{
   });
   renderCalendar();
   renderUpcoming();
-
-  // ⭐ "팬사인회" -> "팬사인회/팬미팅" 이름 변경 전에 저장된 일정 자동 이관
-  const legacyFanItems = snapshot.docs.filter(d=>d.data().type==="팬사인회");
-  if(legacyFanItems.length > 0){
-    const migrateBatch = writeBatch(db);
-    legacyFanItems.forEach(d=>migrateBatch.update(doc(schedulesCol,d.id),{type:"팬사인회/팬미팅"}));
-    migrateBatch.commit();
-  }
 });
 
 /******** 캘린더 렌더링, 드래그 포함 ********/
@@ -1734,17 +1725,11 @@ function renderCalendar(){
   const last=new Date(y,m+1,0).getDate();
   const todayKey=formatDate(`${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`);
 
-  for(let i=0;i<first;i++){
-    const e=document.createElement("div");
-    e.className="day";
-    e.classList.add("empty-day");
-    calendar.appendChild(e);
-  }
-
-  for(let d=1; d<=last; d++){
+  function buildDayCell(y, m, d, isOtherMonth){
     const key=formatDate(`${y}-${m+1}-${d}`);
     const day=document.createElement("div");
     day.className="day";
+    if(isOtherMonth) day.classList.add("other-month");
     if(key===todayKey) day.classList.add("today");
     if(key===selectedDateKey) day.classList.add("selected");
 
@@ -1834,6 +1819,11 @@ visibleSchedules.forEach((it,idx)=>{
 
   s.onclick=e=>{
     e.stopPropagation();
+    if(isOtherMonth){
+      currentDate = new Date(y, m, 1);
+      selectedDateKey = key;
+      renderCalendar();
+    }
     openScheduleModal(it,key);
   };
 
@@ -1915,6 +1905,12 @@ if(expandedDates[key]){
 
     day.appendChild(cont);
     day.onclick = () => {
+  if(isOtherMonth){
+    currentDate = new Date(y, m, 1);
+    selectedDateKey = key;
+    renderCalendar();
+    return;
+  }
   if (selectedDateKey === key) {
     selectedDateText.textContent = `${m+1}월 ${d}일`;
 dateInput.value =
@@ -1938,6 +1934,26 @@ timeInput.value = "";
   day.classList.add("selected");
 };
     calendar.appendChild(day);
+  }
+
+  const prevMonthLastDate = new Date(y, m, 0);
+  const prevY = prevMonthLastDate.getFullYear();
+  const prevM = prevMonthLastDate.getMonth();
+  const prevLast = prevMonthLastDate.getDate();
+  for(let i=first-1; i>=0; i--){
+    buildDayCell(prevY, prevM, prevLast-i, true);
+  }
+
+  for(let d=1; d<=last; d++){
+    buildDayCell(y, m, d, false);
+  }
+
+  const totalCells = first + last;
+  const trailingCount = (7 - (totalCells % 7)) % 7;
+  const nextY = m===11 ? y+1 : y;
+  const nextM = (m+1) % 12;
+  for(let d=1; d<=trailingCount; d++){
+    buildDayCell(nextY, nextM, d, true);
   }
 }
 
@@ -2260,7 +2276,7 @@ function renderUpcoming(){
 
   upcoming.forEach(it=>{
     const diffDays = Math.round((new Date(it.date) - todayDate) / 86400000);
-    const ddayLabel = diffDays === 0 ? "오늘" : diffDays === 1 ? "내일" : `D-${diffDays}`;
+    const ddayLabel = diffDays === 0 ? "D-DAY" : `D-${diffDays}`;
 
     const [, mm, dd] = it.date.split("-");
 
@@ -2305,6 +2321,7 @@ function renderUpcoming(){
     card.onclick = () => {
       const [y,m] = it.date.split("-").map(Number);
       currentDate = new Date(y, m-1, 1);
+      selectedDateKey = it.date;
       renderCalendar();
       openScheduleModal(it, it.date);
     };
@@ -2636,4 +2653,3 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; };
 
 </body>
 </html>
-
