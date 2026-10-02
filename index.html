@@ -212,6 +212,33 @@ button:active {
 }
 
 
+/* 검색 */
+
+#searchBtn {
+
+  width: 34px;
+
+  height: 34px;
+
+  padding: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: white;
+
+  background: rgba(255,255,255,.15);
+
+  border: 1px solid rgba(255,255,255,.15);
+
+  font-size: 14px;
+
+}
+
+
 /* 유형 필터 */
 
 #typeFilter {
@@ -1177,6 +1204,70 @@ button:active {
   transform: translate(-50%, 0);
 }
 
+#searchResults {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.search-result-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 6px;
+  border-bottom: 1px solid #F0EEF8;
+  cursor: pointer;
+}
+
+.search-result-item:hover {
+  background: #FAF9FD;
+}
+
+.search-result-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-result-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.search-result-snippet {
+  font-size: 11.5px;
+  color: var(--subtext);
+  line-height: 1.4;
+  padding-left: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-result-title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-result-date {
+  font-size: 11px;
+  color: var(--subtext);
+  flex: none;
+}
+
+.search-empty {
+  font-size: 12.5px;
+  color: var(--subtext);
+  padding: 16px 4px;
+  text-align: center;
+}
+
 .confirm-actions {
   display: flex;
   flex-direction: row;
@@ -1319,7 +1410,8 @@ button:active {
   }
 
   #prevBtn,
-  #nextBtn {
+  #nextBtn,
+  #searchBtn {
 
     width: 30px;
 
@@ -1475,6 +1567,7 @@ button:active {
   <span id="monthText"></span>
   <button id="nextBtn">▶</button>
   <button id="todayBtn">Today</button>
+  <button id="searchBtn">🔍</button>
 
 </div>
 </header>
@@ -1586,6 +1679,17 @@ button:active {
   </div>
 </div>
 
+<div id="searchModal" class="modal">
+  <div class="modal-content">
+    <div class="input-header">
+      <div id="searchTitle" class="modal-title-text" style="margin-bottom:0;">일정 검색</div>
+      <button id="closeSearchBtn" style="width:32px;height:32px;padding:0;background:#F4F3F7;color:#777;margin-top:0;">✖</button>
+    </div>
+    <input id="searchInput" placeholder="제목이나 내용으로 검색..." style="margin-top:16px;">
+    <div id="searchResults" style="margin-top:10px;"></div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
@@ -1651,6 +1755,12 @@ const cancelEditBtn=document.getElementById("cancelEditBtn");
 const deleteConfirmModal=document.getElementById("deleteConfirmModal");
 const confirmDeleteBtn=document.getElementById("confirmDeleteBtn");
 const cancelDeleteBtn=document.getElementById("cancelDeleteBtn");
+
+const searchBtn=document.getElementById("searchBtn");
+const searchModal=document.getElementById("searchModal");
+const searchInput=document.getElementById("searchInput");
+const searchResults=document.getElementById("searchResults");
+const closeSearchBtn=document.getElementById("closeSearchBtn");
 
 const prevBtn=document.getElementById("prevBtn");
 const nextBtn=document.getElementById("nextBtn");
@@ -2259,10 +2369,11 @@ function closeAllOverlays() {
   actionModal.style.display = "none";
   editModal.style.display = "none";
   deleteConfirmModal.style.display = "none";
+  searchModal.style.display = "none";
 }
 
 /******** 일정 상세 모달 (달력 칸 + 다가오는 일정 공용) ********/
-function openScheduleModal(it, key){
+function openScheduleModal(it, key, skipPush){
   selectedDateKey = key;
   activeGroupId = it.groupId;
 
@@ -2281,7 +2392,7 @@ function openScheduleModal(it, key){
     : it.date;
 
   actionModal.style.display = "flex";
-  pushModalState();
+  if(!skipPush) pushModalState();
 }
 
 /******** 다가오는 일정 ********/
@@ -2594,7 +2705,8 @@ window.addEventListener("popstate", () => {
     inputBox.style.display === "block" ||
     actionModal.style.display === "flex" ||
     editModal.style.display === "flex" ||
-    deleteConfirmModal.style.display === "flex"
+    deleteConfirmModal.style.display === "flex" ||
+    searchModal.style.display === "flex"
   ) {
     closeAllOverlays();
   }
@@ -2658,6 +2770,94 @@ todayBtn.onclick = () => {
   renderUpcoming();
 
 };
+
+/******** 검색 ********/
+searchBtn.onclick = () => {
+  searchInput.value = "";
+  searchResults.innerHTML = "";
+  searchModal.style.display = "flex";
+  pushModalState();
+  setTimeout(()=>searchInput.focus(), 50);
+};
+
+closeSearchBtn.onclick = () => {
+  searchModal.style.display = "none";
+  history.back();
+};
+
+function renderSearchResults(query){
+  searchResults.innerHTML = "";
+  if(!query){
+    return;
+  }
+
+  const q = query.toLowerCase();
+  const matches = [];
+  for(const k in firestoreData){
+    firestoreData[k].forEach(it=>{
+      const titleMatch = (it.title||"").toLowerCase().includes(q);
+      const contentMatch = (it.content||"").toLowerCase().includes(q);
+      if(titleMatch || contentMatch) matches.push(it);
+    });
+  }
+  matches.sort((a,b)=> a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
+
+  if(matches.length === 0){
+    const empty = document.createElement("div");
+    empty.className = "search-empty";
+    empty.textContent = "검색 결과가 없어요";
+    searchResults.appendChild(empty);
+    return;
+  }
+
+  matches.slice(0, 30).forEach(it=>{
+    const row = document.createElement("div");
+    row.className = "search-result-item";
+
+    const topRow = document.createElement("div");
+    topRow.className = "search-result-row";
+
+    const dot = document.createElement("span");
+    dot.className = "search-result-dot";
+    dot.style.background = typeColors[it.type] || "#e0e7ff";
+    topRow.appendChild(dot);
+
+    const title = document.createElement("span");
+    title.className = "search-result-title";
+    title.textContent = it.title;
+    topRow.appendChild(title);
+
+    const [yy, mm, dd] = it.date.split("-");
+    const dateLabel = document.createElement("span");
+    dateLabel.className = "search-result-date";
+    dateLabel.textContent = `${yy}년 ${parseInt(mm)}월 ${parseInt(dd)}일`;
+    topRow.appendChild(dateLabel);
+
+    row.appendChild(topRow);
+
+    const titleMatched = (it.title||"").toLowerCase().includes(q);
+    if(!titleMatched && it.content){
+      const snippet = document.createElement("div");
+      snippet.className = "search-result-snippet";
+      snippet.textContent = it.content.length > 60 ? it.content.slice(0,60)+"…" : it.content;
+      row.appendChild(snippet);
+    }
+
+    row.onclick = () => {
+      searchModal.style.display = "none";
+      const [y,m] = it.date.split("-").map(Number);
+      currentDate = new Date(y, m-1, 1);
+      selectedDateKey = it.date;
+      renderCalendar();
+      scrollToSelectedDay();
+      openScheduleModal(it, it.date, true);
+    };
+
+    searchResults.appendChild(row);
+  });
+}
+
+searchInput.addEventListener("input", () => renderSearchResults(searchInput.value.trim()));
 
 /******** 연/월 선택 모달 ********/
 const monthPickerModal=document.getElementById("monthPickerModal");
