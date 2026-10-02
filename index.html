@@ -2573,6 +2573,22 @@ window.addEventListener("popstate", () => {
 /******** 이전/다음/Today ********/
 prevBtn.onclick=()=>{ currentDate.setMonth(currentDate.getMonth()-1); renderCalendar(); };
 nextBtn.onclick=()=>{ currentDate.setMonth(currentDate.getMonth()+1); renderCalendar(); };
+
+// ⭐ 모바일 스와이프로 월 이동
+let swipeStartX = 0, swipeStartY = 0;
+calendar.addEventListener("touchstart", e => {
+  swipeStartX = e.touches[0].clientX;
+  swipeStartY = e.touches[0].clientY;
+}, {passive:true});
+
+calendar.addEventListener("touchend", e => {
+  const dx = e.changedTouches[0].clientX - swipeStartX;
+  const dy = e.changedTouches[0].clientY - swipeStartY;
+  if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5){
+    currentDate.setMonth(currentDate.getMonth() + (dx < 0 ? 1 : -1));
+    renderCalendar();
+  }
+}, {passive:true});
 todayBtn.onclick = () => {
   const t = new Date();
 
@@ -2667,4 +2683,3 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; };
 
 </body>
 </html>
-
