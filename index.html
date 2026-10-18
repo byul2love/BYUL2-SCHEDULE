@@ -4885,10 +4885,8 @@ function openScheduleModal(it, key, skipPush){
   actionModal.querySelector(".modal-content").style.setProperty("--c", typeColors[it.type] || "#e0e7ff");
   const itemUrl = safeUrl(it.url);
   modalLink.style.display = itemUrl ? "flex" : "none";
-  // 링크 줄에 사이트 이름 표시 (예: instagram.com)
-  let host = "링크 열기";
-  try { if(itemUrl) host = new URL(itemUrl).hostname.replace(/^www\./, ""); } catch {}
-  document.getElementById("modalLinkHost").textContent = host;
+  // 링크 칩 글자는 사이트 상관없이 "링크 열기"
+  document.getElementById("modalLinkHost").textContent = "링크 열기";
   modalLink.href = itemUrl || "#";
 
   // 사진 주소가 있으면 상세 창 위에 사진 표시 (못 불러오면 조용히 숨김)
@@ -5515,7 +5513,5 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; history.back
 
 </body>
 </html>
-
-
 
 
