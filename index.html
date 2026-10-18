@@ -754,9 +754,9 @@ button:active {
 
   width: 100%;
 
-  height: 42vh;
+  height: 58vh;
 
-  max-height: 42vh;
+  max-height: 58vh;
 
   display: none;
 
@@ -1518,11 +1518,12 @@ button:active {
 
   }
 
+  /* 키보드가 올라와도 덜 답답하게 조금 더 크게 */
   #inputBox {
 
-    height: 45vh;
+    height: 62vh;
 
-    max-height: 45vh;
+    max-height: 62vh;
 
   }
 }
@@ -1975,7 +1976,7 @@ header {
   background:
     radial-gradient(ellipse 90% 60% at 50% 115%, rgba(162,155,254,.45), transparent 70%),
     linear-gradient(165deg, #15132B 0%, #2A2560 45%, #5A4BD6 100%);
-  box-shadow: 0 10px 30px rgba(30,25,80,.28);
+  box-shadow: none;
 }
 
 /* 예전 글자 별(✦ · ✧)은 숨기고 진짜 별로 대체 */
@@ -2391,16 +2392,16 @@ header::after {
 
   <select id="typeFilter">
     <option value="전체">전체</option>
-    <option value="기타">기타</option>
-    <option value="버블">버블</option>
     <option value="콘서트">콘서트</option>
-    <option value="행사">행사</option>
-    <option value="발매">발매</option>
-    <option value="기념일">기념일</option>
     <option value="방송">방송</option>
-    <option value="팬사인회/팬미팅">팬사인회/팬미팅</option>
-    <option value="SNS">SNS</option>
     <option value="유튜브">유튜브</option>
+    <option value="발매">발매</option>
+    <option value="행사">행사</option>
+    <option value="팬사인회/팬미팅">팬사인회/팬미팅</option>
+    <option value="기념일">기념일</option>
+    <option value="버블">버블</option>
+    <option value="SNS">SNS</option>
+    <option value="기타">기타</option>
   </select>
 
   <button id="prevBtn" aria-label="이전 달">‹</button>
@@ -2450,17 +2451,16 @@ header::after {
 
   <label>유형</label>
   <select id="typeInput">
-    <option value="기타">기타</option>
-    <option value="버블">버블</option>
     <option value="콘서트">콘서트</option>
-    <option value="행사">행사</option>
-    <option value="발매">발매</option>
-    <option value="기념일">기념일</option>
     <option value="방송">방송</option>
-    <option value="팬사인회/팬미팅">팬사인회/팬미팅</option>
-    <option value="SNS">SNS</option>
     <option value="유튜브">유튜브</option>
-
+    <option value="발매">발매</option>
+    <option value="행사">행사</option>
+    <option value="팬사인회/팬미팅">팬사인회/팬미팅</option>
+    <option value="기념일">기념일</option>
+    <option value="버블">버블</option>
+    <option value="SNS">SNS</option>
+    <option value="기타">기타</option>
   </select>
     <button id="addBtn">추가</button>
 
@@ -2486,7 +2486,8 @@ header::after {
 
 <div id="editModal" class="modal">
   <div class="modal-content">
-    <label>일정 제목</label><input id="editTitleInput">
+    <div class="modal-title-text" style="margin-bottom:2px;">✏️ 일정 수정</div>
+    <label>일정 제목</label><input id="editTitleInput" placeholder="일정 제목">
     <label>일정 내용 (선택)</label>
 <textarea id="editDescInput" placeholder="상세 내용을 입력하세요"></textarea>
     <label>링크 (선택)</label><input id="editUrlInput">
@@ -2499,18 +2500,16 @@ header::after {
 </div>
     <label>유형</label>
     <select id="editTypeInput">
-
-      <option value="기타">기타</option>
-      <option value="버블">버블</option>
       <option value="콘서트">콘서트</option>
-      <option value="행사">행사</option>
-      <option value="발매">발매</option>
-      <option value="기념일">기념일</option>
       <option value="방송">방송</option>
-      <option value="팬사인회/팬미팅">팬사인회/팬미팅</option>
-      <option value="SNS">SNS</option>
       <option value="유튜브">유튜브</option>
-
+      <option value="발매">발매</option>
+      <option value="행사">행사</option>
+      <option value="팬사인회/팬미팅">팬사인회/팬미팅</option>
+      <option value="기념일">기념일</option>
+      <option value="버블">버블</option>
+      <option value="SNS">SNS</option>
+      <option value="기타">기타</option>
     </select>
     <button id="saveEditBtn">저장</button>
     <button id="cancelEditBtn">취소</button>
@@ -3779,9 +3778,22 @@ inputBox.style.display = "block";
 };
 
 
-addBtn.onclick = async () => {
+let saving = false;   // 저장 중 중복 클릭 방지
 
-  if (!titleInput.value || !dateInput.value) return;
+addBtn.onclick = async () => {
+  if (saving) return;
+
+  const title = titleInput.value.trim();
+  if (!title) {
+    showToast("제목을 입력해 주세요.");
+    titleInput.focus();
+    return;
+  }
+  if (!dateInput.value) {
+    showToast("날짜를 선택해 주세요.");
+    dateInput.focus();
+    return;
+  }
 
   const url = safeUrl(urlInput.value);
   if (url === null) {
@@ -3791,40 +3803,40 @@ addBtn.onclick = async () => {
   }
 
   const key = dateInput.value;
-
-  const docRef = doc(schedulesCol);
-
   const order = (firestoreData[key]?.length || 0);
 
-  await setDoc(docRef, {
+  saving = true;
+  addBtn.disabled = true;
+  addBtn.textContent = "저장 중…";
+  try {
+    await setDoc(doc(schedulesCol), {
+      title,
+      url,
+      type: typeInput.value,
+      content: descInput.value || "",
+      date: key,
+      time: timeInput.value || "",
+      groupId: gid(),
+      order
+    });
 
-    title: titleInput.value,
+    titleInput.value = "";
+    urlInput.value = "";
+    descInput.value = "";
+    dateInput.value = "";
+    timeInput.value = "";
+    typeInput.value = "기타";
 
-    url: url,
-
-    type: typeInput.value,
-
-    content: descInput.value || "",
-
-    date: key,
-
- time: timeInput.value || "",
-
-    groupId: gid(),
-
-    order: order
-
-  });
-
-  inputBox.style.display = "none";
-
-  titleInput.value = "";
-  urlInput.value = "";
-  descInput.value = "";
-  dateInput.value = "";
-  timeInput.value = "";
-  typeInput.value = "기타";
-
+    // 입력창을 열 때 남긴 뒤로가기 기록까지 같이 정리하며 닫기
+    history.back();
+    showToast("일정을 추가했어요");
+  } catch {
+    showToast("추가하지 못했어요. 다시 시도해 주세요.");
+  } finally {
+    saving = false;
+    addBtn.disabled = false;
+    addBtn.textContent = "추가";
+  }
 };
 
 /******** 수정/삭제 ********/
@@ -3882,7 +3894,19 @@ saveEditBtn.onclick = async () => {
 
   }
 
-  if (!editDateInput.value) return;
+  if (saving) return;
+
+  const title = editTitleInput.value.trim();
+  if (!title) {
+    showToast("제목을 입력해 주세요.");
+    editTitleInput.focus();
+    return;
+  }
+  if (!editDateInput.value) {
+    showToast("날짜를 선택해 주세요.");
+    editDateInput.focus();
+    return;
+  }
 
   const url = safeUrl(editUrlInput.value);
   if (url === null) {
@@ -3891,55 +3915,47 @@ saveEditBtn.onclick = async () => {
     return;
   }
 
+  const key = editDateInput.value;
+
+  // 지금 열린 일정 문서를 그대로 고쳐 씀 (지우고 새로 만들지 않아서 순서가 유지됨)
+  const target = groupItems.find(it => it.id === activeItemId) || groupItems[0];
+  if (!target) return;
+  const sameDay = target.date === key;
 
   const batch = writeBatch(db);
 
-
-  /* 기존 일정 삭제 */
-
+  // 같은 묶음의 다른 일정이 있으면 정리 (예전 방식과 동일)
   groupItems.forEach(it => {
-
-    batch.delete(
-      doc(schedulesCol, it.id)
-    );
-
+    if (it.id !== target.id) batch.delete(doc(schedulesCol, it.id));
   });
 
-
-  /* 새 일정 생성 */
-
-  const key = editDateInput.value;
-
-
-  const docRef = doc(schedulesCol);
-
-
-  batch.set(docRef, {
-
-    title: editTitleInput.value,
-
-    url: url,
-
+  batch.set(doc(schedulesCol, target.id), {
+    title,
+    url,
     type: editTypeInput.value,
-
     content: editDescInput.value || "",
-
     date: key,
-
     time: editTimeInput.value || "",
-
     groupId: activeGroupId || gid(),
-
-    order: firestoreData[key]?.length || 0
-
+    // 날짜가 그대로면 원래 순서 유지, 날짜를 옮기면 그날 맨 뒤로
+    order: sameDay ? (target.order ?? 0) : (firestoreData[key]?.length || 0)
   });
 
-
-  await batch.commit();
-
-  editModal.style.display = "none";
-  history.back();
-
+  saving = true;
+  saveEditBtn.disabled = true;
+  saveEditBtn.textContent = "저장 중…";
+  try {
+    await batch.commit();
+    editModal.style.display = "none";
+    history.back();
+    showToast("수정했어요");
+  } catch {
+    showToast("저장하지 못했어요. 다시 시도해 주세요.");
+  } finally {
+    saving = false;
+    saveEditBtn.disabled = false;
+    saveEditBtn.textContent = "저장";
+  }
 };
 
 actionDeleteBtn.onclick=()=>{
@@ -3954,11 +3970,22 @@ cancelDeleteBtn.onclick=()=>{
 };
 
 confirmDeleteBtn.onclick=async ()=>{
+  if (saving) return;
   const batch=writeBatch(db);
   for(const k in firestoreData) firestoreData[k].forEach(it=>{ if(inActiveGroup(it)) batch.delete(doc(schedulesCol,it.id)); });
-  await batch.commit();
-  deleteConfirmModal.style.display="none";
-  history.back();
+  saving = true;
+  confirmDeleteBtn.disabled = true;
+  try {
+    await batch.commit();
+    deleteConfirmModal.style.display="none";
+    history.back();
+    showToast("일정을 삭제했어요");
+  } catch {
+    showToast("삭제하지 못했어요. 다시 시도해 주세요.");
+  } finally {
+    saving = false;
+    confirmDeleteBtn.disabled = false;
+  }
 };
 
 /******** 모달 닫기 ********/
