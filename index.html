@@ -1764,6 +1764,75 @@ body.list-mode #listView {
   background: var(--purple);
 }
 
+.list-day-head .count {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--subtext);
+}
+
+.list-item {
+  user-select: none;
+  -webkit-touch-callout: none;
+  transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+.list-item.dragging {
+  opacity: .6;
+  box-shadow: 0 10px 24px rgba(50,40,100,.2);
+}
+
+/* 목록 탭 전용 + 버튼 (오른쪽, 폰 브라우저의 맨 위로 버튼과 안 겹치게 위로 올림) */
+#listAddBtn {
+  display: none;
+  position: fixed;
+  right: 18px;
+  bottom: calc(22px + env(safe-area-inset-bottom));
+  z-index: 900;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  font-size: 28px;
+  line-height: 1;
+  color: white;
+  background: linear-gradient(135deg, #6C5CE7, #9B8CFF);
+  box-shadow: 0 10px 24px rgba(108,92,231,.4);
+}
+
+body.list-mode #listAddBtn {
+  display: block;
+}
+
+/* 맨 위로 버튼 (왼쪽 아래, 달력·목록 둘 다) */
+#topBtn {
+  position: fixed;
+  left: 18px;
+  bottom: calc(27px + env(safe-area-inset-bottom));
+  z-index: 900;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--purple);
+  background: white;
+  border: 1px solid var(--line);
+  box-shadow: 0 6px 18px rgba(40,30,90,.18);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+#topBtn.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
 .list-day-head .star {
   color: #FFA45B;
 }
@@ -2356,6 +2425,8 @@ header::after {
 <div id="weekdays"></div>
 <div id="calendar"></div>
 <div id="listView"></div>
+<button id="listAddBtn" aria-label="일정 추가">＋</button>
+<button id="topBtn" aria-label="맨 위로">↑</button>
 
 <div id="inputBox">
   <div class="input-header">
@@ -3017,7 +3088,7 @@ function buildMiniCal(y, m, todayKey, weekdays){
     });
     if(items.length > 4){
       const more = document.createElement("b");
-      more.textContent = "+";
+      more.textContent = `+${items.length - 4}`;
       dots.appendChild(more);
     }
     cell.appendChild(dots);
@@ -3072,10 +3143,13 @@ function renderList(){
   const keys = Object.keys(firestoreData).filter(k => k.startsWith(prefix)).sort();
   let count = 0;
 
+  const canReorder = selectedTypeFilter === "전체";
+
   keys.forEach(key => {
+    // 순서는 달력과 같게 (드래그로 바꾼 순서)
     const items = firestoreData[key]
       .filter(it => selectedTypeFilter === "전체" || it.type === selectedTypeFilter)
-      .sort((a,b) => (a.time||"").localeCompare(b.time||"") || (a.order??0) - (b.order??0));
+      .sort((a,b) => (a.order??0) - (b.order??0));
     if(items.length === 0) return;
     count += items.length;
 
@@ -3105,11 +3179,16 @@ function renderList(){
       s.textContent = "★";
       head.appendChild(s);
     }
+    const cnt = document.createElement("span");
+    cnt.className = "count";
+    cnt.textContent = `${items.length}개`;
+    head.appendChild(cnt);
     group.appendChild(head);
 
     items.forEach(it => {
       const row = document.createElement("div");
       row.className = "list-item";
+      row.dataset.id = it.id;
       row.style.setProperty("--c", listColorOf(it.type));
 
       // 왼쪽: 유형 + 시간
@@ -3149,7 +3228,12 @@ function renderList(){
         row.appendChild(a);
       }
 
-      row.onclick = () => openScheduleModal(it, key);
+      row.onclick = () => {
+        // 길게 눌러 끈 직후에는 상세 창을 열지 않음
+        if(row.dataset.dragged){ delete row.dataset.dragged; return; }
+        openScheduleModal(it, key);
+      };
+      if(canReorder) enableListReorder(row, group, key);
       group.appendChild(row);
     });
 
@@ -3165,6 +3249,124 @@ function renderList(){
     listView.appendChild(empty);
   }
 }
+
+/******** 목록: 순서 바꾸기 (같은 날짜 안에서) ********/
+let listDragId = null;
+
+async function reorderDay(key, fromId, toId){
+  const list = (firestoreData[key] || []).slice().sort((a,b) => (a.order??0) - (b.order??0));
+  const fi = list.findIndex(x => x.id === fromId);
+  const ti = list.findIndex(x => x.id === toId);
+  if(fi < 0 || ti < 0 || fi === ti) return;
+  const [moved] = list.splice(fi, 1);
+  list.splice(ti, 0, moved);
+  const batch = writeBatch(db);
+  list.forEach((it, i) => batch.update(doc(schedulesCol, it.id), { order: i }));
+  try { await batch.commit(); } catch { showToast("순서를 바꾸지 못했어요."); }
+}
+
+function enableListReorder(row, group, key){
+  // PC: 끌어다 놓기
+  row.draggable = true;
+  row.addEventListener("dragstart", e => {
+    listDragId = row.dataset.id;
+    row.classList.add("dragging");
+    e.dataTransfer.effectAllowed = "move";
+  });
+  row.addEventListener("dragend", () => {
+    row.classList.remove("dragging");
+    listDragId = null;
+  });
+  row.addEventListener("dragover", e => e.preventDefault());
+  row.addEventListener("drop", e => {
+    e.preventDefault();
+    if(listDragId && listDragId !== row.dataset.id && group.contains(document.querySelector(`.list-item[data-id="${listDragId}"]`))){
+      reorderDay(key, listDragId, row.dataset.id);
+    }
+  });
+
+  // 휴대폰: 길게 눌러서 위아래로 끌기
+  let startY = 0, startX = 0, timer = null, canDrag = false;
+
+  row.addEventListener("touchstart", e => {
+    startY = e.touches[0].clientY;
+    startX = e.touches[0].clientX;
+    canDrag = false;
+    timer = setTimeout(() => {
+      canDrag = true;
+      row.classList.add("dragging");
+      navigator.vibrate?.(12);
+    }, 320);
+  }, { passive: true });
+
+  row.addEventListener("touchmove", e => {
+    const dy = e.touches[0].clientY - startY;
+    const dx = e.touches[0].clientX - startX;
+    if(!canDrag){
+      if(Math.abs(dy) > 8 || Math.abs(dx) > 8) clearTimeout(timer);
+      return;
+    }
+    e.preventDefault();
+    row.style.transform = `translateY(${dy}px) scale(.97)`;
+  }, { passive: false });
+
+  row.addEventListener("touchend", e => {
+    clearTimeout(timer);
+    row.style.transform = "";
+    row.classList.remove("dragging");
+    if(!canDrag) return;
+    canDrag = false;
+    row.dataset.dragged = "1";
+
+    const y = e.changedTouches[0].clientY;
+    const rows = [...group.querySelectorAll(".list-item")];
+    let target = rows.find(r => { const b = r.getBoundingClientRect(); return y < b.top + b.height / 2; });
+    if(!target) target = rows[rows.length - 1];
+    if(target && target.dataset.id !== row.dataset.id) reorderDay(key, row.dataset.id, target.dataset.id);
+  });
+
+  row.addEventListener("touchcancel", () => {
+    clearTimeout(timer);
+    canDrag = false;
+    row.style.transform = "";
+    row.classList.remove("dragging");
+  });
+}
+
+/******** 목록: 일정 추가 ********/
+// 원래 달력에서 날짜를 두 번 눌렀을 때와 같은 입력창을 엶
+function openAddFor(key){
+  const [yy, mm, dd] = key.split("-").map(Number);
+  selectedDateKey = key;
+  selectedDateText.textContent = `${mm}월 ${dd}일`;
+  dateInput.value = key;
+  timeInput.value = "";
+  titleInput.value = "";
+  urlInput.value = "";
+  descInput.value = "";
+  typeInput.value = "기타";
+  inputBox.style.display = "block";
+  pushModalState();
+}
+
+// 목록 탭 오른쪽 아래 + 버튼: 이번 달이면 오늘, 아니면 선택한 날짜(없으면 1일)
+document.getElementById("listAddBtn").onclick = () => {
+  const y = currentDate.getFullYear(), m = currentDate.getMonth();
+  const prefix = `${y}-${String(m+1).padStart(2,"0")}-`;
+  const t = new Date();
+  const todayKey = formatDate(`${t.getFullYear()}-${t.getMonth()+1}-${t.getDate()}`);
+  let key = `${prefix}01`;
+  if(todayKey.startsWith(prefix)) key = todayKey;
+  else if(selectedDateKey && selectedDateKey.startsWith(prefix)) key = selectedDateKey;
+  openAddFor(key);
+};
+
+/******** 맨 위로 버튼 ********/
+const topBtn = document.getElementById("topBtn");
+const updateTopBtn = () => topBtn.classList.toggle("show", window.scrollY > 300);
+window.addEventListener("scroll", updateTopBtn, { passive: true });
+updateTopBtn();
+topBtn.onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
 setViewMode(viewMode);
 
