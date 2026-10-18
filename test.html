@@ -3347,6 +3347,11 @@ header::after {
   margin: 40px 0 0 0;
 }
 
+#actionModal .modal-date-text .d-line {
+  display: block;
+  line-height: 1.5;
+}
+
 #actionModal #modalType { grid-column: 1; grid-row: 1; }
 #actionModal #modalTitle { grid-column: 1; grid-row: 3; }
 #actionModal #modalDate { grid-column: 1; grid-row: 4; }
@@ -3354,6 +3359,36 @@ header::after {
 /* 제목(날짜)과 내용 사이 간격 줄이기 */
 #actionModal .modal-desc-text {
   margin-top: 10px;
+}
+
+/* 상세 창 링크: 내용 아래 꽉 찬 한 줄 [🔗 사이트이름 ›] */
+#actionModal #modalLink {
+  align-items: center;
+  gap: 8px;
+  margin: 12px 20px 0 24px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #ECE9F5;
+  background: #FAF9FD;
+  color: #5143C9;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+#actionModal #modalLink .link-host {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#actionModal #modalLink .link-arrow {
+  flex: none;
+  font-size: 18px;
+  line-height: 1;
+  color: #A29BFE;
 }
 
 /* 🔗 링크 아이콘 작게 (잘못 눌리는 일 줄이기) */
@@ -3478,7 +3513,7 @@ header::after {
         <div id="modalDate" class="modal-date-text"></div>
       </div>
       <div id="modalContent" class="modal-desc-text"></div>
-      <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">🔗 링크</a>
+      <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none;"><svg class="act-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span id="modalLinkHost" class="link-host">링크</span><span class="link-arrow" aria-hidden="true">›</span></a>
     </div>
     <div class="modal-actions">
       <button id="actionCopyBtn"><svg class="act-ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span class="action-label">복사</span></button>
@@ -4673,7 +4708,11 @@ function openScheduleModal(it, key, skipPush){
   // 창 맨 위 색 띠를 유형 색으로
   actionModal.querySelector(".modal-content").style.setProperty("--c", typeColors[it.type] || "#e0e7ff");
   const itemUrl = safeUrl(it.url);
-  modalLink.style.display = itemUrl ? "inline-flex" : "none";
+  modalLink.style.display = itemUrl ? "flex" : "none";
+  // 링크 줄에 사이트 이름 표시 (예: instagram.com)
+  let host = "링크 열기";
+  try { if(itemUrl) host = new URL(itemUrl).hostname.replace(/^www\./, ""); } catch {}
+  document.getElementById("modalLinkHost").textContent = host;
   modalLink.href = itemUrl || "#";
 
   // 사진 주소가 있으면 상세 창 위에 사진 표시 (못 불러오면 조용히 숨김)
@@ -4690,7 +4729,15 @@ function openScheduleModal(it, key, skipPush){
   // 날짜 · 시간을 한 줄로 (예: 2026년 9월 27일 (일) · 종일)
   const [yy, mm, dd] = it.date.split("-").map(Number);
   const wd = ["일","월","화","수","목","금","토"][new Date(yy, mm-1, dd).getDay()];
-  modalDate.textContent = `${yy}년 ${mm}월 ${dd}일 (${wd}) · ${it.time ? formatTimeKorean(it.time) : "종일"}`;
+  // 날짜 한 줄, 시간은 그 아랫줄 (좁은 폰에서도 잘리지 않게)
+  modalDate.innerHTML = "";
+  const dateLine = document.createElement("span");
+  dateLine.className = "d-line";
+  dateLine.textContent = `${yy}년 ${mm}월 ${dd}일 (${wd})`;
+  const timeLine = document.createElement("span");
+  timeLine.className = "d-line";
+  timeLine.textContent = it.time ? formatTimeKorean(it.time) : "종일";
+  modalDate.append(dateLine, timeLine);
   actionModal.style.display = "flex";
   if(!skipPush) pushModalState();
 }
