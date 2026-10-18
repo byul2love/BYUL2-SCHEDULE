@@ -2737,6 +2737,12 @@ onSnapshot(schedulesCol, snapshot=>{
 // ⭐ 선택된 날짜 칸으로 부드럽게 스크롤
 function scrollToSelectedDay(){
   requestAnimationFrame(() => {
+    // 목록 탭에서는 목록의 그 날짜 묶음으로 이동
+    if (viewMode === "list") {
+      const group = document.querySelector(`.list-day[data-key="${selectedDateKey}"]`);
+      if (group) group.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
     const selectedEl = document.querySelector(".day.selected");
     if (!selectedEl) return;
     selectedEl.scrollIntoView({
@@ -2968,7 +2974,8 @@ timeInput.value = "";
   }
 
   selectedDateKey = key;
-  inputBox.style.display = "none";
+  // 입력창이 열려 있었다면 뒤로가기 기록까지 정리하며 닫기
+  if (inputBox.style.display === "block") history.back();
   document.querySelectorAll(".day").forEach(x => x.classList.remove("selected"));
   day.classList.add("selected");
 };
@@ -3417,6 +3424,9 @@ function addWebDragEvents(el,dateKey){
     );
 
 
+    // 다른 날짜 일정 위에 놓았으면 아무것도 하지 않음
+    if(fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
+
     const moved = list.splice(fromIndex,1)[0];
 
     list.splice(toIndex,0,moved);
@@ -3488,8 +3498,9 @@ function addMobileTouchDrag(el, container, dateKey) {
       e.touches[0].clientX - startX;
 
 
+    // 위아래뿐 아니라 좌우로 밀어도(달 넘기기) 길게 누르기를 취소
     if(!canDrag &&
-       Math.abs(deltaY)>5){
+       (Math.abs(deltaY)>5 || Math.abs(deltaX)>5)){
 
       moved=true;
       clearTimeout(pressTimer);
@@ -3522,6 +3533,9 @@ function addMobileTouchDrag(el, container, dateKey) {
 
 
     if(!canDrag) return;
+
+    // 순서 바꾸기 중이었으면 달력의 좌우 스와이프(달 넘기기)로 이어지지 않게
+    e.stopPropagation();
 
 
 
@@ -3629,6 +3643,7 @@ function closeAllOverlays() {
   editModal.style.display = "none";
   deleteConfirmModal.style.display = "none";
   searchModal.style.display = "none";
+  document.getElementById("monthPickerModal").style.display = "none";
 }
 
 /******** 일정 상세 모달 (달력 칸 + 다가오는 일정 공용) ********/
@@ -4009,7 +4024,8 @@ window.addEventListener("popstate", () => {
     actionModal.style.display === "flex" ||
     editModal.style.display === "flex" ||
     deleteConfirmModal.style.display === "flex" ||
-    searchModal.style.display === "flex"
+    searchModal.style.display === "flex" ||
+    document.getElementById("monthPickerModal").style.display === "flex"
   ) {
     closeAllOverlays();
   }
@@ -4192,6 +4208,7 @@ monthText.onclick=()=>{
   yearSelect.value=currentDate.getFullYear();
   monthSelect.value=currentDate.getMonth();
   monthPickerModal.style.display="flex";
+  pushModalState();   // 폰 뒤로가기로 닫히게
 };
 
 applyMonthBtn.onclick=()=>{
@@ -4200,10 +4217,11 @@ applyMonthBtn.onclick=()=>{
   currentDate=new Date(y,m,1);
   selectedDateKey=null;
   monthPickerModal.style.display="none";
+  history.back();
   renderCalendar();
 };
 
-cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; };
+cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; history.back(); };
 </script>
 
 <div id="monthPickerModal" class="modal">
