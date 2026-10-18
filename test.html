@@ -4247,7 +4247,8 @@ function renderList(){
       type.className = "list-type";
       type.textContent = it.type;
       left.appendChild(type);
-      left.appendChild(document.createTextNode(it.time ? formatTimeKorean(it.time) : "종일"));
+      // 시간을 정한 일정만 시간 표시 (안 정했으면 유형 배지만)
+      if(it.time) left.appendChild(document.createTextNode(formatTimeKorean(it.time)));
       row.appendChild(left);
 
       const body = document.createElement("div");
@@ -4729,15 +4730,17 @@ function openScheduleModal(it, key, skipPush){
   // 날짜 · 시간을 한 줄로 (예: 2026년 9월 27일 (일) · 종일)
   const [yy, mm, dd] = it.date.split("-").map(Number);
   const wd = ["일","월","화","수","목","금","토"][new Date(yy, mm-1, dd).getDay()];
-  // 날짜 한 줄, 시간은 그 아랫줄 (좁은 폰에서도 잘리지 않게)
+  // 날짜 한 줄 + (시간을 정한 일정만) 시간 아랫줄
+  // 시간을 안 정했으면 "종일" 없이 날짜만
   modalDate.innerHTML = "";
-  const dateLine = document.createElement("span");
-  dateLine.className = "d-line";
-  dateLine.textContent = `${yy}년 ${mm}월 ${dd}일 (${wd})`;
-  const timeLine = document.createElement("span");
-  timeLine.className = "d-line";
-  timeLine.textContent = it.time ? formatTimeKorean(it.time) : "종일";
-  modalDate.append(dateLine, timeLine);
+  [`${yy}년 ${mm}월 ${dd}일 (${wd})`, it.time ? formatTimeKorean(it.time) : null]
+    .filter(Boolean)
+    .forEach(t => {
+      const line = document.createElement("span");
+      line.className = "d-line";
+      line.textContent = t;
+      modalDate.appendChild(line);
+    });
   actionModal.style.display = "flex";
   if(!skipPush) pushModalState();
 }
