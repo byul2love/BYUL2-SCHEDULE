@@ -309,6 +309,61 @@ header.hero {
   background: white;
 }
 
+/* 유형 필터 드롭다운 (헤더 안) */
+#typeFilter {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 38px;
+  max-width: 100px;
+  padding: 0 26px 0 13px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.16);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  background: rgba(255,255,255,.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='white' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center / 9px;
+}
+
+#typeFilter option {
+  color: #262338;
+  background: white;
+}
+
+@media (max-width: 600px) {
+  #navControls {
+    gap: 5px;
+  }
+
+  #typeFilter {
+    height: 34px;
+    max-width: 76px;
+    padding: 0 20px 0 10px;
+    font-size: 11.5px;
+    background-position: right 7px center;
+  }
+
+  .nav-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  #monthText {
+    min-width: 0;
+    height: 34px;
+    padding: 0 12px;
+    font-size: 14px;
+  }
+
+  #todayBtn {
+    height: 34px;
+    padding: 0 11px;
+    font-size: 12px;
+  }
+}
+
 
 /* =========================
    FILTER CHIPS
@@ -1099,13 +1154,11 @@ header.hero {
 .row-2 input[type="time"] { flex: 1; }
 
 #typePicker {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-#typePicker .chip {
-  height: 34px;
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 34px;
+  cursor: pointer;
+  background: var(--surface-2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237F7A93' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 14px center / 10px;
 }
 
 .btn {
@@ -1404,14 +1457,13 @@ header.hero {
   <div id="happyBanner" hidden>🎂 HAPPY MOONBYUL DAY 🌟</div>
 
   <nav id="navControls">
+    <select id="typeFilter" aria-label="유형 필터"></select>
     <button id="prevBtn" class="nav-btn" aria-label="이전 달">‹</button>
     <button id="monthText" aria-label="연도와 월 선택"></button>
     <button id="nextBtn" class="nav-btn" aria-label="다음 달">›</button>
     <button id="todayBtn">오늘</button>
   </nav>
 </header>
-
-<div id="filterChips" class="chips" role="toolbar" aria-label="유형 필터"></div>
 
 <section id="upcomingSection">
   <div class="section-title">✨ 다가오는 일정</div>
@@ -1470,10 +1522,10 @@ header.hero {
     </div>
 
     <label class="field-label" for="titleInput">일정 제목</label>
-    <input id="titleInput" placeholder="예) 단독 콘서트 첫날" autocomplete="off">
+    <input id="titleInput" placeholder="일정 제목을 입력하세요" autocomplete="off">
 
-    <label class="field-label">유형</label>
-    <div id="typePicker"></div>
+    <label class="field-label" for="typePicker">유형</label>
+    <select id="typePicker"></select>
 
     <label class="field-label">날짜 및 시간</label>
     <div class="row-2">
@@ -1482,7 +1534,7 @@ header.hero {
     </div>
 
     <label class="field-label" for="descInput">내용 (선택)</label>
-    <textarea id="descInput" placeholder="장소, 예매 정보 등"></textarea>
+    <textarea id="descInput" placeholder="상세 내용을 입력하세요"></textarea>
 
     <label class="field-label" for="urlInput">링크 (선택)</label>
     <input id="urlInput" placeholder="https://..." inputmode="url" autocomplete="off">
@@ -1759,25 +1811,19 @@ function renderAll(){
   renderUpcoming();
 }
 
-/******** 필터 칩 ********/
-const filterChips = $("filterChips");
+/******** 유형 필터 (드롭다운) ********/
+const typeFilter = $("typeFilter");
 
-function renderChips(){
-  filterChips.innerHTML = "";
-  [["전체", "var(--accent)"], ...TYPES].forEach(([name, c]) => {
-    const b = el("button", "chip" + (selectedTypeFilter === name ? " active" : ""));
-    b.style.setProperty("--c", c);
-    b.setAttribute("aria-pressed", selectedTypeFilter === name);
-    if(name !== "전체") b.appendChild(el("span", "dot"));
-    b.appendChild(document.createTextNode(name));
-    b.onclick = () => {
-      selectedTypeFilter = name;
-      renderChips();
-      renderAll();
-    };
-    filterChips.appendChild(b);
-  });
-}
+["전체", ...TYPES.map(([name]) => name)].forEach(name => {
+  const opt = el("option", null, name);
+  opt.value = name;
+  typeFilter.appendChild(opt);
+});
+
+typeFilter.onchange = () => {
+  selectedTypeFilter = typeFilter.value;
+  renderAll();
+};
 
 /******** 달력 ********/
 const calendar = $("calendar");
@@ -2147,23 +2193,15 @@ const typePicker = $("typePicker");
 
 function setFormType(t){
   formType = TYPE_COLOR[t] ? t : "기타";
-  typePicker.querySelectorAll(".chip").forEach(c => {
-    const on = c.dataset.type === formType;
-    c.classList.toggle("active", on);
-    c.setAttribute("aria-pressed", on);
-  });
+  typePicker.value = formType;
 }
 
-TYPES.forEach(([name, c]) => {
-  const b = el("button", "chip");
-  b.type = "button";
-  b.dataset.type = name;
-  b.style.setProperty("--c", c);
-  b.appendChild(el("span", "dot"));
-  b.appendChild(document.createTextNode(name));
-  b.onclick = () => setFormType(name);
-  typePicker.appendChild(b);
+TYPES.forEach(([name]) => {
+  const opt = el("option", null, name);
+  opt.value = name;
+  typePicker.appendChild(opt);
 });
+typePicker.onchange = () => setFormType(typePicker.value);
 
 function openForm(mode, data = {}){
   formMode = mode;
@@ -2407,10 +2445,8 @@ function enableDragScroll(box){
 }
 
 enableDragScroll(upcomingList);
-enableDragScroll(filterChips);
 
 /******** 첫 화면 ********/
-renderChips();
 renderAll();
 </script>
 
