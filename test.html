@@ -754,9 +754,9 @@ button:active {
 
   width: 100%;
 
-  height: 42vh;
+  height: 58vh;
 
-  max-height: 42vh;
+  max-height: 58vh;
 
   display: none;
 
@@ -1518,11 +1518,12 @@ button:active {
 
   }
 
+  /* 키보드가 올라와도 덜 답답하게 조금 더 크게 */
   #inputBox {
 
-    height: 45vh;
+    height: 62vh;
 
-    max-height: 45vh;
+    max-height: 62vh;
 
   }
 }
@@ -1786,7 +1787,7 @@ body.list-mode #listView {
   display: none;
   position: fixed;
   right: 18px;
-  bottom: calc(90px + env(safe-area-inset-bottom));
+  bottom: calc(22px + env(safe-area-inset-bottom));
   z-index: 900;
   width: 56px;
   height: 56px;
@@ -1806,15 +1807,15 @@ body.list-mode #listAddBtn {
 #topBtn {
   position: fixed;
   left: 18px;
-  bottom: calc(90px + env(safe-area-inset-bottom));
+  bottom: calc(27px + env(safe-area-inset-bottom));
   z-index: 900;
-  width: 56px;
-  height: 56px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: 19px;
   font-weight: 800;
   line-height: 1;
   color: var(--purple);
@@ -1975,7 +1976,7 @@ header {
   background:
     radial-gradient(ellipse 90% 60% at 50% 115%, rgba(162,155,254,.45), transparent 70%),
     linear-gradient(165deg, #15132B 0%, #2A2560 45%, #5A4BD6 100%);
-  box-shadow: 0 10px 30px rgba(30,25,80,.28);
+  box-shadow: none;
 }
 
 /* 예전 글자 별(✦ · ✧)은 숨기고 진짜 별로 대체 */
@@ -2379,28 +2380,369 @@ header::after {
   }
 }
 
+
+/* =========================
+   🌙 담백한 버전 (B시안)
+   - 그라데이션 → 단색 (남색 + 연보라)
+   - 반짝이 별 / 유리 효과 / 그림자 제거
+   - 얇은 테두리, 덜 둥근 모서리
+========================= */
+
+:root {
+  --navy: #23213F;
+  --moon: #C9C0FF;   /* 포인트 연보라 */
+  --paper: #F7F6FB;
+  --rule: #E3E0EE;
+  --ink: #2A2833;
+  --muted: #8A8592;
+}
+
+body {
+  font-family: 'Gowun Dodum', 'Noto Sans KR', sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+@media (min-width: 601px) {
+  body { background-color: var(--paper); }
+}
+
+/* 헤더: 남색 단색, 효과 없음 */
+header {
+  background: var(--navy);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+header::after,
+.stars {
+  display: none;
+}
+
+#siteTitle {
+  font-family: 'DM Serif Display', 'Jua', serif;
+  font-weight: 400;
+  letter-spacing: .5px;
+  text-shadow: none;
+}
+
+#siteTitle .title-line2 {
+  color: var(--moon);
+  text-shadow: none;
+}
+
+#searchBtn,
+#prevBtn,
+#nextBtn,
+#monthText,
+#typeFilter {
+  background-color: transparent;
+  border: 1px solid rgba(255,255,255,.3);
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+#prevBtn,
+#nextBtn {
+  border-radius: 8px;
+}
+
+#monthText,
+#typeFilter,
+#searchBtn {
+  border-radius: 8px;
+}
+
+#todayBtn {
+  border-radius: 8px;
+  color: var(--navy);
+  background: var(--moon);
+  box-shadow: none;
+}
+
+@media (hover: hover) {
+  #todayBtn:hover { background: #D8D1FF; }
+}
+
+/* 다가오는 일정 */
+#upcomingTitle {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.upcoming-card {
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  box-shadow: none;
+}
+
+.upcoming-card:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--navy);
+}
+
+.upcoming-card .upcoming-dday {
+  color: var(--navy);
+  background: #EEEBF8;
+  border-radius: 4px;
+}
+
+.upcoming-card:first-child {
+  background: var(--navy);
+}
+
+.upcoming-card:first-child .upcoming-dday {
+  color: var(--navy);
+  background: var(--moon);
+}
+
+.upcoming-card:first-child .upcoming-title span:first-child {
+  background: var(--moon) !important;
+}
+
+/* 달력 / 목록 탭: 밑줄 탭 */
+#viewTabs {
+  gap: 12px;
+  padding: 0;
+  background: none;
+}
+
+#viewTabs button {
+  height: 26px;
+  padding: 0 2px;
+  border-radius: 0;
+  color: var(--muted);
+  background: none;
+  border-bottom: 2px solid transparent;
+}
+
+#viewTabs button.active {
+  color: var(--navy);
+  background: none;
+  box-shadow: none;
+  border-bottom-color: var(--navy);
+}
+
+/* 달력 */
+#weekdays {
+  border-radius: 10px 10px 0 0;
+}
+
+#calendar {
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 0 0 1px var(--rule);
+}
+
+#weekdays {
+  box-shadow: 0 0 0 1px var(--rule);
+}
+
+.day.today {
+  background: #F5F3FF;
+}
+
+.day.today .day-number {
+  background: var(--navy);
+  box-shadow: none;
+}
+
+.day.selected {
+  box-shadow: inset 0 0 0 2px var(--navy);
+}
+
+.schedule,
+.schedule:hover {
+  box-shadow: none;
+}
+
+.schedule-more {
+  color: var(--navy);
+  background: #EEEBF8;
+}
+
+/* 목록 */
+.mini-cal {
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  box-shadow: none;
+}
+
+.mini-day.today .mini-num {
+  background: var(--navy);
+}
+
+.mini-day.has:hover {
+  background: #F1EFF8;
+}
+
+.list-day-head {
+  color: var(--ink);
+}
+
+.list-day-head .today-badge {
+  color: var(--navy);
+  background: var(--moon);
+  border-radius: 4px;
+}
+
+.list-item {
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--c);
+  box-shadow: none;
+}
+
+.list-item:hover {
+  box-shadow: none;
+  border-color: #C8C3DA;
+  border-left-color: var(--c);
+}
+
+.list-type {
+  border-radius: 4px;
+}
+
+.list-link {
+  background: #EEEBF8;
+}
+
+@keyframes listFlash {
+  0% { background: #ECE8FF; }
+  100% { background: transparent; }
+}
+
+/* 떠 있는 버튼: 단색, 그림자 최소 */
+#listAddBtn {
+  background: var(--navy);
+  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+}
+
+#topBtn {
+  color: var(--navy);
+  border: 1px solid var(--rule);
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+
+/* 입력창 / 팝업 */
+#inputBox {
+  border-radius: 14px 14px 0 0;
+  box-shadow: 0 -2px 12px rgba(0,0,0,.08);
+}
+
+#inputBox::before {
+  background: var(--rule);
+}
+
+#inputBox label,
+.modal-content label {
+  color: var(--muted);
+}
+
+#inputBox input,
+#inputBox select,
+#inputBox textarea,
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+  border-radius: 6px;
+  border-color: var(--rule);
+  background: white;
+  font-family: inherit;
+}
+
+#inputBox input:focus,
+#inputBox select:focus,
+#inputBox textarea:focus,
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+  border-color: var(--navy);
+  box-shadow: none;
+}
+
+#addBtn,
+#saveEditBtn {
+  border-radius: 8px;
+  background: var(--navy);
+  box-shadow: none;
+}
+
+#pasteBtn {
+  color: var(--navy);
+  background: #EEEBF8;
+  border-radius: 6px;
+}
+
+.modal {
+  backdrop-filter: none;
+  background: rgba(20,18,35,.45);
+}
+
+.modal-content {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 6px 24px rgba(0,0,0,.15);
+}
+
+.modal-content button,
+.modal-actions button {
+  border-radius: 8px;
+}
+
+#actionEditBtn {
+  color: var(--navy);
+  background: #EEEBF8;
+  border-color: transparent;
+}
+
+.modal-date-text {
+  color: var(--navy);
+}
+
+#modalLink {
+  color: var(--navy);
+  background: #EEEBF8;
+  border-radius: 6px;
+}
+
+.type-badge {
+  border-radius: 4px;
+}
+
+.modal-actions button {
+  height: 46px;
+}
+
+.toast {
+  border-radius: 8px;
+  background: var(--navy);
+}
+
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Gowun+Dodum&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <header>
   <div class="stars" id="stars" aria-hidden="true"></div>
-  <button id="searchBtn">🔍 검색</button>
+  <button id="searchBtn">검색</button>
   <div id="siteTitle"><span class="title-line title-line1">🌙MOONBYUL</span><span class="title-line title-line2"> SCHEDULE🌟</span></div>
 <div id="navControls">
 
   <select id="typeFilter">
     <option value="전체">전체</option>
-    <option value="기타">기타</option>
-    <option value="버블">버블</option>
     <option value="콘서트">콘서트</option>
-    <option value="행사">행사</option>
-    <option value="발매">발매</option>
-    <option value="기념일">기념일</option>
     <option value="방송">방송</option>
-    <option value="팬사인회/팬미팅">팬사인회/팬미팅</option>
-    <option value="SNS">SNS</option>
     <option value="유튜브">유튜브</option>
+    <option value="발매">발매</option>
+    <option value="행사">행사</option>
+    <option value="팬사인회/팬미팅">팬사인회/팬미팅</option>
+    <option value="기념일">기념일</option>
+    <option value="버블">버블</option>
+    <option value="SNS">SNS</option>
+    <option value="기타">기타</option>
   </select>
 
   <button id="prevBtn" aria-label="이전 달">‹</button>
@@ -2413,10 +2755,10 @@ header::after {
 
 <div id="upcomingSection">
   <div class="upcoming-head">
-    <div id="upcomingTitle">✨ 다가오는 일정</div>
+    <div id="upcomingTitle">다가오는 일정</div>
     <div id="viewTabs" role="tablist" aria-label="보기 방식">
-      <button data-view="calendar" class="active" role="tab">📅 달력</button>
-      <button data-view="list" role="tab">📋 목록</button>
+      <button data-view="calendar" class="active" role="tab">달력</button>
+      <button data-view="list" role="tab">목록</button>
     </div>
   </div>
   <div id="upcomingList"></div>
@@ -2450,17 +2792,16 @@ header::after {
 
   <label>유형</label>
   <select id="typeInput">
-    <option value="기타">기타</option>
-    <option value="버블">버블</option>
     <option value="콘서트">콘서트</option>
-    <option value="행사">행사</option>
-    <option value="발매">발매</option>
-    <option value="기념일">기념일</option>
     <option value="방송">방송</option>
-    <option value="팬사인회/팬미팅">팬사인회/팬미팅</option>
-    <option value="SNS">SNS</option>
     <option value="유튜브">유튜브</option>
-
+    <option value="발매">발매</option>
+    <option value="행사">행사</option>
+    <option value="팬사인회/팬미팅">팬사인회/팬미팅</option>
+    <option value="기념일">기념일</option>
+    <option value="버블">버블</option>
+    <option value="SNS">SNS</option>
+    <option value="기타">기타</option>
   </select>
     <button id="addBtn">추가</button>
 
@@ -2476,17 +2817,18 @@ header::after {
       <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">🔗 링크</a>
     </div>
     <div class="modal-actions">
-      <button id="actionCopyBtn"><span class="action-icon">📋</span><span class="action-label">복사</span></button>
-      <button id="actionEditBtn"><span class="action-icon">✏️</span><span class="action-label">수정</span></button>
-      <button id="actionDeleteBtn"><span class="action-icon">🗑️</span><span class="action-label">삭제</span></button>
-      <button id="actionCancelBtn"><span class="action-icon">✖️</span><span class="action-label">취소</span></button>
+      <button id="actionCopyBtn"><span class="action-label">복사</span></button>
+      <button id="actionEditBtn"><span class="action-label">수정</span></button>
+      <button id="actionDeleteBtn"><span class="action-label">삭제</span></button>
+      <button id="actionCancelBtn"><span class="action-label">취소</span></button>
     </div>
   </div>
 </div>
 
 <div id="editModal" class="modal">
   <div class="modal-content">
-    <label>일정 제목</label><input id="editTitleInput">
+    <div class="modal-title-text" style="margin-bottom:2px;">일정 수정</div>
+    <label>일정 제목</label><input id="editTitleInput" placeholder="일정 제목">
     <label>일정 내용 (선택)</label>
 <textarea id="editDescInput" placeholder="상세 내용을 입력하세요"></textarea>
     <label>링크 (선택)</label><input id="editUrlInput">
@@ -2499,18 +2841,16 @@ header::after {
 </div>
     <label>유형</label>
     <select id="editTypeInput">
-
-      <option value="기타">기타</option>
-      <option value="버블">버블</option>
       <option value="콘서트">콘서트</option>
-      <option value="행사">행사</option>
-      <option value="발매">발매</option>
-      <option value="기념일">기념일</option>
       <option value="방송">방송</option>
-      <option value="팬사인회/팬미팅">팬사인회/팬미팅</option>
-      <option value="SNS">SNS</option>
       <option value="유튜브">유튜브</option>
-
+      <option value="발매">발매</option>
+      <option value="행사">행사</option>
+      <option value="팬사인회/팬미팅">팬사인회/팬미팅</option>
+      <option value="기념일">기념일</option>
+      <option value="버블">버블</option>
+      <option value="SNS">SNS</option>
+      <option value="기타">기타</option>
     </select>
     <button id="saveEditBtn">저장</button>
     <button id="cancelEditBtn">취소</button>
@@ -2738,6 +3078,12 @@ onSnapshot(schedulesCol, snapshot=>{
 // ⭐ 선택된 날짜 칸으로 부드럽게 스크롤
 function scrollToSelectedDay(){
   requestAnimationFrame(() => {
+    // 목록 탭에서는 목록의 그 날짜 묶음으로 이동
+    if (viewMode === "list") {
+      const group = document.querySelector(`.list-day[data-key="${selectedDateKey}"]`);
+      if (group) group.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
     const selectedEl = document.querySelector(".day.selected");
     if (!selectedEl) return;
     selectedEl.scrollIntoView({
@@ -2969,7 +3315,8 @@ timeInput.value = "";
   }
 
   selectedDateKey = key;
-  inputBox.style.display = "none";
+  // 입력창이 열려 있었다면 뒤로가기 기록까지 정리하며 닫기
+  if (inputBox.style.display === "block") history.back();
   document.querySelectorAll(".day").forEach(x => x.classList.remove("selected"));
   day.classList.add("selected");
 };
@@ -3418,6 +3765,9 @@ function addWebDragEvents(el,dateKey){
     );
 
 
+    // 다른 날짜 일정 위에 놓았으면 아무것도 하지 않음
+    if(fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
+
     const moved = list.splice(fromIndex,1)[0];
 
     list.splice(toIndex,0,moved);
@@ -3489,8 +3839,9 @@ function addMobileTouchDrag(el, container, dateKey) {
       e.touches[0].clientX - startX;
 
 
+    // 위아래뿐 아니라 좌우로 밀어도(달 넘기기) 길게 누르기를 취소
     if(!canDrag &&
-       Math.abs(deltaY)>5){
+       (Math.abs(deltaY)>5 || Math.abs(deltaX)>5)){
 
       moved=true;
       clearTimeout(pressTimer);
@@ -3523,6 +3874,9 @@ function addMobileTouchDrag(el, container, dateKey) {
 
 
     if(!canDrag) return;
+
+    // 순서 바꾸기 중이었으면 달력의 좌우 스와이프(달 넘기기)로 이어지지 않게
+    e.stopPropagation();
 
 
 
@@ -3630,6 +3984,7 @@ function closeAllOverlays() {
   editModal.style.display = "none";
   deleteConfirmModal.style.display = "none";
   searchModal.style.display = "none";
+  document.getElementById("monthPickerModal").style.display = "none";
 }
 
 /******** 일정 상세 모달 (달력 칸 + 다가오는 일정 공용) ********/
@@ -3779,9 +4134,22 @@ inputBox.style.display = "block";
 };
 
 
-addBtn.onclick = async () => {
+let saving = false;   // 저장 중 중복 클릭 방지
 
-  if (!titleInput.value || !dateInput.value) return;
+addBtn.onclick = async () => {
+  if (saving) return;
+
+  const title = titleInput.value.trim();
+  if (!title) {
+    showToast("제목을 입력해 주세요.");
+    titleInput.focus();
+    return;
+  }
+  if (!dateInput.value) {
+    showToast("날짜를 선택해 주세요.");
+    dateInput.focus();
+    return;
+  }
 
   const url = safeUrl(urlInput.value);
   if (url === null) {
@@ -3791,40 +4159,40 @@ addBtn.onclick = async () => {
   }
 
   const key = dateInput.value;
-
-  const docRef = doc(schedulesCol);
-
   const order = (firestoreData[key]?.length || 0);
 
-  await setDoc(docRef, {
+  saving = true;
+  addBtn.disabled = true;
+  addBtn.textContent = "저장 중…";
+  try {
+    await setDoc(doc(schedulesCol), {
+      title,
+      url,
+      type: typeInput.value,
+      content: descInput.value || "",
+      date: key,
+      time: timeInput.value || "",
+      groupId: gid(),
+      order
+    });
 
-    title: titleInput.value,
+    titleInput.value = "";
+    urlInput.value = "";
+    descInput.value = "";
+    dateInput.value = "";
+    timeInput.value = "";
+    typeInput.value = "기타";
 
-    url: url,
-
-    type: typeInput.value,
-
-    content: descInput.value || "",
-
-    date: key,
-
- time: timeInput.value || "",
-
-    groupId: gid(),
-
-    order: order
-
-  });
-
-  inputBox.style.display = "none";
-
-  titleInput.value = "";
-  urlInput.value = "";
-  descInput.value = "";
-  dateInput.value = "";
-  timeInput.value = "";
-  typeInput.value = "기타";
-
+    // 입력창을 열 때 남긴 뒤로가기 기록까지 같이 정리하며 닫기
+    history.back();
+    showToast("일정을 추가했어요");
+  } catch {
+    showToast("추가하지 못했어요. 다시 시도해 주세요.");
+  } finally {
+    saving = false;
+    addBtn.disabled = false;
+    addBtn.textContent = "추가";
+  }
 };
 
 /******** 수정/삭제 ********/
@@ -3882,7 +4250,19 @@ saveEditBtn.onclick = async () => {
 
   }
 
-  if (!editDateInput.value) return;
+  if (saving) return;
+
+  const title = editTitleInput.value.trim();
+  if (!title) {
+    showToast("제목을 입력해 주세요.");
+    editTitleInput.focus();
+    return;
+  }
+  if (!editDateInput.value) {
+    showToast("날짜를 선택해 주세요.");
+    editDateInput.focus();
+    return;
+  }
 
   const url = safeUrl(editUrlInput.value);
   if (url === null) {
@@ -3891,55 +4271,47 @@ saveEditBtn.onclick = async () => {
     return;
   }
 
+  const key = editDateInput.value;
+
+  // 지금 열린 일정 문서를 그대로 고쳐 씀 (지우고 새로 만들지 않아서 순서가 유지됨)
+  const target = groupItems.find(it => it.id === activeItemId) || groupItems[0];
+  if (!target) return;
+  const sameDay = target.date === key;
 
   const batch = writeBatch(db);
 
-
-  /* 기존 일정 삭제 */
-
+  // 같은 묶음의 다른 일정이 있으면 정리 (예전 방식과 동일)
   groupItems.forEach(it => {
-
-    batch.delete(
-      doc(schedulesCol, it.id)
-    );
-
+    if (it.id !== target.id) batch.delete(doc(schedulesCol, it.id));
   });
 
-
-  /* 새 일정 생성 */
-
-  const key = editDateInput.value;
-
-
-  const docRef = doc(schedulesCol);
-
-
-  batch.set(docRef, {
-
-    title: editTitleInput.value,
-
-    url: url,
-
+  batch.set(doc(schedulesCol, target.id), {
+    title,
+    url,
     type: editTypeInput.value,
-
     content: editDescInput.value || "",
-
     date: key,
-
     time: editTimeInput.value || "",
-
     groupId: activeGroupId || gid(),
-
-    order: firestoreData[key]?.length || 0
-
+    // 날짜가 그대로면 원래 순서 유지, 날짜를 옮기면 그날 맨 뒤로
+    order: sameDay ? (target.order ?? 0) : (firestoreData[key]?.length || 0)
   });
 
-
-  await batch.commit();
-
-  editModal.style.display = "none";
-  history.back();
-
+  saving = true;
+  saveEditBtn.disabled = true;
+  saveEditBtn.textContent = "저장 중…";
+  try {
+    await batch.commit();
+    editModal.style.display = "none";
+    history.back();
+    showToast("수정했어요");
+  } catch {
+    showToast("저장하지 못했어요. 다시 시도해 주세요.");
+  } finally {
+    saving = false;
+    saveEditBtn.disabled = false;
+    saveEditBtn.textContent = "저장";
+  }
 };
 
 actionDeleteBtn.onclick=()=>{
@@ -3954,11 +4326,22 @@ cancelDeleteBtn.onclick=()=>{
 };
 
 confirmDeleteBtn.onclick=async ()=>{
+  if (saving) return;
   const batch=writeBatch(db);
   for(const k in firestoreData) firestoreData[k].forEach(it=>{ if(inActiveGroup(it)) batch.delete(doc(schedulesCol,it.id)); });
-  await batch.commit();
-  deleteConfirmModal.style.display="none";
-  history.back();
+  saving = true;
+  confirmDeleteBtn.disabled = true;
+  try {
+    await batch.commit();
+    deleteConfirmModal.style.display="none";
+    history.back();
+    showToast("일정을 삭제했어요");
+  } catch {
+    showToast("삭제하지 못했어요. 다시 시도해 주세요.");
+  } finally {
+    saving = false;
+    confirmDeleteBtn.disabled = false;
+  }
 };
 
 /******** 모달 닫기 ********/
@@ -3982,7 +4365,8 @@ window.addEventListener("popstate", () => {
     actionModal.style.display === "flex" ||
     editModal.style.display === "flex" ||
     deleteConfirmModal.style.display === "flex" ||
-    searchModal.style.display === "flex"
+    searchModal.style.display === "flex" ||
+    document.getElementById("monthPickerModal").style.display === "flex"
   ) {
     closeAllOverlays();
   }
@@ -4165,6 +4549,7 @@ monthText.onclick=()=>{
   yearSelect.value=currentDate.getFullYear();
   monthSelect.value=currentDate.getMonth();
   monthPickerModal.style.display="flex";
+  pushModalState();   // 폰 뒤로가기로 닫히게
 };
 
 applyMonthBtn.onclick=()=>{
@@ -4173,10 +4558,11 @@ applyMonthBtn.onclick=()=>{
   currentDate=new Date(y,m,1);
   selectedDateKey=null;
   monthPickerModal.style.display="none";
+  history.back();
   renderCalendar();
 };
 
-cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; };
+cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; history.back(); };
 </script>
 
 <div id="monthPickerModal" class="modal">
