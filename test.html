@@ -3332,19 +3332,20 @@ header::after {
 
 /* 머리 영역: 왼쪽 [유형 배지 … 제목 · 시간(아래쪽)] / 오른쪽 [사진]
    → 제목·시간이 사진 아래쪽 높이에 맞춰 내려오고, 내용은 항상 사진 아래부터 */
+/* 배지 · 제목 · 날짜를 한 덩어리로 붙여서 사진 옆 세로 가운데에 (사이 여백 없음) */
 #actionModal .detail-head {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-rows: auto 1fr auto auto;
+  grid-template-rows: 1fr auto auto auto 1fr;
   column-gap: 12px;
 }
 
 #actionModal .detail-photo {
   float: none;
   grid-column: 2;
-  grid-row: 1 / span 4;
-  align-self: end;
-  margin: 40px 0 0 0;
+  grid-row: 1 / span 5;
+  align-self: start;
+  margin: 0 32px 0 0;   /* 오른쪽 위 ✕ 버튼 왼쪽에 나란히 */
 }
 
 #actionModal .modal-date-text .d-line {
@@ -3352,7 +3353,7 @@ header::after {
   line-height: 1.5;
 }
 
-#actionModal #modalType { grid-column: 1; grid-row: 1; }
+#actionModal #modalType { grid-column: 1; grid-row: 2; }
 #actionModal #modalTitle { grid-column: 1; grid-row: 3; }
 #actionModal #modalDate { grid-column: 1; grid-row: 4; }
 
