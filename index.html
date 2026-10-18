@@ -2398,7 +2398,7 @@ header::after {
 }
 
 body {
-  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   color: var(--ink);
   background: var(--paper);
 }
@@ -2420,7 +2420,7 @@ header::after,
 }
 
 #siteTitle {
-  font-family: 'DM Serif Display', 'Jua', serif;
+  font-family: 'Jua', sans-serif;
   font-weight: 400;
   letter-spacing: .5px;
   text-shadow: none;
@@ -2945,12 +2945,45 @@ header::after {
   }
 }
 
-/* 일정 글씨 살짝 더 굵게 (프리텐다드의 중간 굵기 사용) */
+/* 일정 글씨 살짝 더 굵게 (Noto Sans KR의 중간 굵기 사용) */
 .schedule,
 .list-snippet,
 .upcoming-card .upcoming-date,
 .modal-desc-text {
   font-weight: 500;
+}
+
+/* 달력 / 목록 탭 아이콘 (선 아이콘, 글씨 색을 따라감) */
+#viewTabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tab-ic {
+  width: 13px;
+  height: 13px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tab-ic circle {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* 돋보기 동그라미는 선으로 */
+.tab-ic circle.ring {
+  fill: none;
+  stroke: currentColor;
+}
+
+#searchBtn {
+  gap: 4px;
 }
 
 /* 달력 | 목록 사이 구분선 */
@@ -2985,14 +3018,12 @@ header::after {
 
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 </head>
 <body>
 
 <header>
   <div class="stars" id="stars" aria-hidden="true"></div>
-  <button id="searchBtn">검색</button>
+  <button id="searchBtn"><svg class="tab-ic" viewBox="0 0 16 16" aria-hidden="true"><circle class="ring" cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>검색</button>
   <div id="siteTitle"><span class="title-line title-line1">🌙MOONBYUL</span><span class="title-line title-line2"> SCHEDULE🌟</span></div>
 <div id="navControls">
 
@@ -3022,8 +3053,8 @@ header::after {
   <div class="upcoming-head">
     <div id="upcomingTitle">다가오는 일정</div>
     <div id="viewTabs" role="tablist" aria-label="보기 방식">
-      <button data-view="calendar" class="active" role="tab">달력</button>
-      <button data-view="list" role="tab">목록</button>
+      <button data-view="calendar" class="active" role="tab"><svg class="tab-ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3"/></svg>달력</button>
+      <button data-view="list" role="tab"><svg class="tab-ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4h8M6 8h8M6 12h8"/><circle cx="2.8" cy="4" r=".9"/><circle cx="2.8" cy="8" r=".9"/><circle cx="2.8" cy="12" r=".9"/></svg>목록</button>
     </div>
   </div>
   <div id="upcomingList"></div>
