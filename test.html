@@ -3441,6 +3441,33 @@ body:has(#inputBox[style*="block"]) {
   overscroll-behavior: contain;
 }
 
+/* 상세 창 흔들림 방지:
+   창 위나 어두운 바깥을 끌어도 뒤 페이지가 늘어나거나(바운스) 주소창이 움직이지 않게,
+   스크롤은 상세 내용 부분에서만 */
+html:has(.modal[style*="flex"]) {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+#actionModal {
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+#actionModal .modal-info {
+  touch-action: pan-y;
+}
+
+#actionModal .modal-content {
+  max-height: 85vh;
+  max-height: 85svh;   /* 주소창이 보였다 숨었다 해도 높이가 안 바뀌게 */
+}
+
+/* 사진은 다 불러온 뒤에 부드럽게 (이전 일정 사진이 잠깐 보였다 바뀌는 깜빡임 방지) */
+#actionModal .detail-photo img {
+  transition: opacity .15s ease;
+}
+
 @media (max-width: 600px) {
   /* 2) 수정 창은 화면 위쪽에 붙여서, 키보드가 올라와도 위아래로 튀지 않게 */
   #editModal {
@@ -4870,7 +4897,9 @@ function openScheduleModal(it, key, skipPush){
   photo.onerror = () => { photoLink.hidden = true; };
   // 세로 사진은 더 길게 보여주기
   photo.classList.remove("portrait");
-  photo.onload = () => { photo.classList.toggle("portrait", photo.naturalHeight > photo.naturalWidth); };
+  // 새 사진을 다 불러오기 전까지는 안 보이게 (이전 사진 깜빡임 방지)
+  photo.style.opacity = "0";
+  photo.onload = () => { photo.classList.toggle("portrait", photo.naturalHeight > photo.naturalWidth); photo.style.opacity = ""; };
   photo.src = imageUrl || "";
 
   // 날짜 · 시간을 한 줄로 (예: 2026년 9월 27일 (일) · 종일)
@@ -5484,4 +5513,6 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; history.back
 
 </body>
 </html>
+
+
 
