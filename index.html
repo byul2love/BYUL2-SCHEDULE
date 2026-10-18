@@ -2398,7 +2398,7 @@ header::after {
 }
 
 body {
-  font-family: 'Gowun Dodum', 'Noto Sans KR', sans-serif;
+  font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
   color: var(--ink);
   background: var(--paper);
 }
@@ -2884,27 +2884,6 @@ header {
     radial-gradient(1.2px 1.2px at 92% 48%, rgba(255,255,255,.6), transparent 100%),
     radial-gradient(1.6px 1.6px at 14% 80%, rgba(255,255,255,.5), transparent 100%),
     radial-gradient(1.4px 1.4px at 88% 76%, rgba(255,255,255,.5), transparent 100%),
-    /* 별 추가 */
-    radial-gradient(1px 1px at 4% 45%, rgba(255,255,255,.6), transparent 100%),
-    radial-gradient(1.4px 1.4px at 11% 6%, rgba(255,255,255,.7), transparent 100%),
-    radial-gradient(1px 1px at 17% 35%, rgba(255,255,255,.5), transparent 100%),
-    radial-gradient(1.8px 1.8px at 26% 28%, rgba(255,255,255,.75), transparent 100%),
-    radial-gradient(1px 1px at 29% 88%, rgba(255,255,255,.45), transparent 100%),
-    radial-gradient(1.2px 1.2px at 38% 52%, rgba(255,255,255,.55), transparent 100%),
-    radial-gradient(1px 1px at 41% 4%, rgba(255,255,255,.7), transparent 100%),
-    radial-gradient(1.6px 1.6px at 44% 74%, rgba(255,255,255,.5), transparent 100%),
-    radial-gradient(1px 1px at 52% 22%, rgba(255,255,255,.6), transparent 100%),
-    radial-gradient(1.4px 1.4px at 55% 66%, rgba(255,255,255,.45), transparent 100%),
-    radial-gradient(1px 1px at 63% 32%, rgba(255,255,255,.65), transparent 100%),
-    radial-gradient(1.8px 1.8px at 66% 4%, rgba(255,255,255,.8), transparent 100%),
-    radial-gradient(1px 1px at 73% 84%, rgba(255,255,255,.45), transparent 100%),
-    radial-gradient(1.2px 1.2px at 76% 42%, rgba(255,255,255,.6), transparent 100%),
-    radial-gradient(1px 1px at 85% 8%, rgba(255,255,255,.7), transparent 100%),
-    radial-gradient(1.6px 1.6px at 86% 60%, rgba(255,255,255,.5), transparent 100%),
-    radial-gradient(1px 1px at 95% 30%, rgba(255,255,255,.65), transparent 100%),
-    radial-gradient(1.4px 1.4px at 97% 68%, rgba(255,255,255,.5), transparent 100%),
-    radial-gradient(1px 1px at 2% 70%, rgba(255,255,255,.5), transparent 100%),
-    radial-gradient(1.2px 1.2px at 50% 90%, rgba(255,255,255,.4), transparent 100%),
     /* 기존 밤하늘 색 */
     radial-gradient(ellipse 90% 60% at 50% 115%, rgba(162,155,254,.45), transparent 70%),
     linear-gradient(165deg, #15132B 0%, #2A2560 45%, #5A4BD6 100%);
@@ -2966,16 +2945,37 @@ header::after {
   }
 }
 
-/* 일정 글씨 살짝 더 굵게
-   (고운돋움은 굵은 버전이 없어서 글자 테두리를 아주 얇게 덧그려 두께를 올림) */
+/* 일정 글씨 살짝 더 굵게 (프리텐다드의 중간 굵기 사용) */
 .schedule,
-.list-title,
 .list-snippet,
-.upcoming-card .upcoming-title,
 .upcoming-card .upcoming-date,
-.modal-title-text,
 .modal-desc-text {
-  -webkit-text-stroke: .1px currentColor;
+  font-weight: 500;
+}
+
+/* 달력 | 목록 사이 구분선 */
+#viewTabs {
+  align-items: center;
+  gap: 0;
+}
+
+#viewTabs button {
+  padding: 0 9px;
+}
+
+#viewTabs button + button {
+  position: relative;
+}
+
+#viewTabs button + button::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: 11px;
+  background: #CFC9E6;
+  transform: translateY(-50%);
 }
 
 /* 헤더 반짝이는 별 다시 켜기 (가만히 있는 별 위에 같이) */
@@ -2985,7 +2985,8 @@ header::after {
 
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 </head>
 <body>
 
@@ -3081,17 +3082,17 @@ header::after {
       <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">🔗 링크</a>
     </div>
     <div class="modal-actions">
-      <button id="actionCopyBtn"><span class="action-label">복사</span></button>
-      <button id="actionEditBtn"><span class="action-label">수정</span></button>
-      <button id="actionDeleteBtn"><span class="action-label">삭제</span></button>
-      <button id="actionCancelBtn"><span class="action-label">취소</span></button>
+      <button id="actionCopyBtn"><span class="action-icon">📋</span><span class="action-label">복사</span></button>
+      <button id="actionEditBtn"><span class="action-icon">✏️</span><span class="action-label">수정</span></button>
+      <button id="actionDeleteBtn"><span class="action-icon">🗑️</span><span class="action-label">삭제</span></button>
+      <button id="actionCancelBtn"><span class="action-icon">✖️</span><span class="action-label">취소</span></button>
     </div>
   </div>
 </div>
 
 <div id="editModal" class="modal">
   <div class="modal-content">
-    <div class="modal-title-text" style="margin-bottom:2px;">일정 수정</div>
+    <div class="modal-title-text" style="margin-bottom:2px;">✏️ 일정 수정</div>
     <label>일정 제목</label><input id="editTitleInput" placeholder="일정 제목">
     <label>일정 내용 (선택)</label>
 <textarea id="editDescInput" placeholder="상세 내용을 입력하세요"></textarea>
@@ -3254,7 +3255,7 @@ const inActiveGroup = it => activeGroupId ? it.groupId === activeGroupId : it.id
 (() => {
   const box = document.getElementById("stars");
   if(!box) return;
-  for(let i = 0; i < 40; i++){
+  for(let i = 0; i < 26; i++){
     const s = document.createElement("span");
     const big = Math.random() < .15;
     const size = big ? 3 : (Math.random() < .5 ? 2 : 1.5);
