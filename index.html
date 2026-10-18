@@ -3510,11 +3510,11 @@ body:has(#inputBox[style*="block"]) {
 
 #actionModal #modalTitle { grid-column: 1; grid-row: 2; }
 #actionModal #modalDate { grid-column: 1; grid-row: 3; }
-/* 내용은 날짜 바로 밑(사진 왼쪽)에 붙여서 빈 여백 없애기 */
+/* 내용은 사진 밑에 가로로 꽉 차게 */
 #actionModal .detail-head #modalContent {
-  grid-column: 1;
-  grid-row: 4;
-  margin: 8px 0 0;
+  grid-column: 1 / -1;
+  grid-row: 5;
+  margin: 10px 0 0;
 }
 /* 사진이 없으면 오른쪽 칸 간격도 없앰 */
 #actionModal .detail-head:has(.detail-photo[hidden]) { column-gap: 0; }
