@@ -3305,6 +3305,57 @@ header::after {
   padding-bottom: 4px;
 }
 
+/* 사진: 증명사진처럼 작은 세로 사진을 제목 오른쪽에 */
+#actionModal .detail-photo {
+  float: right;
+  width: 78px;
+  height: 104px;
+  margin: 40px 0 8px 12px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #F2F0FA;
+  box-shadow: 0 0 0 1px #ECE9F5;
+}
+
+#actionModal .detail-photo[hidden] {
+  display: none;
+}
+
+#actionModal .detail-photo img,
+#actionModal .detail-photo img.portrait {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+}
+
+/* 머리 영역: 왼쪽 [유형 배지 … 제목 · 시간(아래쪽)] / 오른쪽 [사진]
+   → 제목·시간이 사진 아래쪽 높이에 맞춰 내려오고, 내용은 항상 사진 아래부터 */
+#actionModal .detail-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto 1fr auto auto;
+  column-gap: 12px;
+}
+
+#actionModal .detail-photo {
+  float: none;
+  grid-column: 2;
+  grid-row: 1 / span 4;
+  align-self: end;
+  margin: 40px 0 0 0;
+}
+
+#actionModal #modalType { grid-column: 1; grid-row: 1; }
+#actionModal #modalTitle { grid-column: 1; grid-row: 3; }
+#actionModal #modalDate { grid-column: 1; grid-row: 4; }
+
+/* 제목(날짜)과 내용 사이 간격 줄이기 */
+#actionModal .modal-desc-text {
+  margin-top: 10px;
+}
+
 /* 🔗 링크 아이콘 작게 (잘못 눌리는 일 줄이기) */
 .schedule .link-icon {
   font-size: 8px;
@@ -3419,9 +3470,9 @@ header::after {
 
 <div id="actionModal" class="modal">
   <div class="modal-content">
-    <div id="modalImageLink" class="detail-photo" hidden><img id="modalImage" alt="" loading="lazy" referrerpolicy="no-referrer"></div>
     <div class="modal-info">
       <div class="detail-head">
+        <div id="modalImageLink" class="detail-photo" hidden><img id="modalImage" alt="" loading="lazy" referrerpolicy="no-referrer"></div>
         <div id="modalType"></div>
         <div id="modalTitle" class="modal-title-text"></div>
         <div id="modalDate" class="modal-date-text"></div>
