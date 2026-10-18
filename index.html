@@ -3012,6 +3012,61 @@ header::after {
   transform: translateY(-50%);
 }
 
+/* 12월 22일 HAPPY DAY 리본: 주황 → 연한 핑크
+   (보라색 강조 카드 위에 올라가도 어울리게) */
+.upcoming-ribbon {
+  padding: 3px 8px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  color: #B83A6B;
+  background: #FFE1EC;
+  border-radius: 0 0 0 8px;
+}
+
+/* 생일 카드 테두리도 연한 핑크 (보라 강조 카드일 때는 테두리 없음) */
+.upcoming-card.birthday {
+  border-color: #F6C6D8;
+}
+
+.upcoming-card.birthday:first-child {
+  border: none;
+}
+
+/* 다가오는 일정: 가장 가까운 일정 강조(보라 카드) 없애기 → 모든 카드 똑같이 */
+.upcoming-card:first-child {
+  background: white;
+  border: 1px solid var(--rule);
+}
+
+.upcoming-card:first-child .upcoming-dday {
+  color: #5143C9;
+  background: #EEEBFF;
+}
+
+/* 오늘(D-DAY) 일정만 가볍게 강조: D-DAY 배지만 진한 보라 */
+.upcoming-card.is-today .upcoming-dday {
+  color: white;
+  background: #6C5CE7;
+}
+
+.upcoming-card:first-child .upcoming-title {
+  color: var(--text);
+}
+
+.upcoming-card:first-child .upcoming-date {
+  color: var(--subtext);
+}
+
+.upcoming-card:first-child .upcoming-title span:first-child {
+  background: var(--dot) !important;
+}
+
+.upcoming-card.birthday,
+.upcoming-card.birthday:first-child {
+  border: 1px solid #F6C6D8;
+}
+
 /* 헤더 반짝이는 별 다시 켜기 (가만히 있는 별 위에 같이) */
 .stars {
   display: block;
@@ -4350,8 +4405,10 @@ function renderUpcoming(){
 
     const card = document.createElement("div");
     card.className = "upcoming-card";
+    if(diffDays === 0) card.classList.add("is-today");   // 오늘 일정만 강조
 
     if(isSpecialAnniversary(it.date)){
+      card.classList.add("birthday");
       const ribbon = document.createElement("span");
       ribbon.className = "upcoming-ribbon";
       ribbon.textContent = "HAPPY DAY";
@@ -4373,6 +4430,7 @@ function renderUpcoming(){
     dot.style.borderRadius = "50%";
     dot.style.marginRight = "5px";
     dot.style.background = typeColors[it.type] || "#ccc";
+    dot.style.setProperty("--dot", typeColors[it.type] || "#ccc");
     titleRow.appendChild(dot);
 
     const titleText = document.createElement("span");
