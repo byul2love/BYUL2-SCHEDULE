@@ -3516,6 +3516,24 @@ body:has(#inputBox[style*="block"]) {
   grid-row: 5;
   margin: 10px 0 0;
 }
+/* 링크: 내용 밑에 글자 길이만큼만 작은 칩으로 */
+#actionModal .detail-head #modalLink {
+  grid-column: 1 / -1;
+  grid-row: 6;
+  justify-self: start;
+  max-width: 100%;
+  margin: 12px 0 0;
+  padding: 5px 10px;
+  gap: 5px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+#actionModal .detail-head #modalLink .act-ic {
+  width: 13px;
+  height: 13px;
+}
+#actionModal .detail-head #modalLink .link-host { flex: 0 1 auto; }
+#actionModal .detail-head #modalLink .link-arrow { font-size: 15px; }
 /* 사진이 없으면 오른쪽 칸 간격도 없앰 */
 #actionModal .detail-head:has(.detail-photo[hidden]) { column-gap: 0; }
 
@@ -3640,8 +3658,8 @@ body:has(#inputBox[style*="block"]) {
         <div id="modalTitle" class="modal-title-text"></div>
         <div id="modalDate" class="modal-date-text"></div>
         <div id="modalContent" class="modal-desc-text"></div>
+        <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none;"><svg class="act-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span id="modalLinkHost" class="link-host">링크</span><span class="link-arrow" aria-hidden="true">›</span></a>
       </div>
-      <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none;"><svg class="act-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span id="modalLinkHost" class="link-host">링크</span><span class="link-arrow" aria-hidden="true">›</span></a>
     </div>
     <div class="modal-actions">
       <button id="actionCopyBtn"><svg class="act-ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span class="action-label">복사</span></button>
@@ -5466,3 +5484,4 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; history.back
 
 </body>
 </html>
+
