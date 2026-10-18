@@ -3426,6 +3426,99 @@ header::after {
   font-size: 13px;
 }
 
+/* =========================
+   휴대폰에서 수정 창 · 입력창 흔들림 방지
+========================= */
+
+/* 1) 창이 열려 있는 동안 뒤 페이지(달력)가 같이 스크롤되지 않게 */
+body:has(.modal[style*="flex"]),
+body:has(#inputBox[style*="block"]) {
+  overflow: hidden;
+}
+
+.modal-content,
+#inputBox {
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 600px) {
+  /* 2) 수정 창은 화면 위쪽에 붙여서, 키보드가 올라와도 위아래로 튀지 않게 */
+  #editModal {
+    align-items: flex-start;
+    padding-top: 24px;
+  }
+
+  #editModal .modal-content {
+    max-height: calc(100dvh - 48px);
+  }
+
+  /* 날짜 · 시간 칸이 창 밖으로 삐져나와 좌우로 흔들리던 것 방지 */
+  .datetime-row input[type="date"],
+  .datetime-row input[type="time"] {
+    min-width: 0;
+    width: auto;
+    padding: 0 8px;
+  }
+
+  .datetime-row input[type="date"] { flex: 1.35 1 0; }
+  .datetime-row input[type="time"] { flex: 1 1 0; }
+
+  #editModal .modal-content,
+  #inputBox {
+    overflow-x: hidden;
+  }
+
+  /* 예시(안내) 글씨는 조금 작게 → 칸 안에 다 보이게 */
+  #editModal input::placeholder,
+  #editModal textarea::placeholder,
+  #inputBox input::placeholder,
+  #inputBox textarea::placeholder {
+    font-size: 13.5px;
+  }
+
+  /* 3) 입력칸 글씨 16px: 누를 때 화면이 자동 확대되며 흔들리는 것 방지 */
+  #editModal input,
+  #editModal select,
+  #editModal textarea,
+  #inputBox input,
+  #inputBox select,
+  #inputBox textarea,
+  #searchInput {
+    font-size: 16px;
+  }
+}
+
+/* 상세 창 머리:
+   [유형 배지]
+   [제목  ] [사진]
+   [날짜  ] [    ]   ← 사진은 배지 아래 줄부터 오른쪽 */
+#actionModal .detail-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto 1fr;
+  column-gap: 12px;
+  align-items: start;
+}
+
+#actionModal #modalType { grid-column: 1 / -1; grid-row: 1; }
+
+#actionModal .detail-photo {
+  grid-column: 2;
+  grid-row: 2 / span 3;
+  margin: 10px 0 0;
+}
+
+#actionModal #modalTitle { grid-column: 1; grid-row: 2; }
+#actionModal #modalDate { grid-column: 1; grid-row: 3; }
+/* 내용은 사진 밑에 가로로 꽉 차게 */
+#actionModal .detail-head #modalContent {
+  grid-column: 1 / -1;
+  grid-row: 5;
+  margin: 10px 0 0;
+}
+/* 사진이 없으면 오른쪽 칸 간격도 없앰 */
+#actionModal .detail-head:has(.detail-photo[hidden]) { column-gap: 0; }
+
 /* 🔗 링크 아이콘 작게 (잘못 눌리는 일 줄이기) */
 .schedule .link-icon {
   font-size: 8px;
@@ -3512,7 +3605,7 @@ header::after {
   <label>일정 내용 (선택)</label>
 <textarea id="descInput" placeholder="상세 내용을 입력하세요"></textarea>
   <label>링크 (선택)</label><input id="urlInput" placeholder="https://...">
-  <label>사진 주소 (선택)</label><input id="imageInput" placeholder="사진을 길게 눌러 '이미지 주소 복사' 후 붙여넣기" inputmode="url" autocomplete="off">
+  <label>사진 주소 (선택)</label><input id="imageInput" placeholder="이미지 주소 붙여넣기" inputmode="url" autocomplete="off">
 <div class="form-divider"></div>
 <label>날짜 및 시간</label>
 
@@ -3546,8 +3639,8 @@ header::after {
         <div id="modalType"></div>
         <div id="modalTitle" class="modal-title-text"></div>
         <div id="modalDate" class="modal-date-text"></div>
+        <div id="modalContent" class="modal-desc-text"></div>
       </div>
-      <div id="modalContent" class="modal-desc-text"></div>
       <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none;"><svg class="act-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span id="modalLinkHost" class="link-host">링크</span><span class="link-arrow" aria-hidden="true">›</span></a>
     </div>
     <div class="modal-actions">
@@ -3566,7 +3659,7 @@ header::after {
     <label>일정 내용 (선택)</label>
 <textarea id="editDescInput" placeholder="상세 내용을 입력하세요"></textarea>
     <label>링크 (선택)</label><input id="editUrlInput">
-    <label>사진 주소 (선택)</label><input id="editImageInput" placeholder="사진을 길게 눌러 '이미지 주소 복사' 후 붙여넣기" inputmode="url" autocomplete="off">
+    <label>사진 주소 (선택)</label><input id="editImageInput" placeholder="이미지 주소 붙여넣기" inputmode="url" autocomplete="off">
 <div class="form-divider"></div>
 <label>날짜 및 시간</label>
 
