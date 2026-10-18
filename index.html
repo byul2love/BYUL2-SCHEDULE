@@ -2380,13 +2380,613 @@ header::after {
   }
 }
 
+
+/* =========================
+   🌙 담백한 버전 (B시안)
+   - 그라데이션 → 단색 (남색 + 연보라)
+   - 반짝이 별 / 유리 효과 / 그림자 제거
+   - 얇은 테두리, 덜 둥근 모서리
+========================= */
+
+:root {
+  --navy: #23213F;
+  --moon: #C9C0FF;   /* 포인트 연보라 */
+  --paper: #F7F6FB;
+  --rule: #E3E0EE;
+  --ink: #2A2833;
+  --muted: #8A8592;
+}
+
+body {
+  font-family: 'Gowun Dodum', 'Noto Sans KR', sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+@media (min-width: 601px) {
+  body { background-color: var(--paper); }
+}
+
+/* 헤더: 남색 단색, 효과 없음 */
+header {
+  background: var(--navy);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+header::after,
+.stars {
+  display: none;
+}
+
+#siteTitle {
+  font-family: 'DM Serif Display', 'Jua', serif;
+  font-weight: 400;
+  letter-spacing: .5px;
+  text-shadow: none;
+}
+
+#siteTitle .title-line2 {
+  color: var(--moon);
+  text-shadow: none;
+}
+
+#searchBtn,
+#prevBtn,
+#nextBtn,
+#monthText,
+#typeFilter {
+  background-color: transparent;
+  border: 1px solid rgba(255,255,255,.3);
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+#prevBtn,
+#nextBtn {
+  border-radius: 8px;
+}
+
+#monthText,
+#typeFilter,
+#searchBtn {
+  border-radius: 8px;
+}
+
+#todayBtn {
+  border-radius: 8px;
+  color: var(--navy);
+  background: var(--moon);
+  box-shadow: none;
+}
+
+@media (hover: hover) {
+  #todayBtn:hover { background: #D8D1FF; }
+}
+
+/* 다가오는 일정 */
+#upcomingTitle {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.upcoming-card {
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  box-shadow: none;
+}
+
+.upcoming-card:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--navy);
+}
+
+.upcoming-card .upcoming-dday {
+  color: var(--navy);
+  background: #EEEBF8;
+  border-radius: 4px;
+}
+
+.upcoming-card:first-child {
+  background: var(--navy);
+}
+
+.upcoming-card:first-child .upcoming-dday {
+  color: var(--navy);
+  background: var(--moon);
+}
+
+.upcoming-card:first-child .upcoming-title span:first-child {
+  background: var(--moon) !important;
+}
+
+/* 달력 / 목록 탭: 밑줄 탭 */
+#viewTabs {
+  gap: 12px;
+  padding: 0;
+  background: none;
+}
+
+#viewTabs button {
+  height: 26px;
+  padding: 0 2px;
+  border-radius: 0;
+  color: var(--muted);
+  background: none;
+  border-bottom: 2px solid transparent;
+}
+
+#viewTabs button.active {
+  color: var(--navy);
+  background: none;
+  box-shadow: none;
+  border-bottom-color: var(--navy);
+}
+
+/* 달력 */
+#weekdays {
+  border-radius: 10px 10px 0 0;
+}
+
+#calendar {
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 0 0 1px var(--rule);
+}
+
+#weekdays {
+  box-shadow: 0 0 0 1px var(--rule);
+}
+
+.day.today {
+  background: #F5F3FF;
+}
+
+.day.today .day-number {
+  background: var(--navy);
+  box-shadow: none;
+}
+
+.day.selected {
+  box-shadow: inset 0 0 0 2px var(--navy);
+}
+
+.schedule,
+.schedule:hover {
+  box-shadow: none;
+}
+
+.schedule-more {
+  color: var(--navy);
+  background: #EEEBF8;
+}
+
+/* 목록 */
+.mini-cal {
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  box-shadow: none;
+}
+
+.mini-day.today .mini-num {
+  background: var(--navy);
+}
+
+.mini-day.has:hover {
+  background: #F1EFF8;
+}
+
+.list-day-head {
+  color: var(--ink);
+}
+
+.list-day-head .today-badge {
+  color: var(--navy);
+  background: var(--moon);
+  border-radius: 4px;
+}
+
+.list-item {
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--c);
+  box-shadow: none;
+}
+
+.list-item:hover {
+  box-shadow: none;
+  border-color: #C8C3DA;
+  border-left-color: var(--c);
+}
+
+.list-type {
+  border-radius: 4px;
+}
+
+.list-link {
+  background: #EEEBF8;
+}
+
+@keyframes listFlash {
+  0% { background: #ECE8FF; }
+  100% { background: transparent; }
+}
+
+/* 떠 있는 버튼: 단색, 그림자 최소 */
+#listAddBtn {
+  background: var(--navy);
+  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+}
+
+#topBtn {
+  color: var(--navy);
+  border: 1px solid var(--rule);
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+
+/* 입력창 / 팝업 */
+#inputBox {
+  border-radius: 14px 14px 0 0;
+  box-shadow: 0 -2px 12px rgba(0,0,0,.08);
+}
+
+#inputBox::before {
+  background: var(--rule);
+}
+
+#inputBox label,
+.modal-content label {
+  color: var(--muted);
+}
+
+#inputBox input,
+#inputBox select,
+#inputBox textarea,
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+  border-radius: 6px;
+  border-color: var(--rule);
+  background: white;
+  font-family: inherit;
+}
+
+#inputBox input:focus,
+#inputBox select:focus,
+#inputBox textarea:focus,
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+  border-color: var(--navy);
+  box-shadow: none;
+}
+
+#addBtn,
+#saveEditBtn {
+  border-radius: 8px;
+  background: var(--navy);
+  box-shadow: none;
+}
+
+#pasteBtn {
+  color: var(--navy);
+  background: #EEEBF8;
+  border-radius: 6px;
+}
+
+.modal {
+  backdrop-filter: none;
+  background: rgba(20,18,35,.45);
+}
+
+.modal-content {
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 6px 24px rgba(0,0,0,.15);
+}
+
+.modal-content button,
+.modal-actions button {
+  border-radius: 8px;
+}
+
+#actionEditBtn {
+  color: var(--navy);
+  background: #EEEBF8;
+  border-color: transparent;
+}
+
+.modal-date-text {
+  color: var(--navy);
+}
+
+#modalLink {
+  color: var(--navy);
+  background: #EEEBF8;
+  border-radius: 6px;
+}
+
+.type-badge {
+  border-radius: 4px;
+}
+
+.modal-actions button {
+  height: 46px;
+}
+
+.toast {
+  border-radius: 8px;
+  background: var(--navy);
+}
+
+
+/* =========================
+   색만 기존(tab.html)과 같게
+   - 모양(테두리, 모서리, 효과 없음)은 담백한 버전 그대로
+========================= */
+
+:root {
+  --paper: #F6F4FF;
+  --rule: #E8E4FA;
+  --soft: #F2F0FF;
+}
+
+body,
+.day.other-month {
+  background-color: var(--paper);
+}
+
+.day.other-month {
+  background: #FBFAFE;
+}
+
+/* 헤더: 기존 밤하늘 그라데이션 색 */
+header {
+  background:
+    radial-gradient(ellipse 90% 60% at 50% 115%, rgba(162,155,254,.45), transparent 70%),
+    linear-gradient(165deg, #15132B 0%, #2A2560 45%, #5A4BD6 100%);
+}
+
+#siteTitle .title-line2 {
+  color: #FFE3A3;
+}
+
+#todayBtn {
+  color: #3A2F7A;
+  background: white;
+}
+
+@media (hover: hover) {
+  #todayBtn:hover { background: #F1EFFF; }
+}
+
+/* 다가오는 일정 */
+.upcoming-card:hover {
+  border-color: var(--purple-light);
+}
+
+.upcoming-card .upcoming-dday {
+  color: #5143C9;
+  background: #EEEBFF;
+}
+
+.upcoming-card:first-child {
+  background: linear-gradient(135deg, #6C5CE7, #9B8CFF);
+}
+
+.upcoming-card:first-child .upcoming-dday {
+  color: #4B3FB8;
+  background: white;
+}
+
+.upcoming-card:first-child .upcoming-title span:first-child {
+  background: white !important;
+}
+
+/* 탭 */
+#viewTabs button.active {
+  color: var(--purple);
+  border-bottom-color: var(--purple);
+}
+
+/* 달력 */
+.day.today {
+  background: #F8F6FF;
+}
+
+.day.today .day-number,
+.mini-day.today .mini-num {
+  background: linear-gradient(135deg, #6C5CE7, #A29BFE);
+}
+
+.day.selected {
+  box-shadow: inset 0 0 0 2px var(--purple);
+}
+
+.schedule-more,
+.list-link,
+#pasteBtn,
+#actionEditBtn,
+#modalLink {
+  color: var(--purple);
+  background: var(--soft);
+}
+
+/* 목록 */
+.mini-day.has:hover {
+  background: var(--soft);
+}
+
+.list-day-head {
+  color: var(--purple-dark);
+}
+
+.list-day-head .today-badge {
+  color: white;
+  background: var(--purple);
+}
+
+.list-item:hover {
+  border-color: #D6D0F2;
+  border-left-color: var(--c);
+}
+
+@keyframes listFlash {
+  0% { background: #EEEBFF; }
+  100% { background: transparent; }
+}
+
+/* 버튼 */
+#listAddBtn,
+#addBtn,
+#saveEditBtn {
+  background: linear-gradient(135deg, #6C5CE7, #9B8CFF);
+}
+
+#topBtn {
+  color: var(--purple);
+}
+
+#inputBox input:focus,
+#inputBox select:focus,
+#inputBox textarea:focus,
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+  border-color: var(--purple-light);
+}
+
+.modal-date-text {
+  color: var(--purple);
+}
+
+.toast {
+  background: rgba(45,42,58,.92);
+}
+
+
+/* =========================
+   헤더 꾸미기: 가만히 있는 별 + 아래쪽 구름 테두리
+========================= */
+
+header {
+  padding-bottom: 38px;
+  border-radius: 0;
+  background:
+    /* 작은 별 (움직이지 않음) */
+    radial-gradient(1.6px 1.6px at 8% 18%, rgba(255,255,255,.9), transparent 100%),
+    radial-gradient(1.2px 1.2px at 21% 62%, rgba(255,255,255,.6), transparent 100%),
+    radial-gradient(2px 2px at 33% 12%, rgba(255,255,255,.85), transparent 100%),
+    radial-gradient(1.2px 1.2px at 47% 40%, rgba(255,255,255,.5), transparent 100%),
+    radial-gradient(1.6px 1.6px at 58% 9%, rgba(255,255,255,.8), transparent 100%),
+    radial-gradient(1.2px 1.2px at 69% 55%, rgba(255,255,255,.55), transparent 100%),
+    radial-gradient(2px 2px at 81% 24%, rgba(255,255,255,.85), transparent 100%),
+    radial-gradient(1.2px 1.2px at 92% 48%, rgba(255,255,255,.6), transparent 100%),
+    radial-gradient(1.6px 1.6px at 14% 80%, rgba(255,255,255,.5), transparent 100%),
+    radial-gradient(1.4px 1.4px at 88% 76%, rgba(255,255,255,.5), transparent 100%),
+    /* 별 추가 */
+    radial-gradient(1px 1px at 4% 45%, rgba(255,255,255,.6), transparent 100%),
+    radial-gradient(1.4px 1.4px at 11% 6%, rgba(255,255,255,.7), transparent 100%),
+    radial-gradient(1px 1px at 17% 35%, rgba(255,255,255,.5), transparent 100%),
+    radial-gradient(1.8px 1.8px at 26% 28%, rgba(255,255,255,.75), transparent 100%),
+    radial-gradient(1px 1px at 29% 88%, rgba(255,255,255,.45), transparent 100%),
+    radial-gradient(1.2px 1.2px at 38% 52%, rgba(255,255,255,.55), transparent 100%),
+    radial-gradient(1px 1px at 41% 4%, rgba(255,255,255,.7), transparent 100%),
+    radial-gradient(1.6px 1.6px at 44% 74%, rgba(255,255,255,.5), transparent 100%),
+    radial-gradient(1px 1px at 52% 22%, rgba(255,255,255,.6), transparent 100%),
+    radial-gradient(1.4px 1.4px at 55% 66%, rgba(255,255,255,.45), transparent 100%),
+    radial-gradient(1px 1px at 63% 32%, rgba(255,255,255,.65), transparent 100%),
+    radial-gradient(1.8px 1.8px at 66% 4%, rgba(255,255,255,.8), transparent 100%),
+    radial-gradient(1px 1px at 73% 84%, rgba(255,255,255,.45), transparent 100%),
+    radial-gradient(1.2px 1.2px at 76% 42%, rgba(255,255,255,.6), transparent 100%),
+    radial-gradient(1px 1px at 85% 8%, rgba(255,255,255,.7), transparent 100%),
+    radial-gradient(1.6px 1.6px at 86% 60%, rgba(255,255,255,.5), transparent 100%),
+    radial-gradient(1px 1px at 95% 30%, rgba(255,255,255,.65), transparent 100%),
+    radial-gradient(1.4px 1.4px at 97% 68%, rgba(255,255,255,.5), transparent 100%),
+    radial-gradient(1px 1px at 2% 70%, rgba(255,255,255,.5), transparent 100%),
+    radial-gradient(1.2px 1.2px at 50% 90%, rgba(255,255,255,.4), transparent 100%),
+    /* 기존 밤하늘 색 */
+    radial-gradient(ellipse 90% 60% at 50% 115%, rgba(162,155,254,.45), transparent 70%),
+    linear-gradient(165deg, #15132B 0%, #2A2560 45%, #5A4BD6 100%);
+}
+
+/* 아래쪽 구름: 뒤쪽 반투명 한 겹 + 앞쪽 배경색 한 겹 */
+header::before,
+header::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 26px;
+  pointer-events: none;
+  background-repeat: repeat-x;
+  background-position: bottom left;
+  animation: none;
+  opacity: 1;
+  top: auto;
+  width: auto;
+  letter-spacing: 0;
+}
+
+header::before {
+  bottom: 5px;
+  background-size: 150px 26px;
+  background-position: 40px bottom;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 26'%3E%3Cpath d='M0 26V16Q12 4 26 13Q36 1 52 11Q64 3 76 12Q90 2 104 12Q118 5 128 14Q140 7 150 16V26Z' fill='%23F6F4FF' fill-opacity='.28'/%3E%3C/svg%3E");
+}
+
+header::after {
+  background-size: 120px 22px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 22'%3E%3Cpath d='M0 22V14Q10 5 21 12Q30 2 44 10Q55 3 66 11Q78 3 90 11Q102 5 110 12Q116 9 120 14V22Z' fill='%23F6F4FF'/%3E%3C/svg%3E");
+}
+
+/* 오른쪽 위 은은한 초승달 */
+#siteTitle::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  right: 6%;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  box-shadow: inset -9px 6px 0 0 rgba(255,227,163,.22);
+  transform: rotate(-20deg);
+  pointer-events: none;
+}
+
+@media (max-width: 600px) {
+  header {
+    padding-bottom: 34px;
+  }
+
+  #siteTitle::before {
+    display: none;
+  }
+}
+
+/* 일정 글씨 살짝 더 굵게
+   (고운돋움은 굵은 버전이 없어서 글자 테두리를 아주 얇게 덧그려 두께를 올림) */
+.schedule,
+.list-title,
+.list-snippet,
+.upcoming-card .upcoming-title,
+.upcoming-card .upcoming-date,
+.modal-title-text,
+.modal-desc-text {
+  -webkit-text-stroke: .1px currentColor;
+}
+
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Gowun+Dodum&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <header>
   <div class="stars" id="stars" aria-hidden="true"></div>
-  <button id="searchBtn">🔍 검색</button>
+  <button id="searchBtn">검색</button>
   <div id="siteTitle"><span class="title-line title-line1">🌙MOONBYUL</span><span class="title-line title-line2"> SCHEDULE🌟</span></div>
 <div id="navControls">
 
@@ -2414,10 +3014,10 @@ header::after {
 
 <div id="upcomingSection">
   <div class="upcoming-head">
-    <div id="upcomingTitle">✨ 다가오는 일정</div>
+    <div id="upcomingTitle">다가오는 일정</div>
     <div id="viewTabs" role="tablist" aria-label="보기 방식">
-      <button data-view="calendar" class="active" role="tab">📅 달력</button>
-      <button data-view="list" role="tab">📋 목록</button>
+      <button data-view="calendar" class="active" role="tab">달력</button>
+      <button data-view="list" role="tab">목록</button>
     </div>
   </div>
   <div id="upcomingList"></div>
@@ -2476,17 +3076,17 @@ header::after {
       <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">🔗 링크</a>
     </div>
     <div class="modal-actions">
-      <button id="actionCopyBtn"><span class="action-icon">📋</span><span class="action-label">복사</span></button>
-      <button id="actionEditBtn"><span class="action-icon">✏️</span><span class="action-label">수정</span></button>
-      <button id="actionDeleteBtn"><span class="action-icon">🗑️</span><span class="action-label">삭제</span></button>
-      <button id="actionCancelBtn"><span class="action-icon">✖️</span><span class="action-label">취소</span></button>
+      <button id="actionCopyBtn"><span class="action-label">복사</span></button>
+      <button id="actionEditBtn"><span class="action-label">수정</span></button>
+      <button id="actionDeleteBtn"><span class="action-label">삭제</span></button>
+      <button id="actionCancelBtn"><span class="action-label">취소</span></button>
     </div>
   </div>
 </div>
 
 <div id="editModal" class="modal">
   <div class="modal-content">
-    <div class="modal-title-text" style="margin-bottom:2px;">✏️ 일정 수정</div>
+    <div class="modal-title-text" style="margin-bottom:2px;">일정 수정</div>
     <label>일정 제목</label><input id="editTitleInput" placeholder="일정 제목">
     <label>일정 내용 (선택)</label>
 <textarea id="editDescInput" placeholder="상세 내용을 입력하세요"></textarea>
