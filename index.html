@@ -3067,6 +3067,186 @@ header::after {
   border: 1px solid #F6C6D8;
 }
 
+/* =========================
+   일정 누르면 뜨는 상세 창 새 디자인
+========================= */
+
+#actionModal .modal-content {
+  position: relative;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+#actionModal .modal-info {
+  padding: 0;
+  margin: 0;
+  border-bottom: none;
+}
+
+/* 제목 부분: 왼쪽에 얇은 유형 색 띠만 (목록 일정과 같은 느낌) */
+#actionModal .detail-head {
+  position: relative;
+  padding: 20px 20px 4px 24px;
+}
+
+#actionModal .detail-head::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 20px;
+  bottom: 4px;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--c, #EEEBFF);
+}
+
+/* 내용 · 링크 영역 */
+#actionModal #modalContent,
+#actionModal #modalLink {
+  margin-left: 24px;
+  margin-right: 20px;
+}
+
+#actionModal .type-badge {
+  margin-bottom: 0;
+  padding: 4px 11px;
+  border-radius: 12px;
+}
+
+#actionModal .modal-title-text {
+  margin: 10px 0 4px;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+/* 날짜 · 시간: 상자 없이 한 줄 */
+#actionModal .modal-date-text {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: #8B8798;
+}
+
+/* 내용 */
+#actionModal .modal-desc-text {
+  margin-top: 16px;
+  margin-bottom: 0;
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+
+#actionModal #modalLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 12px 20px 0;
+}
+
+/* 버튼: 복사 · 삭제 · 수정(강조) 가로로, 닫기는 오른쪽 위 ✕ */
+#actionModal .modal-actions {
+  padding: 16px 18px 18px;
+  gap: 8px;
+}
+
+/* 버튼 세 개 모두 같은 연회색, 글자 색으로만 구분 */
+#actionModal .modal-actions button {
+  height: 44px;
+  flex: 1;
+  flex-direction: row;
+  gap: 5px;
+  border-radius: 11px;
+  border: none;
+  color: #4A4560;
+  background: #F4F3F8;
+}
+
+#actionModal .action-icon {
+  font-size: 14px;
+}
+
+#actionModal .action-label {
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+#actionCopyBtn { order: 1; }
+#actionDeleteBtn { order: 2; }
+
+#actionModal #actionEditBtn {
+  order: 3;
+  color: #6C5CE7;
+}
+
+#actionModal #actionDeleteBtn {
+  color: #E35D6A;
+}
+
+#actionModal #actionCancelBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 30px;
+  height: 30px;
+  min-width: 0;
+  flex: none;
+  padding: 0;
+  border-radius: 50%;
+  border: none;
+  background: #F4F3F7;
+}
+
+#actionModal #actionCancelBtn .action-label {
+  display: none;
+}
+
+/* 내용과 버튼 사이 구분선 */
+#actionModal .modal-actions {
+  margin: 16px 20px 0;
+  padding: 14px 0 18px;
+  border-top: 1px solid #EFEDF5;
+}
+
+/* 버튼 배치: 복사 · 삭제 · 수정 모두 같은 크기 (아이콘 + 글자) */
+#actionModal #actionCopyBtn,
+#actionModal #actionDeleteBtn,
+#actionModal #actionEditBtn {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* 복사 · 수정 · 삭제 · 닫기 선 아이콘 (글자 색을 따라감) */
+.act-ic {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+#actionModal #actionCancelBtn {
+  color: #6B6680;
+}
+
+#actionModal #actionCancelBtn .act-ic {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.2;
+}
+
+/* 휴대폰에서도 가운데 팝업으로 (살짝 커지며 등장) */
+#actionModal .modal-content {
+  animation: popIn .18s ease;
+}
+
+@keyframes popIn {
+  from { transform: scale(.96); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
 /* 헤더 반짝이는 별 다시 켜기 (가만히 있는 별 위에 같이) */
 .stars {
   display: block;
@@ -3162,17 +3342,19 @@ header::after {
 <div id="actionModal" class="modal">
   <div class="modal-content">
     <div class="modal-info">
-      <div id="modalType"></div>
-      <div id="modalTitle" class="modal-title-text"></div>
-      <div id="modalDate" class="modal-date-text"></div>
+      <div class="detail-head">
+        <div id="modalType"></div>
+        <div id="modalTitle" class="modal-title-text"></div>
+        <div id="modalDate" class="modal-date-text"></div>
+      </div>
       <div id="modalContent" class="modal-desc-text"></div>
       <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">🔗 링크</a>
     </div>
     <div class="modal-actions">
-      <button id="actionCopyBtn"><span class="action-icon">📋</span><span class="action-label">복사</span></button>
-      <button id="actionEditBtn"><span class="action-icon">✏️</span><span class="action-label">수정</span></button>
-      <button id="actionDeleteBtn"><span class="action-icon">🗑️</span><span class="action-label">삭제</span></button>
-      <button id="actionCancelBtn"><span class="action-icon">✖️</span><span class="action-label">취소</span></button>
+      <button id="actionCopyBtn"><svg class="act-ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span class="action-label">복사</span></button>
+      <button id="actionEditBtn"><svg class="act-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg><span class="action-label">수정</span></button>
+      <button id="actionDeleteBtn"><svg class="act-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg><span class="action-label">삭제</span></button>
+      <button id="actionCancelBtn" aria-label="닫기"><svg class="act-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span class="action-label">취소</span></button>
     </div>
   </div>
 </div>
@@ -4346,20 +4528,25 @@ function openScheduleModal(it, key, skipPush){
   activeItemId = it.id;
 
   modalTitle.textContent = it.title;
-  modalContent.textContent = it.content || "(내용 없음)";
+  // 내용이 없으면 내용 칸을 아예 숨김
+  modalContent.textContent = it.content || "";
+  modalContent.style.display = it.content ? "" : "none";
   modalType.innerHTML = "";
   const typeBadge = document.createElement("span");
   typeBadge.className = "type-badge";
   typeBadge.textContent = it.type;
   typeBadge.style.background = typeColors[it.type] || "#e0e7ff";
   modalType.appendChild(typeBadge);
+  // 창 맨 위 색 띠를 유형 색으로
+  actionModal.querySelector(".modal-content").style.setProperty("--c", typeColors[it.type] || "#e0e7ff");
   const itemUrl = safeUrl(it.url);
-  modalLink.style.display = itemUrl ? "block" : "none";
+  modalLink.style.display = itemUrl ? "inline-flex" : "none";
   modalLink.href = itemUrl || "#";
-  modalDate.textContent = it.time
-    ? `${it.date} ${formatTimeKorean(it.time)}`
-    : it.date;
 
+  // 날짜 · 시간을 한 줄로 (예: 2026년 9월 27일 (일) · 종일)
+  const [yy, mm, dd] = it.date.split("-").map(Number);
+  const wd = ["일","월","화","수","목","금","토"][new Date(yy, mm-1, dd).getDay()];
+  modalDate.textContent = `${yy}년 ${mm}월 ${dd}일 (${wd}) · ${it.time ? formatTimeKorean(it.time) : "종일"}`;
   actionModal.style.display = "flex";
   if(!skipPush) pushModalState();
 }
