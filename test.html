@@ -3345,7 +3345,7 @@ header::after {
   grid-column: 2;
   grid-row: 1 / span 5;
   align-self: start;
-  margin: 0 32px 0 0;   /* 오른쪽 위 ✕ 버튼 왼쪽에 나란히 */
+  margin: 0;
 }
 
 #actionModal .modal-date-text .d-line {
@@ -3390,6 +3390,40 @@ header::after {
   font-size: 18px;
   line-height: 1;
   color: #A29BFE;
+}
+
+/* ✕ 버튼 없애고 → 아래 버튼 줄 맨 끝에 [취소] (복사 · 수정 · 삭제 · 취소, 모두 같은 크기) */
+#actionModal #actionCancelBtn {
+  position: static;
+  order: 4;
+  flex: 1 1 0;
+  width: auto;
+  height: 44px;
+  min-width: 0;
+  padding: 0 2px;
+  border-radius: 11px;
+  box-shadow: none;
+  color: #4A4560;
+  background: #F4F3F8;
+}
+
+#actionModal #actionCancelBtn .action-label {
+  display: inline;
+}
+
+#actionModal #actionCancelBtn .act-ic {
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.8;
+}
+
+/* 버튼이 4개가 되니 글자 살짝 작게 */
+#actionModal .modal-actions {
+  gap: 6px;
+}
+
+#actionModal .modal-actions .action-label {
+  font-size: 13px;
 }
 
 /* 🔗 링크 아이콘 작게 (잘못 눌리는 일 줄이기) */
