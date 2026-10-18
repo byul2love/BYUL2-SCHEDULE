@@ -1568,11 +1568,754 @@ button:active {
   flex: 1;
 }
 
+
+/* =========================
+   달력 / 목록 전환 탭
+========================= */
+
+#viewTabs {
+  display: flex;
+  gap: 4px;
+  margin: 10px 16px 10px;
+  padding: 4px;
+  border-radius: 14px;
+  background: #ECE9FB;
+}
+
+#viewTabs button {
+  flex: 1;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--subtext);
+  background: transparent;
+}
+
+#viewTabs button.active {
+  color: var(--purple);
+  background: white;
+  box-shadow: 0 2px 8px rgba(60,50,120,.12);
+}
+
+#listView {
+  display: none;
+  padding: 0 12px 120px;
+}
+
+body.list-mode #weekdays,
+body.list-mode #calendar {
+  display: none;
+}
+
+body.list-mode #listView {
+  display: block;
+}
+
+/* 목록 위 작은 달력 */
+.mini-cal {
+  padding: 10px 6px 8px;
+  margin-bottom: 4px;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 3px 12px rgba(60,50,120,.06);
+}
+
+.mini-wd,
+.mini-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.mini-wd {
+  margin-bottom: 4px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #777287;
+}
+
+.mini-wd .sun { color: #FF6B81; }
+.mini-wd .sat { color: #6C7CFF; }
+
+.mini-grid {
+  gap: 2px;
+}
+
+.mini-day {
+  height: 44px;
+  padding: 4px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 10px;
+  background: none;
+  font-family: inherit;
+}
+
+.mini-day:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.mini-day:disabled:active {
+  transform: none;
+}
+
+@media (hover: hover) {
+  .mini-day.has:hover {
+    background: #F6F4FF;
+  }
+}
+
+.mini-num {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.mini-day.sun .mini-num { color: #FF6B81; }
+.mini-day.sat .mini-num { color: #6C7CFF; }
+
+.mini-day.today .mini-num {
+  color: white;
+  background: linear-gradient(135deg, #6C5CE7, #A29BFE);
+}
+
+.mini-star {
+  position: absolute;
+  top: -5px;
+  right: -6px;
+  font-size: 9px;
+  color: #FFA45B;
+}
+
+.mini-dots {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 7px;
+  margin-top: 3px;
+}
+
+.mini-dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.12);
+}
+
+.mini-dots b {
+  font-size: 9px;
+  line-height: 1;
+  color: var(--subtext);
+}
+
+/* 작은 달력에서 누른 날짜 묶음을 잠깐 강조 */
+@keyframes listFlash {
+  0% { background: #EEEBFF; }
+  100% { background: transparent; }
+}
+
+.list-day.flash {
+  border-radius: 14px;
+  animation: listFlash 1.2s ease;
+}
+
+.list-day {
+  margin-top: 16px;
+}
+
+.list-day:first-child {
+  margin-top: 4px;
+}
+
+.list-day-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px 7px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--purple-dark);
+}
+
+.list-day-head .wd {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--subtext);
+}
+
+.list-day-head.sun { color: #FF6B81; }
+.list-day-head.sat { color: #6C7CFF; }
+
+.list-day-head .today-badge {
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 10.5px;
+  color: white;
+  background: var(--purple);
+}
+
+.list-day-head .star {
+  color: #FFA45B;
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border-left: 4px solid var(--c);
+  background: white;
+  box-shadow: 0 2px 8px rgba(50,40,100,.06);
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .list-item:hover {
+    box-shadow: 0 5px 14px rgba(50,40,100,.12);
+  }
+}
+
+.list-left {
+  flex: none;
+  width: 64px;
+  text-align: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--subtext);
+}
+
+.list-type {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto 4px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #3A3240;
+  overflow-wrap: anywhere;
+  background: var(--c);
+}
+
+/* 작은 달력 아래 유형 범례 (이번 달에 있는 유형만) */
+.mini-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 8px;
+  padding-top: 9px;
+  border-top: 1px dashed var(--line);
+}
+
+/* "● 콘서트" 처럼 점 + 글자 */
+.mini-legend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--subtext);
+}
+
+.mini-legend-chip::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.12);
+}
+
+.list-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.list-title {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.list-snippet {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--subtext);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.list-link {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  text-decoration: none;
+  background: #F2F0FF;
+}
+
+.list-empty {
+  padding: 50px 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--subtext);
+}
+
+@media (max-width: 600px) {
+  #viewTabs {
+    margin: 10px 12px 8px;
+  }
+
+  #listView {
+    padding: 0 8px 100px;
+  }
+}
+
+
+/* =========================
+   ✨ 디자인 개선 (위 스타일을 덮어씀)
+========================= */
+
+/* 헤더: 밤하늘 그라데이션 + 반짝이는 별 */
+header {
+  padding: 24px 16px 20px;
+  border-radius: 0 0 12px 12px;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% 115%, rgba(162,155,254,.45), transparent 70%),
+    linear-gradient(165deg, #15132B 0%, #2A2560 45%, #5A4BD6 100%);
+  box-shadow: 0 10px 30px rgba(30,25,80,.28);
+}
+
+/* 예전 글자 별(✦ · ✧)은 숨기고 진짜 별로 대체 */
+header::before {
+  content: none;
+}
+
+.stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.stars span {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  opacity: .2;
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+.stars span.big {
+  box-shadow: 0 0 6px 1px rgba(255,255,255,.7);
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: .15; transform: scale(.8); }
+  50% { opacity: .95; transform: scale(1.15); }
+}
+
+/* 아래쪽에 은은한 지평선 빛줄기 */
+header::after {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,227,163,.6), transparent);
+  pointer-events: none;
+}
+
+/* 제목: 빛 번짐 없이 은은한 그림자만 */
+#siteTitle {
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 6px rgba(10,8,30,.3);
+}
+
+#siteTitle .title-line2 {
+  color: #FFE3A3;
+  text-shadow: 0 2px 6px rgba(10,8,30,.3);
+}
+
+#searchBtn {
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.22);
+  backdrop-filter: blur(6px);
+}
+
+#prevBtn,
+#nextBtn,
+#monthText,
+#typeFilter {
+  background-color: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.2);
+  backdrop-filter: blur(6px);
+}
+
+#todayBtn {
+  color: #3A2F7A;
+  box-shadow: 0 4px 12px rgba(0,0,0,.18);
+}
+
+#navControls {
+  gap: 6px;
+}
+
+#prevBtn,
+#nextBtn {
+  border-radius: 50%;
+  font-size: 20px;
+  line-height: 1;
+}
+
+#monthText {
+  border: 1px solid rgba(255,255,255,.16);
+  white-space: nowrap;
+}
+
+#todayBtn {
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+#prevBtn,
+#nextBtn,
+#monthText,
+#todayBtn {
+  flex-shrink: 0;
+}
+
+#typeFilter {
+  -webkit-appearance: none;
+  appearance: none;
+  max-width: 96px;
+  padding: 0 24px 0 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.16);
+  font-weight: 700;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background: rgba(255,255,255,.14) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='white' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 9px center / 9px;
+}
+
+/* 다가오는 일정 */
+#upcomingSection {
+  padding: 16px 16px 2px;
+  background: transparent;
+  border-bottom: none;
+}
+
+#upcomingTitle {
+  font-size: 13px;
+  color: var(--subtext);
+  margin-bottom: 8px;
+}
+
+#upcomingList {
+  gap: 8px;
+  padding: 2px 2px 10px;
+  scrollbar-width: none;
+}
+
+#upcomingList::-webkit-scrollbar {
+  display: none;
+}
+
+.upcoming-card {
+  flex: 0 0 auto;
+  width: 152px;
+  min-width: 0;
+  max-width: none;
+  padding: 9px 11px;
+  border-radius: 14px;
+  background: white;
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 14px rgba(60,50,120,.06);
+}
+
+.upcoming-card .upcoming-dday {
+  padding: 1px 7px;
+  margin-bottom: 5px;
+  font-size: 10.5px;
+  color: #5143C9;
+  background: #EEEBFF;
+  border-color: transparent;
+}
+
+.upcoming-card .upcoming-title {
+  font-size: 12.5px;
+  margin-bottom: 2px;
+}
+
+.upcoming-card .upcoming-date {
+  font-size: 11px;
+}
+
+/* 가장 가까운 일정은 보라색 카드로 강조 */
+.upcoming-card:first-child {
+  border: none;
+  background: linear-gradient(135deg, #6C5CE7, #9B8CFF);
+}
+
+.upcoming-card:first-child .upcoming-dday {
+  color: #4B3FB8;
+  background: white;
+}
+
+.upcoming-card:first-child .upcoming-title {
+  color: white;
+}
+
+.upcoming-card:first-child .upcoming-title span:first-child {
+  background: white !important;
+}
+
+.upcoming-card:first-child .upcoming-date {
+  color: rgba(255,255,255,.85);
+}
+
+.upcoming-ribbon {
+  font-size: 9px;
+  padding: 3px 8px;
+}
+
+/* 탭: 다가오는 일정 제목 줄 오른쪽에 작은 토글로 */
+.upcoming-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.upcoming-head #upcomingTitle {
+  margin-bottom: 0;
+}
+
+#viewTabs {
+  flex: none;
+  gap: 2px;
+  margin: 0;
+  padding: 3px;
+  border-radius: 12px;
+}
+
+#viewTabs button {
+  flex: none;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 9px;
+  font-size: 11.5px;
+}
+
+/* 달력/목록 영역 위 여백 */
+#weekdays,
+#listView {
+  margin-top: 4px;
+}
+
+/* 달력: 둥근 카드 */
+#weekdays {
+  margin: 0 12px;
+  border: none;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 0 0 1px var(--line);
+}
+
+.weekday {
+  padding: 11px 0 9px;
+  font-size: 12px;
+}
+
+#calendar {
+  gap: 1px;
+  margin: 1px 12px 450px;
+  border: none;
+  border-radius: 0 0 20px 20px;
+  overflow: hidden;
+  background: var(--line);
+  box-shadow: 0 0 0 1px var(--line), 0 10px 30px rgba(60,50,120,.06);
+}
+
+.day {
+  border: none;
+}
+
+.day.other-month {
+  background: #FBFAFE;
+}
+
+.day.today {
+  background: #F8F6FF;
+}
+
+.day.selected {
+  box-shadow: inset 0 0 0 2px var(--purple);
+}
+
+#calendar .day:nth-child(7n+1) .day-number { color: #FF6B81; }
+#calendar .day:nth-child(7n) .day-number { color: #6C7CFF; }
+#calendar .day.today .day-number { color: white; }
+
+/* 입력창 / 팝업 */
+#inputBox {
+  border-radius: 24px 24px 0 0;
+  padding: 14px 18px 26px;
+}
+
+#inputBox input,
+#inputBox select,
+.modal-content input,
+.modal-content select {
+  height: 42px;
+  border-radius: 11px;
+  font-size: 14px;
+}
+
+#inputBox textarea,
+.modal-content textarea {
+  border-radius: 11px;
+  font-size: 14px;
+}
+
+#addBtn,
+#saveEditBtn {
+  height: 46px;
+  border-radius: 13px;
+  font-size: 15px;
+}
+
+.modal-content {
+  padding: 24px;
+  border-radius: 22px;
+}
+
+.modal-content button {
+  border-radius: 12px;
+}
+
+.modal-title-text {
+  font-size: 19px;
+}
+
+.modal-date-text {
+  font-size: 13px;
+}
+
+.modal-desc-text {
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+#modalLink {
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.modal-actions button {
+  height: 60px;
+  border-radius: 13px;
+}
+
+/* 휴대폰 */
+@media (max-width: 600px) {
+  header {
+    padding: 20px 10px 18px;
+  }
+
+  #navControls {
+    gap: 4px;
+  }
+
+  #typeFilter {
+    flex-shrink: 1;
+    width: auto;
+    min-width: 54px;
+    max-width: 70px;
+    height: 32px;
+    padding: 0 18px 0 9px;
+    font-size: 11.5px;
+    background-position: right 6px center;
+  }
+
+  #prevBtn,
+  #nextBtn {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+  }
+
+  #monthText {
+    min-width: 0;
+    padding: 6px 10px;
+    font-size: 13.5px;
+  }
+
+  #todayBtn {
+    height: 32px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+
+  #upcomingSection {
+    padding: 14px 8px 2px;
+  }
+
+  #viewTabs button {
+    padding: 0 8px;
+  }
+
+  #weekdays {
+    margin: 0 6px;
+  }
+
+  #calendar {
+    margin: 1px 6px 270px;
+  }
+
+  #listView {
+    padding: 0 6px 100px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stars span {
+    animation: none;
+    opacity: .5;
+  }
+}
+
 </style>
 </head>
 <body>
 
 <header>
+  <div class="stars" id="stars" aria-hidden="true"></div>
   <button id="searchBtn">🔍 검색</button>
   <div id="siteTitle"><span class="title-line title-line1">🌙MOONBYUL</span><span class="title-line title-line2"> SCHEDULE🌟</span></div>
 <div id="navControls">
@@ -1591,21 +2334,28 @@ button:active {
     <option value="유튜브">유튜브</option>
   </select>
 
-  <button id="prevBtn">◀</button>
+  <button id="prevBtn" aria-label="이전 달">‹</button>
   <span id="monthText"></span>
-  <button id="nextBtn">▶</button>
+  <button id="nextBtn" aria-label="다음 달">›</button>
   <button id="todayBtn">Today</button>
 
 </div>
 </header>
 
 <div id="upcomingSection">
-  <div id="upcomingTitle">✨ 다가오는 일정</div>
+  <div class="upcoming-head">
+    <div id="upcomingTitle">✨ 다가오는 일정</div>
+    <div id="viewTabs" role="tablist" aria-label="보기 방식">
+      <button data-view="calendar" class="active" role="tab">📅 달력</button>
+      <button data-view="list" role="tab">📋 목록</button>
+    </div>
+  </div>
   <div id="upcomingList"></div>
 </div>
 
 <div id="weekdays"></div>
 <div id="calendar"></div>
+<div id="listView"></div>
 
 <div id="inputBox">
   <div class="input-header">
@@ -1819,6 +2569,33 @@ firestoreData={},
 selectedTypeFilter="전체";
 let expandedDates = {};
 let copiedSchedule = null;
+let activeItemId = null;
+
+// 지금 열린 일정과 같은 묶음인지 확인
+// groupId가 없는 옛날 일정은 자기 자신만 해당 (다른 일정이 같이 지워지지 않게)
+const inActiveGroup = it => activeGroupId ? it.groupId === activeGroupId : it.id === activeItemId;
+
+// 헤더에 반짝이는 별 뿌리기
+(() => {
+  const box = document.getElementById("stars");
+  if(!box) return;
+  for(let i = 0; i < 40; i++){
+    const s = document.createElement("span");
+    const big = Math.random() < .15;
+    const size = big ? 3 : (Math.random() < .5 ? 2 : 1.5);
+    if(big) s.className = "big";
+    s.style.width = s.style.height = `${size}px`;
+    s.style.left = `${Math.random() * 100}%`;
+    s.style.top = `${Math.random() * 100}%`;
+    s.style.animationDelay = `${Math.random() * 4}s`;
+    s.style.animationDuration = `${2.5 + Math.random() * 3}s`;
+    box.appendChild(s);
+  }
+})();
+
+// 달력 / 목록 보기 (마지막으로 고른 보기를 기억)
+let viewMode = "calendar";
+try { if(localStorage.getItem("mb-view") === "list") viewMode = "list"; } catch {}
 
 /******** 헬퍼 ********/
 const gid=()=>Math.random().toString(36).slice(2);
@@ -2153,7 +2930,243 @@ timeInput.value = "";
     void calendar.offsetWidth;
     calendar.classList.add(direction==="next" ? "slide-next" : "slide-prev");
   }
+
+  renderList();
 }
+
+/******** 목록 보기 ********/
+const listView = document.getElementById("listView");
+const viewTabs = document.getElementById("viewTabs");
+
+function setViewMode(mode){
+  viewMode = mode;
+  document.body.classList.toggle("list-mode", mode === "list");
+  viewTabs.querySelectorAll("button").forEach(b => {
+    const on = b.dataset.view === mode;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-selected", on);
+  });
+  try { localStorage.setItem("mb-view", mode); } catch {}
+  renderList();
+}
+
+viewTabs.querySelectorAll("button").forEach(b => {
+  b.onclick = () => setViewMode(b.dataset.view);
+});
+
+// 목록 탭 유형 색 (달력 탭과 같은 원래 파스텔 색)
+const listColors = typeColors;
+const listColorOf = t => listColors[t] || listColors["기타"];
+const LEGEND_ORDER = ["콘서트","방송","유튜브","발매","행사","팬사인회/팬미팅","기념일","버블","SNS","기타"];
+
+// 목록 위에 붙는 작은 달력 (날짜마다 유형 색깔 점)
+// 점이 있는 날짜를 누르면 아래 목록의 그 날짜로 이동
+function buildMiniCal(y, m, todayKey, weekdays){
+  const monthTypes = new Set();
+  const box = document.createElement("div");
+  box.className = "mini-cal";
+
+  const wdRow = document.createElement("div");
+  wdRow.className = "mini-wd";
+  weekdays.forEach((w, i) => {
+    const s = document.createElement("span");
+    s.textContent = w;
+    if(i === 0) s.className = "sun";
+    if(i === 6) s.className = "sat";
+    wdRow.appendChild(s);
+  });
+  box.appendChild(wdRow);
+
+  const grid = document.createElement("div");
+  grid.className = "mini-grid";
+
+  const first = new Date(y, m, 1).getDay();
+  const last = new Date(y, m+1, 0).getDate();
+  for(let i = 0; i < first; i++) grid.appendChild(document.createElement("span"));
+
+  for(let d = 1; d <= last; d++){
+    const key = formatDate(`${y}-${m+1}-${d}`);
+    const dow = (first + d - 1) % 7;
+    const items = (firestoreData[key] || [])
+      .filter(it => selectedTypeFilter === "전체" || it.type === selectedTypeFilter)
+      .sort((a,b) => (a.order??0) - (b.order??0));
+    items.forEach(it => monthTypes.add(listColors[it.type] ? it.type : "기타"));
+
+    const cell = document.createElement("button");
+    cell.className = "mini-day" + (items.length ? " has" : "") + (key === todayKey ? " today" : "")
+      + (dow === 0 ? " sun" : dow === 6 ? " sat" : "");
+    cell.setAttribute("aria-label", `${m+1}월 ${d}일, 일정 ${items.length}개`);
+
+    const num = document.createElement("span");
+    num.className = "mini-num";
+    num.textContent = d;
+    if(isSpecialAnniversary(key)){
+      const star = document.createElement("span");
+      star.className = "mini-star";
+      star.textContent = "★";
+      num.appendChild(star);
+    }
+    cell.appendChild(num);
+
+    const dots = document.createElement("span");
+    dots.className = "mini-dots";
+    items.slice(0, 4).forEach(it => {
+      const dot = document.createElement("i");
+      dot.style.background = listColorOf(it.type);
+      dots.appendChild(dot);
+    });
+    if(items.length > 4){
+      const more = document.createElement("b");
+      more.textContent = "+";
+      dots.appendChild(more);
+    }
+    cell.appendChild(dots);
+
+    if(items.length){
+      cell.onclick = () => {
+        const group = listView.querySelector(`.list-day[data-key="${key}"]`);
+        if(!group) return;
+        group.scrollIntoView({ behavior: "smooth", block: "start" });
+        group.classList.remove("flash");
+        void group.offsetWidth;
+        group.classList.add("flash");
+      };
+    } else {
+      cell.disabled = true;
+    }
+    grid.appendChild(cell);
+  }
+
+  box.appendChild(grid);
+
+  // 이번 달에 실제로 있는 유형만 범례로 표시
+  if(monthTypes.size){
+    const legend = document.createElement("div");
+    legend.className = "mini-legend";
+    LEGEND_ORDER.forEach(name => {
+      if(!monthTypes.has(name)) return;
+      const chip = document.createElement("span");
+      chip.className = "mini-legend-chip";
+      chip.style.setProperty("--c", listColorOf(name));
+      chip.textContent = name;
+      legend.appendChild(chip);
+    });
+    box.appendChild(legend);
+  }
+
+  return box;
+}
+
+// 지금 보고 있는 달의 일정을 날짜순으로 나열
+function renderList(){
+  if(viewMode !== "list") return;
+
+  const y = currentDate.getFullYear(), m = currentDate.getMonth();
+  const prefix = `${y}-${String(m+1).padStart(2,"0")}-`;
+  const todayKey = formatDate(`${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`);
+  const weekdays = ["일","월","화","수","목","금","토"];
+
+  listView.innerHTML = "";
+  listView.appendChild(buildMiniCal(y, m, todayKey, weekdays));
+
+  const keys = Object.keys(firestoreData).filter(k => k.startsWith(prefix)).sort();
+  let count = 0;
+
+  keys.forEach(key => {
+    const items = firestoreData[key]
+      .filter(it => selectedTypeFilter === "전체" || it.type === selectedTypeFilter)
+      .sort((a,b) => (a.time||"").localeCompare(b.time||"") || (a.order??0) - (b.order??0));
+    if(items.length === 0) return;
+    count += items.length;
+
+    const [, mm, dd] = key.split("-").map(Number);
+    const dow = new Date(y, mm-1, dd).getDay();
+
+    const group = document.createElement("div");
+    group.className = "list-day" + (key === todayKey ? " today" : "");
+    group.dataset.key = key;
+
+    const head = document.createElement("div");
+    head.className = "list-day-head" + (dow === 0 ? " sun" : dow === 6 ? " sat" : "");
+    head.appendChild(document.createTextNode(`${mm}월 ${dd}일`));
+    const wd = document.createElement("span");
+    wd.className = "wd";
+    wd.textContent = `${weekdays[dow]}요일`;
+    head.appendChild(wd);
+    if(key === todayKey){
+      const b = document.createElement("span");
+      b.className = "today-badge";
+      b.textContent = "오늘";
+      head.appendChild(b);
+    }
+    if(isSpecialAnniversary(key)){
+      const s = document.createElement("span");
+      s.className = "star";
+      s.textContent = "★";
+      head.appendChild(s);
+    }
+    group.appendChild(head);
+
+    items.forEach(it => {
+      const row = document.createElement("div");
+      row.className = "list-item";
+      row.style.setProperty("--c", listColorOf(it.type));
+
+      // 왼쪽: 유형 + 시간
+      const left = document.createElement("div");
+      left.className = "list-left";
+      const type = document.createElement("span");
+      type.className = "list-type";
+      type.textContent = it.type;
+      left.appendChild(type);
+      left.appendChild(document.createTextNode(it.time ? formatTimeKorean(it.time) : "종일"));
+      row.appendChild(left);
+
+      const body = document.createElement("div");
+      body.className = "list-body";
+      const title = document.createElement("div");
+      title.className = "list-title";
+      title.textContent = it.title;
+      body.appendChild(title);
+      if(it.content){
+        const snip = document.createElement("div");
+        snip.className = "list-snippet";
+        snip.textContent = it.content.split("\n")[0];
+        body.appendChild(snip);
+      }
+      row.appendChild(body);
+
+      const itemUrl = safeUrl(it.url);
+      if(itemUrl){
+        const a = document.createElement("a");
+        a.className = "list-link";
+        a.href = itemUrl;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.textContent = "🔗";
+        a.setAttribute("aria-label", "링크 열기");
+        a.onclick = e => e.stopPropagation();
+        row.appendChild(a);
+      }
+
+      row.onclick = () => openScheduleModal(it, key);
+      group.appendChild(row);
+    });
+
+    listView.appendChild(group);
+  });
+
+  if(count === 0){
+    const empty = document.createElement("div");
+    empty.className = "list-empty";
+    empty.textContent = selectedTypeFilter === "전체"
+      ? "이번 달 일정이 없어요"
+      : `이번 달 '${selectedTypeFilter}' 일정이 없어요`;
+    listView.appendChild(empty);
+  }
+}
+
+setViewMode(viewMode);
 
 /******** 드래그/터치 구현 ********/
 function addWebDragEvents(el,dateKey){
@@ -2421,6 +3434,7 @@ function closeAllOverlays() {
 function openScheduleModal(it, key, skipPush){
   selectedDateKey = key;
   activeGroupId = it.groupId;
+  activeItemId = it.id;
 
   modalTitle.textContent = it.title;
   modalContent.textContent = it.content || "(내용 없음)";
@@ -2617,7 +3631,7 @@ actionCopyBtn.onclick = () => {
 
   for (const k in firestoreData) {
     firestoreData[k].forEach(it => {
-      if (it.groupId === activeGroupId) {
+      if (inActiveGroup(it)) {
         items.push({ ...it });
       }
     });
@@ -2635,7 +3649,7 @@ actionCopyBtn.onclick = () => {
 actionEditBtn.onclick=()=>{
   const items=[];
   for(const k in firestoreData){
-    firestoreData[k].forEach(it=>{ if(it.groupId===activeGroupId) items.push({...it,date:k}); });
+    firestoreData[k].forEach(it=>{ if(inActiveGroup(it)) items.push({...it,date:k}); });
   }
   if(items.length===0) return;
   items.sort((a,b)=>new Date(a.date)-new Date(b.date));
@@ -2659,7 +3673,7 @@ saveEditBtn.onclick = async () => {
 
     firestoreData[k].forEach(it => {
 
-      if (it.groupId === activeGroupId)
+      if (inActiveGroup(it))
         groupItems.push(it);
 
     });
@@ -2712,7 +3726,7 @@ saveEditBtn.onclick = async () => {
 
     time: editTimeInput.value || "",
 
-    groupId: activeGroupId,
+    groupId: activeGroupId || gid(),
 
     order: firestoreData[key]?.length || 0
 
@@ -2739,7 +3753,7 @@ cancelDeleteBtn.onclick=()=>{
 
 confirmDeleteBtn.onclick=async ()=>{
   const batch=writeBatch(db);
-  for(const k in firestoreData) firestoreData[k].forEach(it=>{ if(it.groupId===activeGroupId) batch.delete(doc(schedulesCol,it.id)); });
+  for(const k in firestoreData) firestoreData[k].forEach(it=>{ if(inActiveGroup(it)) batch.delete(doc(schedulesCol,it.id)); });
   await batch.commit();
   deleteConfirmModal.style.display="none";
   history.back();
@@ -2800,6 +3814,15 @@ todayBtn.onclick = () => {
   selectedDateKey = formatDate(`${t.getFullYear()}-${t.getMonth()+1}-${t.getDate()}`);
 
   renderCalendar();
+
+  // 목록 보기일 때는 오늘 날짜 묶음으로 이동
+  if(viewMode === "list"){
+    requestAnimationFrame(() => {
+      const todayGroup = listView.querySelector(".list-day.today");
+      (todayGroup || listView).scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    return;
+  }
 
   // 2️⃣ 오늘 날짜 선택 + 3️⃣ 스크롤 이동
   requestAnimationFrame(() => {
@@ -2973,4 +3996,3 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; };
 
 </body>
 </html>
-
