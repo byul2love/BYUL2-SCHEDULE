@@ -2719,6 +2719,232 @@ header::after,
   background: var(--navy);
 }
 
+
+/* =========================
+   색만 기존(tab.html)과 같게
+   - 모양(테두리, 모서리, 효과 없음)은 담백한 버전 그대로
+========================= */
+
+:root {
+  --paper: #F6F4FF;
+  --rule: #E8E4FA;
+  --soft: #F2F0FF;
+}
+
+body,
+.day.other-month {
+  background-color: var(--paper);
+}
+
+.day.other-month {
+  background: #FBFAFE;
+}
+
+/* 헤더: 기존 밤하늘 그라데이션 색 */
+header {
+  background:
+    radial-gradient(ellipse 90% 60% at 50% 115%, rgba(162,155,254,.45), transparent 70%),
+    linear-gradient(165deg, #15132B 0%, #2A2560 45%, #5A4BD6 100%);
+}
+
+#siteTitle .title-line2 {
+  color: #FFE3A3;
+}
+
+#todayBtn {
+  color: #3A2F7A;
+  background: white;
+}
+
+@media (hover: hover) {
+  #todayBtn:hover { background: #F1EFFF; }
+}
+
+/* 다가오는 일정 */
+.upcoming-card:hover {
+  border-color: var(--purple-light);
+}
+
+.upcoming-card .upcoming-dday {
+  color: #5143C9;
+  background: #EEEBFF;
+}
+
+.upcoming-card:first-child {
+  background: linear-gradient(135deg, #6C5CE7, #9B8CFF);
+}
+
+.upcoming-card:first-child .upcoming-dday {
+  color: #4B3FB8;
+  background: white;
+}
+
+.upcoming-card:first-child .upcoming-title span:first-child {
+  background: white !important;
+}
+
+/* 탭 */
+#viewTabs button.active {
+  color: var(--purple);
+  border-bottom-color: var(--purple);
+}
+
+/* 달력 */
+.day.today {
+  background: #F8F6FF;
+}
+
+.day.today .day-number,
+.mini-day.today .mini-num {
+  background: linear-gradient(135deg, #6C5CE7, #A29BFE);
+}
+
+.day.selected {
+  box-shadow: inset 0 0 0 2px var(--purple);
+}
+
+.schedule-more,
+.list-link,
+#pasteBtn,
+#actionEditBtn,
+#modalLink {
+  color: var(--purple);
+  background: var(--soft);
+}
+
+/* 목록 */
+.mini-day.has:hover {
+  background: var(--soft);
+}
+
+.list-day-head {
+  color: var(--purple-dark);
+}
+
+.list-day-head .today-badge {
+  color: white;
+  background: var(--purple);
+}
+
+.list-item:hover {
+  border-color: #D6D0F2;
+  border-left-color: var(--c);
+}
+
+@keyframes listFlash {
+  0% { background: #EEEBFF; }
+  100% { background: transparent; }
+}
+
+/* 버튼 */
+#listAddBtn,
+#addBtn,
+#saveEditBtn {
+  background: linear-gradient(135deg, #6C5CE7, #9B8CFF);
+}
+
+#topBtn {
+  color: var(--purple);
+}
+
+#inputBox input:focus,
+#inputBox select:focus,
+#inputBox textarea:focus,
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+  border-color: var(--purple-light);
+}
+
+.modal-date-text {
+  color: var(--purple);
+}
+
+.toast {
+  background: rgba(45,42,58,.92);
+}
+
+
+/* =========================
+   헤더 꾸미기: 가만히 있는 별 + 아래쪽 구름 테두리
+========================= */
+
+header {
+  padding-bottom: 38px;
+  border-radius: 0;
+  background:
+    /* 작은 별 (움직이지 않음) */
+    radial-gradient(1.6px 1.6px at 8% 18%, rgba(255,255,255,.9), transparent 100%),
+    radial-gradient(1.2px 1.2px at 21% 62%, rgba(255,255,255,.6), transparent 100%),
+    radial-gradient(2px 2px at 33% 12%, rgba(255,255,255,.85), transparent 100%),
+    radial-gradient(1.2px 1.2px at 47% 40%, rgba(255,255,255,.5), transparent 100%),
+    radial-gradient(1.6px 1.6px at 58% 9%, rgba(255,255,255,.8), transparent 100%),
+    radial-gradient(1.2px 1.2px at 69% 55%, rgba(255,255,255,.55), transparent 100%),
+    radial-gradient(2px 2px at 81% 24%, rgba(255,255,255,.85), transparent 100%),
+    radial-gradient(1.2px 1.2px at 92% 48%, rgba(255,255,255,.6), transparent 100%),
+    radial-gradient(1.6px 1.6px at 14% 80%, rgba(255,255,255,.5), transparent 100%),
+    radial-gradient(1.4px 1.4px at 88% 76%, rgba(255,255,255,.5), transparent 100%),
+    /* 기존 밤하늘 색 */
+    radial-gradient(ellipse 90% 60% at 50% 115%, rgba(162,155,254,.45), transparent 70%),
+    linear-gradient(165deg, #15132B 0%, #2A2560 45%, #5A4BD6 100%);
+}
+
+/* 아래쪽 구름: 뒤쪽 반투명 한 겹 + 앞쪽 배경색 한 겹 */
+header::before,
+header::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 26px;
+  pointer-events: none;
+  background-repeat: repeat-x;
+  background-position: bottom left;
+  animation: none;
+  opacity: 1;
+  top: auto;
+  width: auto;
+  letter-spacing: 0;
+}
+
+header::before {
+  bottom: 5px;
+  background-size: 150px 26px;
+  background-position: 40px bottom;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 26'%3E%3Cpath d='M0 26V16Q12 4 26 13Q36 1 52 11Q64 3 76 12Q90 2 104 12Q118 5 128 14Q140 7 150 16V26Z' fill='%23F6F4FF' fill-opacity='.28'/%3E%3C/svg%3E");
+}
+
+header::after {
+  background-size: 120px 22px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 22'%3E%3Cpath d='M0 22V14Q10 5 21 12Q30 2 44 10Q55 3 66 11Q78 3 90 11Q102 5 110 12Q116 9 120 14V22Z' fill='%23F6F4FF'/%3E%3C/svg%3E");
+}
+
+/* 오른쪽 위 은은한 초승달 */
+#siteTitle::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  right: 6%;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  box-shadow: inset -9px 6px 0 0 rgba(255,227,163,.22);
+  transform: rotate(-20deg);
+  pointer-events: none;
+}
+
+@media (max-width: 600px) {
+  header {
+    padding-bottom: 34px;
+  }
+
+  #siteTitle::before {
+    display: none;
+  }
+}
+
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Gowun+Dodum&display=swap" rel="stylesheet">
