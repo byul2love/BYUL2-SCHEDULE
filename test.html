@@ -3225,6 +3225,11 @@ header::after {
   object-fit: contain;
 }
 
+/* 세로 사진은 세로로 더 길게 */
+.detail-photo img.portrait {
+  max-height: 240px;
+}
+
 /* 사진이 있으면 닫기 버튼이 사진 위에서도 잘 보이게 */
 #actionModal #actionCancelBtn {
   z-index: 2;
@@ -3276,6 +3281,47 @@ header::after {
 @keyframes popIn {
   from { transform: scale(.96); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
+}
+
+/* 상세 창: 내용이 길어도 버튼은 항상 아래에 보이게
+   (사진·제목·내용 부분만 스크롤, 버튼 줄은 고정) */
+#actionModal .modal-content {
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+  overflow: hidden;
+}
+
+#actionModal .detail-photo,
+#actionModal .modal-actions {
+  flex: none;
+}
+
+#actionModal .modal-info {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: 4px;
+}
+
+/* 🔗 링크 아이콘 작게 (잘못 눌리는 일 줄이기) */
+.schedule .link-icon {
+  font-size: 8px;
+  line-height: 1;
+  margin-bottom: 1px;
+}
+
+@media (max-width: 600px) {
+  .schedule .link-icon {
+    font-size: 6.5px;
+  }
+}
+
+.list-link {
+  width: 26px;
+  height: 26px;
+  font-size: 11px;
 }
 
 /* 헤더 반짝이는 별 다시 켜기 (가만히 있는 별 위에 같이) */
@@ -4585,6 +4631,9 @@ function openScheduleModal(it, key, skipPush){
   const imageUrl = safeUrl(it.image);
   photoLink.hidden = !imageUrl;
   photo.onerror = () => { photoLink.hidden = true; };
+  // 세로 사진은 더 길게 보여주기
+  photo.classList.remove("portrait");
+  photo.onload = () => { photo.classList.toggle("portrait", photo.naturalHeight > photo.naturalWidth); };
   photo.src = imageUrl || "";
 
   // 날짜 · 시간을 한 줄로 (예: 2026년 9월 27일 (일) · 종일)
