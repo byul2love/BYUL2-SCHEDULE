@@ -3121,14 +3121,14 @@ header::after {
 
 #actionModal .modal-title-text {
   margin: 10px 0 4px;
-  font-size: 18px;
+  font-size: calc(18px * var(--text-comp, 1));   /* 폰 글씨 확대만큼 되돌려서 어디서나 같은 크기로 */
   font-weight: 700;
 }
 
 /* 날짜 · 시간: 상자 없이 한 줄 */
 #actionModal .modal-date-text {
   margin: 0;
-  font-size: 13px;
+  font-size: calc(13px * var(--text-comp, 1));
   font-weight: 500;
   color: #8B8798;
 }
@@ -5921,6 +5921,21 @@ todayBtn.onclick = () => {
   renderUpcoming();
 
 };
+
+/******** 폰 글씨 확대 감지 ********/
+// 카카오톡 브라우저나 폰 글꼴 크기 설정 때문에 글씨가 커지면
+// 일정 창 제목 · 날짜만 그만큼 줄여서 컴퓨터에서 보는 것과 같은 모양으로
+(() => {
+  const probe = document.createElement("span");
+  probe.textContent = "가";
+  probe.style.cssText = "position:absolute;visibility:hidden;left:-999px;top:0;font-size:100px;line-height:1;white-space:nowrap";
+  document.body.appendChild(probe);
+  const scale = probe.getBoundingClientRect().height / 100;
+  probe.remove();
+  if(scale > 1.05 && scale < 3){
+    document.documentElement.style.setProperty("--text-comp", (1 / scale).toFixed(3));
+  }
+})();
 
 /******** 📢 업데이트 소식 ********/
 const noticeBtn = document.getElementById("noticeBtn");
