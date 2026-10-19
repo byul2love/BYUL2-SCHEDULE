@@ -3121,7 +3121,7 @@ header::after {
 
 #actionModal .modal-title-text {
   margin: 10px 0 4px;
-  font-size: 19px;
+  font-size: 17px;
   font-weight: 700;
 }
 
@@ -3675,6 +3675,16 @@ html.modal-lock body {
 #editModal .clear-btn[hidden],
 #inputBox .clear-btn[hidden] {
   display: none;
+}
+
+/* 줄바꿈: 영어도 한글처럼 글자 단위로 (줄 끝까지 꽉 채우고 넘어감)
+   → 상세창 제목·내용, 달력 칸 일정, 목록 일정 */
+#modalTitle,
+#modalContent,
+.schedule .title,
+.list-title,
+.list-snippet {
+  word-break: break-all;
 }
 
 /* 사진이 없으면 오른쪽 칸 간격도 없앰 */
