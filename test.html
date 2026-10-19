@@ -3992,7 +3992,7 @@ body.list-mode #siteFooter {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.20-e</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.20-f</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
@@ -5470,15 +5470,27 @@ function openScheduleModal(it, key, skipPush){
   const photo = document.getElementById("modalImage");
   // 사진 주소가 없고 링크가 유튜브면 유튜브 썸네일을 대신 보여줌
   const ytId = youtubeId(itemUrl);
-  const imageUrl = safeUrl(it.image) || (ytId ? `https://i.ytimg.com/vi/${ytId}/mqdefault.jpg` : "");
+  // 유튜브 썸네일은 고화질부터 시도, 없으면 한 단계씩 낮은 화질로
+  // (sd · hq는 4:3에 위아래 검은 띠가 있지만 16:9 칸에 꽉 채우면 띠가 잘려 나감)
+  const ytThumbs = (!safeUrl(it.image) && ytId)
+    ? ["maxresdefault", "sddefault", "hqdefault", "mqdefault"].map(q => `https://i.ytimg.com/vi/${ytId}/${q}.jpg`)
+    : [];
+  const imageUrl = safeUrl(it.image) || ytThumbs.shift() || "";
   photoLink.classList.toggle("is-video", !safeUrl(it.image) && !!ytId);
   photoLink.hidden = !imageUrl;
-  photo.onerror = () => { photoLink.hidden = true; };
+  // 다음 화질이 남아 있으면 그걸로, 없으면 조용히 숨김
+  const nextThumb = () => {
+    if(ytThumbs.length){ photo.src = ytThumbs.shift(); return true; }
+    return false;
+  };
+  photo.onerror = () => { if(!nextThumb()) photoLink.hidden = true; };
   // 세로 사진은 더 길게 보여주기
   photo.classList.remove("portrait");
   // 새 사진을 다 불러오기 전까지는 안 보이게 (이전 사진 깜빡임 방지)
   photo.style.opacity = "0";
   photo.onload = () => {
+    // 유튜브는 그 화질이 없으면 120×90 빈 회색 그림을 줌 → 다음 화질로
+    if(photo.naturalWidth <= 120 && nextThumb()) return;
     const isPortrait = photo.naturalHeight > photo.naturalWidth;
     photo.classList.toggle("portrait", isPortrait);
     // 세로 사진은 세로 칸, 가로 사진은 가로 칸
