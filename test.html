@@ -3871,16 +3871,16 @@ body.list-mode #siteFooter {
   grid-column: 1;
   grid-row: 4;
   align-self: start;
-  justify-self: start;
+  justify-self: center;   /* 사진은 가운데에 */
   margin: 12px 0 0;
-  /* 세로 사진: 세로 칸 */
-  width: 150px;
-  height: 200px;
+  /* 세로 사진: 세로 칸 (3:4) */
+  width: 132px;
+  height: 176px;
 }
 
-/* 가로 사진 · 유튜브 썸네일: 창 너비 가득 (16:9) */
+/* 가로 사진 · 유튜브 썸네일: 16:9, 창 너비보다 살짝 작게 */
 #actionModal .detail-photo.wide {
-  width: 100%;
+  width: min(100%, 240px);
   height: auto;
   aspect-ratio: 16 / 9;
 }
