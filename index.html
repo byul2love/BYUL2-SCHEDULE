@@ -3678,8 +3678,13 @@ html.modal-lock body {
 }
 
 /* 줄바꿈: 영어도 한글처럼 글자 단위로 (줄 끝까지 꽉 채우고 넘어감)
-   → 상세창 제목·내용, 달력 칸 일정, 목록 일정 */
-#modalTitle,
+   → 상세창 내용, 달력 칸 일정, 목록 일정
+   (상세창 제목은 읽기 편하게 영어 단어째로 넘어감) */
+#modalTitle {
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+
 #modalContent,
 .schedule .title,
 .list-title,
@@ -3721,6 +3726,13 @@ body.list-mode #siteFooter {
 }
 
 #noticeBtn[hidden] { display: none; }
+
+/* 지금 폰에 뜬 코드가 최신인지 확인용 작은 버전 표시 (코드 올릴 때 숫자만 바꾸기) */
+#siteVersion {
+  margin-top: 2px;
+  font-size: 10px;
+  color: #CFC9E6;
+}
 
 #siteFooter .footer-dot {
   margin: 0 4px;
@@ -3845,6 +3857,62 @@ body.list-mode #siteFooter {
   margin-left: -24px;   /* 왼쪽 여백 끝(창 가장자리)에 붙이기 */
 }
 
+/* 사진 위치: 날짜 밑에 크게 (제목 · 날짜는 항상 가로로 꽉)
+   [유형 배지]
+   [제목 ··············]
+   [날짜 ··············]
+   [   사진 / 썸네일   ]
+   ─────────────
+   [내용] */
+#actionModal .detail-head {
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 0;
+}
+
+#actionModal #modalTitle,
+#actionModal #modalDate {
+  grid-column: 1;
+}
+
+#actionModal .detail-photo {
+  grid-column: 1;
+  grid-row: 4;
+  align-self: start;
+  justify-self: center;   /* 사진은 가운데에 */
+  margin: 12px auto 0;    /* 오래된 폰 브라우저에서도 가운데로 (양옆 자동 여백) */
+  /* 세로 사진: 세로 칸 (3:4) */
+  width: 132px;
+  height: 176px;
+}
+
+/* 가로 사진 · 유튜브 썸네일: 16:9, 창 너비보다 살짝 작게 */
+#actionModal .detail-photo.wide {
+  width: min(100%, 240px);
+  height: auto;
+  aspect-ratio: 16 / 9;
+}
+
+/* 썸네일이 커졌으니 ▶ 표시도 조금 크게 */
+#actionModal .detail-photo.is-video::after {
+  width: 40px;
+  height: 40px;
+  background-size: 22px;
+}
+
+/* 왼쪽 유형 색 띠는 배지 ~ 날짜 옆까지만 (사진 옆으로는 안 내려가게) */
+#actionModal .detail-head::before {
+  grid-row: 1 / 4;
+}
+
+/* 링크: 상세창 오른쪽 위, 유형 배지와 같은 줄에 작은 칩으로 */
+#actionModal .detail-head #modalLink {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  justify-self: end;
+  align-self: center;
+  margin: 0;
+}
+
 /* 🔗 링크 아이콘 작게 (잘못 눌리는 일 줄이기) */
 .schedule .link-icon {
   font-size: 8px;
@@ -3869,6 +3937,13 @@ body.list-mode #siteFooter {
   display: block;
 }
 
+/* 카톡 같은 앱 안 브라우저는 주소창이 나왔다 들어가면 화면 높이(svh)도 같이 바뀌어
+   상세 창이 줄었다 늘었다 들썩임 → 주소창이 보일 때의 높이(--stable-vh, 스크립트가 잼)에 고정
+   위치는 열 때 화면 가운데(--modal-top)에 두고, 열려 있는 동안은 그대로 */
+#actionModal .modal-content {
+  max-height: calc(var(--stable-vh, 1svh) * 85);
+  top: var(--modal-top, calc(var(--stable-vh, 1svh) * 50));
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -3918,7 +3993,7 @@ body.list-mode #siteFooter {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.20-g</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
@@ -5352,6 +5427,36 @@ function setLockedScroll(y){
   sync();
 })();
 
+/* 상세 창 높이 기준: 지금까지 본 가장 작은 화면 높이 (= 주소창 · 메뉴바가 보일 때)
+   키보드 때문에 줄어든 건 빼고, 폰을 돌리면(너비가 바뀌면) 다시 잼
+   위치: 열 때 지금 화면의 가운데, 열려 있는 동안은 그대로
+   (주소창이 나와 창 아래가 화면 밖으로 나갈 때만 그만큼 올림) */
+(() => {
+  const root = document.documentElement;
+  const modal = document.getElementById("actionModal");
+  const box = modal.querySelector(".modal-content");
+  let w = innerWidth, minH = innerHeight, openTop = 0;
+  const typing = () => /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || "");
+  const isOpen = () => modal.style.display === "flex";
+  const apply = () => root.style.setProperty("--stable-vh", `${minH / 100}px`);
+  const place = () => {
+    const half = box.offsetHeight / 2;
+    const top = Math.max(half + 8, Math.min(openTop, innerHeight - half - 8));
+    root.style.setProperty("--modal-top", `${top}px`);
+  };
+  new MutationObserver(() => {
+    if(isOpen() && !openTop){ openTop = innerHeight / 2; place(); }
+    else if(!isOpen()) openTop = 0;
+  }).observe(modal, { attributes: true, attributeFilter: ["style"] });
+  addEventListener("resize", () => {
+    if(innerWidth !== w){ w = innerWidth; minH = innerHeight; if(openTop) openTop = innerHeight / 2; }
+    else if(!typing()) minH = Math.min(minH, innerHeight);
+    apply();
+    if(openTop) place();
+  });
+  apply();
+})();
+
 /******** 일정 상세 모달 (달력 칸 + 다가오는 일정 공용) ********/
 function openScheduleModal(it, key, skipPush){
   selectedDateKey = key;
@@ -5372,8 +5477,8 @@ function openScheduleModal(it, key, skipPush){
   actionModal.querySelector(".modal-content").style.setProperty("--c", typeColors[it.type] || "#e0e7ff");
   const itemUrl = safeUrl(it.url);
   modalLink.style.display = itemUrl ? "flex" : "none";
-  // 링크 칩 글자는 사이트 상관없이 "링크 열기"
-  document.getElementById("modalLinkHost").textContent = "링크 열기";
+  // 링크 칩 글자는 사이트 상관없이 "링크"
+  document.getElementById("modalLinkHost").textContent = "링크";
   modalLink.href = itemUrl || "#";
 
   // 사진 주소가 있으면 상세 창 위에 사진 표시 (못 불러오면 조용히 숨김)
@@ -5381,15 +5486,27 @@ function openScheduleModal(it, key, skipPush){
   const photo = document.getElementById("modalImage");
   // 사진 주소가 없고 링크가 유튜브면 유튜브 썸네일을 대신 보여줌
   const ytId = youtubeId(itemUrl);
-  const imageUrl = safeUrl(it.image) || (ytId ? `https://i.ytimg.com/vi/${ytId}/mqdefault.jpg` : "");
+  // 유튜브 썸네일은 고화질부터 시도, 없으면 한 단계씩 낮은 화질로
+  // (sd · hq는 4:3에 위아래 검은 띠가 있지만 16:9 칸에 꽉 채우면 띠가 잘려 나감)
+  const ytThumbs = (!safeUrl(it.image) && ytId)
+    ? ["maxresdefault", "sddefault", "hqdefault", "mqdefault"].map(q => `https://i.ytimg.com/vi/${ytId}/${q}.jpg`)
+    : [];
+  const imageUrl = safeUrl(it.image) || ytThumbs.shift() || "";
   photoLink.classList.toggle("is-video", !safeUrl(it.image) && !!ytId);
   photoLink.hidden = !imageUrl;
-  photo.onerror = () => { photoLink.hidden = true; };
+  // 다음 화질이 남아 있으면 그걸로, 없으면 조용히 숨김
+  const nextThumb = () => {
+    if(ytThumbs.length){ photo.src = ytThumbs.shift(); return true; }
+    return false;
+  };
+  photo.onerror = () => { if(!nextThumb()) photoLink.hidden = true; };
   // 세로 사진은 더 길게 보여주기
   photo.classList.remove("portrait");
   // 새 사진을 다 불러오기 전까지는 안 보이게 (이전 사진 깜빡임 방지)
   photo.style.opacity = "0";
   photo.onload = () => {
+    // 유튜브는 그 화질이 없으면 120×90 빈 회색 그림을 줌 → 다음 화질로
+    if(photo.naturalWidth <= 120 && nextThumb()) return;
     const isPortrait = photo.naturalHeight > photo.naturalWidth;
     photo.classList.toggle("portrait", isPortrait);
     // 세로 사진은 세로 칸, 가로 사진은 가로 칸
