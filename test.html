@@ -3121,7 +3121,7 @@ header::after {
 
 #actionModal .modal-title-text {
   margin: 10px 0 4px;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
 }
 
@@ -3549,13 +3549,13 @@ html.modal-lock body {
 
   /* 날짜 칸을 조금 더 넓게, 글씨는 더 작게 → "2026. 12. 05." 이 잘리지 않게 */
   #editModal .datetime-row input[type="date"],
-  #inputBox .datetime-row input[type="date"] { flex: 1 1 0; }
+  #inputBox .datetime-row input[type="date"] { flex: 1.2 1 0; }   /* 날짜 칸을 시간 칸보다 살짝 넓게 */
   #editModal .datetime-row input[type="date"],
   #editModal .datetime-row input[type="time"],
   #inputBox .datetime-row input[type="date"],
   #inputBox .datetime-row input[type="time"] {
     font-size: 13px;
-    padding: 0 8px;
+    padding: 0 6px;   /* 안쪽 여백을 줄여 글자 자리 확보 */
   }
 }
 
