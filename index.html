@@ -483,6 +483,11 @@ button:active {
   animation: calSlidePrev .22s ease;
 }
 
+/* 목록 탭의 작은 달력도 밀어서 넘길 때 살짝 미끄러지게 */
+.mini-cal.slide-next { animation: calSlideNext .22s ease; }
+.mini-cal.slide-prev { animation: calSlidePrev .22s ease; }
+.mini-cal { touch-action: pan-y; user-select: none; }
+
 .day {
 
   background: white;
@@ -3444,9 +3449,21 @@ body:has(#inputBox[style*="block"]) {
 /* 상세 창 흔들림 방지:
    창 위나 어두운 바깥을 끌어도 뒤 페이지가 늘어나거나(바운스) 주소창이 움직이지 않게,
    스크롤은 상세 내용 부분에서만 */
-html:has(.modal[style*="flex"]) {
+html:has(.modal[style*="flex"]),
+html.modal-lock {
   overflow: hidden;
   overscroll-behavior: none;
+}
+
+/* 창이 열려 있는 동안 뒤 페이지를 화면에 못 박기 (스크립트가 html에 modal-lock을 붙임)
+   → 스크롤할 데가 없으니 폰 주소창 · 메뉴바가 숨지 않아 창이 들썩이지 않음 */
+html.modal-lock body {
+  overflow: hidden;
+  overscroll-behavior: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
 }
 
 #actionModal {
@@ -3463,6 +3480,16 @@ html:has(.modal[style*="flex"]) {
 #actionModal .modal-content {
   max-height: 85vh;
   max-height: 85svh;   /* 주소창이 보였다 숨었다 해도 높이가 안 바뀌게 */
+  /* 가운데 위치도 주소창과 상관없는 고정 기준(svh)으로
+     → 스크롤하다 주소창이 움직여도 창이 위아래로 들썩이지 않게 */
+  position: absolute;
+  left: 50%;
+  top: 50vh;
+  top: 50svh;
+  translate: -50% -50%;
+  width: calc(100% - 40px);
+  max-width: 360px;
+  margin: 0;
 }
 
 /* 사진은 다 불러온 뒤에 부드럽게 (이전 일정 사진이 잠깐 보였다 바뀌는 깜빡임 방지) */
@@ -3505,15 +3532,30 @@ html:has(.modal[style*="flex"]) {
     font-size: 13.5px;
   }
 
-  /* 3) 입력칸 글씨 16px: 누를 때 화면이 자동 확대되며 흔들리는 것 방지 */
+  /* 3) 검색칸 글씨 16px: 누를 때 화면이 자동 확대되며 흔들리는 것 방지 */
+  #searchInput {
+    font-size: 16px;
+  }
+
+  /* 일정 추가 · 수정 칸 글씨는 조금 작게 (긴 주소나 날짜가 잘리지 않게) */
   #editModal input,
   #editModal select,
   #editModal textarea,
   #inputBox input,
   #inputBox select,
-  #inputBox textarea,
-  #searchInput {
-    font-size: 16px;
+  #inputBox textarea {
+    font-size: 14px;
+  }
+
+  /* 날짜 칸을 조금 더 넓게, 글씨는 더 작게 → "2026. 12. 05." 이 잘리지 않게 */
+  #editModal .datetime-row input[type="date"],
+  #inputBox .datetime-row input[type="date"] { flex: 1 1 0; }
+  #editModal .datetime-row input[type="date"],
+  #editModal .datetime-row input[type="time"],
+  #inputBox .datetime-row input[type="date"],
+  #inputBox .datetime-row input[type="time"] {
+    font-size: 13px;
+    padding: 0 8px;
   }
 }
 
@@ -3534,16 +3576,28 @@ html:has(.modal[style*="flex"]) {
 #actionModal .detail-photo {
   grid-column: 2;
   grid-row: 2 / span 3;
-  margin: 10px 0 0;
+  margin: 0;
+  align-self: center;   /* 글이 사진보다 길면 사진을 글 높이 가운데에 */
+  /* 세로 사진은 모두 같은 세로 칸(3:4) */
+  width: 78px;
+  height: 104px;
+}
+
+/* 가로 사진은 모두 같은 가로 칸(4:3) */
+#actionModal .detail-photo.wide {
+  width: 104px;
+  height: 78px;
 }
 
 #actionModal #modalTitle { grid-column: 1; grid-row: 2; }
 #actionModal #modalDate { grid-column: 1; grid-row: 3; }
-/* 내용은 사진 밑에 가로로 꽉 차게 */
+/* 내용은 사진 밑에 가로로 꽉 차게, 위쪽(제목·사진)과 얇은 선으로 구분 */
 #actionModal .detail-head #modalContent {
   grid-column: 1 / -1;
   grid-row: 5;
-  margin: 10px 0 0;
+  margin: 12px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid #F0EEF6;
 }
 /* 링크: 내용 밑에 글자 길이만큼만 작은 칩으로 */
 #actionModal .detail-head #modalLink {
@@ -3563,8 +3617,78 @@ html:has(.modal[style*="flex"]) {
 }
 #actionModal .detail-head #modalLink .link-host { flex: 0 1 auto; }
 #actionModal .detail-head #modalLink .link-arrow { font-size: 15px; }
+/* 입력칸 안 오른쪽 ✕ (고치고 있는 칸에만 보임) */
+.clear-wrap {
+  position: relative;
+  display: block;
+}
+
+.clear-wrap > input,
+.clear-wrap > textarea {
+  display: block;
+  padding-right: 32px;
+}
+
+#editModal .clear-btn,
+#inputBox .clear-btn {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  translate: 0 -50%;
+  width: 18px;
+  height: 18px;
+  min-width: 0;
+  min-height: 0;
+  flex: none;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 50%;
+  background: #ECE9F5;
+  color: #8A84A6;
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 18px;
+  text-align: center;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+/* 버튼은 작아도 누르는 범위는 넉넉하게 (보이지 않는 터치 영역) */
+#editModal .clear-btn::after,
+#inputBox .clear-btn::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+}
+
+#editModal .clear-btn:active,
+#inputBox .clear-btn:active { background: #DDD8EE; }
+
+/* 내용칸(여러 줄)은 오른쪽 위에 */
+#editModal .clear-wrap.is-area .clear-btn,
+#inputBox .clear-wrap.is-area .clear-btn {
+  top: 10px;
+  translate: none;
+}
+
+#editModal .clear-btn[hidden],
+#inputBox .clear-btn[hidden] {
+  display: none;
+}
+
 /* 사진이 없으면 오른쪽 칸 간격도 없앰 */
 #actionModal .detail-head:has(.detail-photo[hidden]) { column-gap: 0; }
+
+/* 왼쪽 유형 색 띠는 제목 부분(유형 배지 ~ 날짜·사진)까지만, 내용·링크 옆으로는 안 내려가게 */
+#actionModal .detail-head::before {
+  position: static;
+  grid-column: 1;
+  grid-row: 1 / 5;
+  align-self: stretch;
+  justify-self: start;
+  margin-left: -24px;   /* 왼쪽 여백 끝(창 가장자리)에 붙이기 */
+}
 
 /* 🔗 링크 아이콘 작게 (잘못 눌리는 일 줄이기) */
 .schedule .link-icon {
@@ -3705,7 +3829,7 @@ html:has(.modal[style*="flex"]) {
     <label>일정 제목</label><input id="editTitleInput" placeholder="일정 제목">
     <label>일정 내용 (선택)</label>
 <textarea id="editDescInput" placeholder="상세 내용을 입력하세요"></textarea>
-    <label>링크 (선택)</label><input id="editUrlInput">
+    <label>링크 (선택)</label><input id="editUrlInput" placeholder="https://...">
     <label>사진 주소 (선택)</label><input id="editImageInput" placeholder="이미지 주소 붙여넣기" inputmode="url" autocomplete="off">
 <div class="form-divider"></div>
 <label>날짜 및 시간</label>
@@ -3956,13 +4080,23 @@ onSnapshot(schedulesCol, snapshot=>{
 function scrollToSelectedDay(){
   requestAnimationFrame(() => {
     // 목록 탭에서는 목록의 그 날짜 묶음으로 이동
+    // 창이 열려 페이지가 고정돼 있으면, 창을 닫았을 때 그 날짜가 보이도록 돌아갈 위치만 바꿔 둠
+    const locked = document.documentElement.classList.contains("modal-lock");
+    const moveLocked = (el, block) => {
+      const r = el.getBoundingClientRect();
+      const docTop = r.top + lockY;
+      setLockedScroll(block === "center" ? docTop - (window.innerHeight - r.height) / 2 : docTop);
+    };
     if (viewMode === "list") {
       const group = document.querySelector(`.list-day[data-key="${selectedDateKey}"]`);
-      if (group) group.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (!group) return;
+      if (locked) moveLocked(group, "start");
+      else group.scrollIntoView({ behavior: "smooth", block: "start" });
       return;
     }
     const selectedEl = document.querySelector(".day.selected");
     if (!selectedEl) return;
+    if (locked) { moveLocked(selectedEl, "center"); return; }
     selectedEl.scrollIntoView({
       behavior: "smooth",
       block: "center"
@@ -4054,13 +4188,27 @@ visibleSchedules.forEach((it,idx)=>{
     linkIcon.textContent="🔗";
 
 
-    linkIcon.onclick=e=>{
+    // 링크 아이콘 덜 민감하게:
+    // 아이콘을 따로 누를 수 있는 버튼으로 두면 폰이 근처 터치를 아이콘 쪽으로 끌어당겨서
+    // 일정을 누르려다 링크가 열림 → 손가락이 실제로 아이콘 위(±3px)에 닿았을 때만 링크 열기
+    let touchPt = null;
+    s.addEventListener("touchstart", e => {
+      const t = e.touches[0];
+      touchPt = { x: t.clientX, y: t.clientY };
+    }, { passive: true });
 
-      e.stopPropagation();
-
+    s.addEventListener("click", e => {
+      const p = touchPt || { x: e.clientX, y: e.clientY };
+      touchPt = null;
+      const b = linkIcon.getBoundingClientRect();
+      const pad = 3;
+      const onIcon = p.x >= b.left - pad && p.x <= b.right + pad &&
+                     p.y >= b.top - pad && p.y <= b.bottom + pad;
+      if(!onIcon) return;            // 아이콘이 아니면 평소처럼 일정 상세 열기
+      e.stopImmediatePropagation();
+      e.preventDefault();
       window.open(itemUrl,"_blank","noopener");
-
-    };
+    }, true);
 
 
     s.appendChild(linkIcon);
@@ -4348,6 +4496,25 @@ function buildMiniCal(y, m, todayKey, weekdays){
     });
     box.appendChild(legend);
   }
+
+  // 작은 달력도 좌우로 밀면(드래그) 달 넘기기 — 큰 달력과 똑같이
+  let sx = 0, sy = 0;
+  const startSwipe = (x, y) => { sx = x; sy = y; };
+  const endSwipe = (x, y) => {
+    const dx = x - sx, dy = y - sy;
+    if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5){
+      const dir = dx < 0 ? "next" : "prev";
+      currentDate.setMonth(currentDate.getMonth() + (dir === "next" ? 1 : -1));
+      renderCalendar(dir);   // 목록(작은 달력 포함)도 같이 다시 그려짐
+      const fresh = listView.querySelector(".mini-cal");
+      if(fresh) fresh.classList.add(dir === "next" ? "slide-next" : "slide-prev");
+    }
+  };
+  box.addEventListener("touchstart", e => startSwipe(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+  box.addEventListener("touchend", e => endSwipe(e.changedTouches[0].clientX, e.changedTouches[0].clientY), { passive: true });
+  // 컴퓨터에서는 마우스로 끌어서
+  box.addEventListener("mousedown", e => startSwipe(e.clientX, e.clientY));
+  box.addEventListener("mouseup", e => endSwipe(e.clientX, e.clientY));
 
   return box;
 }
@@ -4865,6 +5032,71 @@ function closeAllOverlays() {
   document.getElementById("monthPickerModal").style.display = "none";
 }
 
+// ⭐ 입력칸 안 오른쪽 ✕: 누르면 그 칸 내용을 한 번에 지움
+// 지금 고치고 있는 칸(커서가 있는 칸)에만, 글이 있을 때만 보임
+// → 스크롤 · 드래그할 때는 ✕가 없어서 실수로 지워질 일이 없음
+["titleInput","descInput","urlInput","imageInput",
+ "editTitleInput","editDescInput","editUrlInput","editImageInput"].forEach(id => {
+  const field = document.getElementById(id);
+  if(!field) return;
+  const wrap = document.createElement("span");
+  wrap.className = "clear-wrap" + (field.tagName === "TEXTAREA" ? " is-area" : "");
+  field.parentNode.insertBefore(wrap, field);
+  wrap.appendChild(field);
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "clear-btn";
+  btn.setAttribute("aria-label", "내용 지우기");
+  btn.textContent = "✕";
+  wrap.appendChild(btn);
+
+  let editing = false;
+  const update = () => { btn.hidden = !editing || field.value === ""; };
+  field.addEventListener("focus", () => { editing = true; update(); });
+  field.addEventListener("blur", () => { editing = false; update(); });
+  field.addEventListener("input", update);
+  // 버튼을 눌러도 칸에서 커서가 빠지지 않게 (키보드도 그대로)
+  btn.addEventListener("pointerdown", e => e.preventDefault());
+  btn.addEventListener("mousedown", e => e.preventDefault());
+  btn.addEventListener("click", () => {
+    field.value = "";
+    field.dispatchEvent(new Event("input", { bubbles: true }));
+    field.focus();
+  });
+  update();
+});
+
+// ⭐ 창이 열려 있는 동안 뒤 페이지 스크롤 잠그기 (모든 폰 브라우저에서 확실하게)
+// 창이 열리고 닫힐 때(style 변경)를 지켜보다가 html에 modal-lock을 붙였다 뗌
+// 뒤 페이지를 화면에 못 박아서(position: fixed) 스크롤할 데가 아예 없게
+// → 폰 브라우저가 주소창 · 아래 메뉴바를 숨기지 않아서 창이 들썩이지 않음
+let lockY = 0;
+function setLockedScroll(y){
+  lockY = Math.max(0, Math.round(y));
+  document.body.style.top = `-${lockY}px`;
+}
+(() => {
+  const overlays = [...document.querySelectorAll(".modal"), document.getElementById("inputBox")].filter(Boolean);
+  const root = document.documentElement;
+  const sync = () => {
+    const open = overlays.some(el => el.style.display === "flex" || el.style.display === "block");
+    if(open === root.classList.contains("modal-lock")) return;
+    if(open){
+      const y = window.scrollY;
+      root.classList.add("modal-lock");
+      setLockedScroll(y);
+    } else {
+      root.classList.remove("modal-lock");
+      document.body.style.top = "";
+      window.scrollTo({ top: lockY, behavior: "instant" });
+    }
+  };
+  const mo = new MutationObserver(sync);
+  overlays.forEach(el => mo.observe(el, { attributes: true, attributeFilter: ["style"] }));
+  sync();
+})();
+
 /******** 일정 상세 모달 (달력 칸 + 다가오는 일정 공용) ********/
 function openScheduleModal(it, key, skipPush){
   selectedDateKey = key;
@@ -4899,7 +5131,13 @@ function openScheduleModal(it, key, skipPush){
   photo.classList.remove("portrait");
   // 새 사진을 다 불러오기 전까지는 안 보이게 (이전 사진 깜빡임 방지)
   photo.style.opacity = "0";
-  photo.onload = () => { photo.classList.toggle("portrait", photo.naturalHeight > photo.naturalWidth); photo.style.opacity = ""; };
+  photo.onload = () => {
+    const isPortrait = photo.naturalHeight > photo.naturalWidth;
+    photo.classList.toggle("portrait", isPortrait);
+    // 세로 사진은 세로 칸, 가로 사진은 가로 칸
+    photoLink.classList.toggle("wide", !isPortrait);
+    photo.style.opacity = "";
+  };
   photo.src = imageUrl || "";
 
   // 날짜 · 시간을 한 줄로 (예: 2026년 9월 27일 (일) · 종일)
