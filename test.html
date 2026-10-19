@@ -3904,6 +3904,15 @@ body.list-mode #siteFooter {
   grid-row: 1 / 4;
 }
 
+/* 링크: 상세창 오른쪽 위, 유형 배지와 같은 줄에 작은 칩으로 */
+#actionModal .detail-head #modalLink {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  justify-self: end;
+  align-self: center;
+  margin: 0;
+}
+
 /* 🔗 링크 아이콘 작게 (잘못 눌리는 일 줄이기) */
 .schedule .link-icon {
   font-size: 8px;
@@ -3977,7 +3986,7 @@ body.list-mode #siteFooter {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.20-c</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.20-d</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
@@ -5431,8 +5440,8 @@ function openScheduleModal(it, key, skipPush){
   actionModal.querySelector(".modal-content").style.setProperty("--c", typeColors[it.type] || "#e0e7ff");
   const itemUrl = safeUrl(it.url);
   modalLink.style.display = itemUrl ? "flex" : "none";
-  // 링크 칩 글자는 사이트 상관없이 "링크 열기"
-  document.getElementById("modalLinkHost").textContent = "링크 열기";
+  // 링크 칩 글자는 사이트 상관없이 "링크"
+  document.getElementById("modalLinkHost").textContent = "링크";
   modalLink.href = itemUrl || "#";
 
   // 사진 주소가 있으면 상세 창 위에 사진 표시 (못 불러오면 조용히 숨김)
