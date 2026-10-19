@@ -3792,6 +3792,31 @@ body.list-mode #siteFooter {
   margin-top: 16px;
 }
 
+/* 삭제 후 [되돌리기] 알림 */
+.toast.undo-toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px 6px 18px;
+}
+
+.toast.undo-toast.show {
+  pointer-events: auto;
+}
+
+#undoBtn {
+  margin: 0;
+  padding: 7px 12px;
+  border: none;
+  border-radius: 20px;
+  background: rgba(255,255,255,.14);
+  color: #D9D2FF;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: none;
+  cursor: pointer;
+}
+
 /* 사진이 없으면 오른쪽 칸 간격도 없앰 */
 #actionModal .detail-head:has(.detail-photo[hidden]) { column-gap: 0; }
 
@@ -4035,6 +4060,7 @@ body.list-mode #siteFooter {
           <li>칸 누르면 나오는 ✕로 내용 한 번에 지우기</li>
           <li>일정 창에서 복사 → 다른 날짜에 붙여넣기</li>
           <li>일정 길게 눌러 끌면 순서 변경</li>
+          <li>실수로 삭제했으면 아래 알림의 [되돌리기]로 복구 (6초 안에)</li>
         </ul>
       </div>
     </div>
@@ -5691,19 +5717,55 @@ cancelDeleteBtn.onclick=()=>{
 confirmDeleteBtn.onclick=async ()=>{
   if (saving) return;
   const batch=writeBatch(db);
-  for(const k in firestoreData) firestoreData[k].forEach(it=>{ if(inActiveGroup(it)) batch.delete(doc(schedulesCol,it.id)); });
+  const removed = [];   // 되돌리기용으로 지우는 일정 내용을 그대로 기억
+  for(const k in firestoreData) firestoreData[k].forEach(it=>{ if(inActiveGroup(it)){ removed.push({...it}); batch.delete(doc(schedulesCol,it.id)); } });
   saving = true;
   confirmDeleteBtn.disabled = true;
   try {
     await batch.commit();
     deleteConfirmModal.style.display="none";
     history.back();
-    showToast("일정을 삭제했어요");
+    showUndo(removed);
   } catch {
     showToast("삭제하지 못했어요. 다시 시도해 주세요.");
   } finally {
     saving = false;
     confirmDeleteBtn.disabled = false;
+  }
+};
+
+/******** 삭제 되돌리기 ********/
+// 삭제하고 6초 안에 [되돌리기]를 누르면 지운 일정을 같은 id · 내용 · 순서로 다시 저장
+const undoToast = document.getElementById("undoToast");
+const undoBtn = document.getElementById("undoBtn");
+let undoItems = null, undoTimer = null;
+
+function showUndo(items){
+  if(!items.length){ showToast("일정을 삭제했어요"); return; }
+  undoItems = items;
+  toast.classList.remove("show");
+  undoToast.classList.add("show");
+  clearTimeout(undoTimer);
+  undoTimer = setTimeout(hideUndo, 6000);
+}
+
+function hideUndo(){
+  undoToast.classList.remove("show");
+  undoItems = null;
+}
+
+undoBtn.onclick = async () => {
+  const items = undoItems;
+  if(!items) return;
+  clearTimeout(undoTimer);
+  hideUndo();
+  const batch = writeBatch(db);
+  items.forEach(({ id, ...data }) => batch.set(doc(schedulesCol, id), data));
+  try {
+    await batch.commit();
+    showToast("되돌렸어요");
+  } catch {
+    showToast("되돌리지 못했어요. 다시 시도해 주세요.");
   }
 };
 
@@ -5809,7 +5871,7 @@ todayBtn.onclick = () => {
 const noticeBtn = document.getElementById("noticeBtn");
 const noticeModal = document.getElementById("noticeModal");
 const noticeList = document.getElementById("noticeList");
-// 소식이 바뀌었는지 알아보는 표시 (맨 위 소식의 날짜 + 항목들)
+// 새 소식인지 알아보는 표시: 맨 위 소식의 날짜만 봄 (문장만 고치면 다시 안 뜸)
 // 새 소식은 올린 날 포함 7일(일주일) 동안만 저절로 뜨고 NEW 표시 (그 뒤엔 맨 아래 글씨로만 보기)
 const NOTICE_DAYS = 7;
 const noticeIsFresh = (() => {
@@ -5821,7 +5883,7 @@ const noticeIsFresh = (() => {
   const days = Math.round((today - start) / 86400000);
   return days >= 0 && days < NOTICE_DAYS;
 })();
-const noticeVersion = UPDATES.length ? UPDATES[0].date + "|" + UPDATES[0].items.join("|") : "";
+const noticeVersion = UPDATES.length ? UPDATES[0].date : "";
 const noticeSeen = () => { try { return localStorage.getItem("mb-notice-seen") === noticeVersion; } catch { return true; } };
 
 function renderNotices(){
@@ -6026,6 +6088,8 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; history.back
 </div>
 
 <div id="toast" class="toast"></div>
+<!-- 삭제 직후 몇 초 동안: [되돌리기] -->
+<div id="undoToast" class="toast undo-toast"><span>일정을 삭제했어요</span><button id="undoBtn" type="button">되돌리기</button></div>
 
 </body>
 </html>
