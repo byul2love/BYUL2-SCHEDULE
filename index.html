@@ -3817,6 +3817,21 @@ body.list-mode #siteFooter {
   cursor: pointer;
 }
 
+/* 유튜브 썸네일에는 가운데 ▶ 표시 */
+#actionModal .detail-photo { position: relative; }
+#actionModal .detail-photo.is-video::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 26px;
+  height: 26px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: rgba(0,0,0,.55) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 7l8 5-8 5z' fill='white'/%3E%3C/svg%3E") center / 16px no-repeat;
+  pointer-events: none;
+}
+
 /* 사진이 없으면 오른쪽 칸 간격도 없앰 */
 #actionModal .detail-head:has(.detail-photo[hidden]) { column-gap: 0; }
 
@@ -4057,6 +4072,7 @@ body.list-mode #siteFooter {
         <ul>
           <li>날짜 두 번 누르면 일정 추가 (목록 탭은 + 버튼)</li>
           <li>사진 주소 넣으면 일정 창에 사진 표시</li>
+          <li>유튜브 링크는 썸네일이 저절로 표시 (사진 주소 넣으면 그 사진으로)</li>
           <li>칸 누르면 나오는 ✕로 내용 한 번에 지우기</li>
           <li>일정 창에서 복사 → 다른 날짜에 붙여넣기</li>
           <li>일정 길게 눌러 끌면 순서 변경</li>
@@ -4090,9 +4106,9 @@ const UPDATES = [
   {
     date: "2026-10-19",
     items: [
-      "일정 상세 창에서 사진 미리보기를 볼 수 있어요",
       "일정에 사진을 넣을 수 있어요! 추가 · 수정 창의 '사진 주소' 칸에 이미지 주소를 붙여넣어 주세요",
-      "일정 사이트 디자인이 변경되었어요",
+      "일정을 누르면 뜨는 창에서 사진 미리보기를 볼 수 있어요",
+      "일정 창 디자인이 더 깔끔해졌어요",
       "목록 탭이 생겼어요! 이번 달 일정을 날짜순으로 한눈에 볼 수 있어요"
     ]
   }
@@ -4245,6 +4261,23 @@ function showToast(msg){
   toast.classList.add("show");
   clearTimeout(toastTimer);
   toastTimer = setTimeout(()=>toast.classList.remove("show"), 1800);
+}
+
+// ⭐ 유튜브 링크에서 영상 id 뽑기 (youtube.com/watch?v= · youtu.be/ · shorts/ · live/ · embed/)
+function youtubeId(u){
+  if(!u) return "";
+  try {
+    const url = new URL(u);
+    const host = url.hostname.replace(/^(www|m)\./, "");
+    let id = "";
+    if(host === "youtu.be") id = url.pathname.slice(1).split("/")[0];
+    else if(host === "youtube.com" || host === "music.youtube.com"){
+      id = url.searchParams.get("v") || "";
+      const m = url.pathname.match(/^\/(shorts|live|embed)\/([^/?#]+)/);
+      if(!id && m) id = m[2];
+    }
+    return /^[A-Za-z0-9_-]{6,20}$/.test(id) ? id : "";
+  } catch { return ""; }
 }
 
 // ⭐ 링크 검사: http/https 주소만 허용 (javascript: 등 차단)
@@ -5346,7 +5379,10 @@ function openScheduleModal(it, key, skipPush){
   // 사진 주소가 있으면 상세 창 위에 사진 표시 (못 불러오면 조용히 숨김)
   const photoLink = document.getElementById("modalImageLink");
   const photo = document.getElementById("modalImage");
-  const imageUrl = safeUrl(it.image);
+  // 사진 주소가 없고 링크가 유튜브면 유튜브 썸네일을 대신 보여줌
+  const ytId = youtubeId(itemUrl);
+  const imageUrl = safeUrl(it.image) || (ytId ? `https://i.ytimg.com/vi/${ytId}/mqdefault.jpg` : "");
+  photoLink.classList.toggle("is-video", !safeUrl(it.image) && !!ytId);
   photoLink.hidden = !imageUrl;
   photo.onerror = () => { photoLink.hidden = true; };
   // 세로 사진은 더 길게 보여주기
