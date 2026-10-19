@@ -3456,6 +3456,8 @@ html:has(.modal[style*="flex"]) {
 
 #actionModal .modal-info {
   touch-action: pan-y;
+  /* 내용 끝까지 스크롤했을 때 창이 늘어나며 출렁이는 효과 없애기 */
+  overscroll-behavior: none;
 }
 
 #actionModal .modal-content {
@@ -3503,15 +3505,30 @@ html:has(.modal[style*="flex"]) {
     font-size: 13.5px;
   }
 
-  /* 3) 입력칸 글씨 16px: 누를 때 화면이 자동 확대되며 흔들리는 것 방지 */
+  /* 3) 검색칸 글씨 16px: 누를 때 화면이 자동 확대되며 흔들리는 것 방지 */
+  #searchInput {
+    font-size: 16px;
+  }
+
+  /* 일정 추가 · 수정 칸 글씨는 조금 작게 (긴 주소나 날짜가 잘리지 않게) */
   #editModal input,
   #editModal select,
   #editModal textarea,
   #inputBox input,
   #inputBox select,
-  #inputBox textarea,
-  #searchInput {
-    font-size: 16px;
+  #inputBox textarea {
+    font-size: 14px;
+  }
+
+  /* 날짜 칸을 조금 더 넓게, 글씨는 더 작게 → "2026. 12. 05." 이 잘리지 않게 */
+  #editModal .datetime-row input[type="date"],
+  #inputBox .datetime-row input[type="date"] { flex: 1.6 1 0; }
+  #editModal .datetime-row input[type="date"],
+  #editModal .datetime-row input[type="time"],
+  #inputBox .datetime-row input[type="date"],
+  #inputBox .datetime-row input[type="time"] {
+    font-size: 13px;
+    padding: 0 6px;
   }
 }
 
@@ -3532,16 +3549,19 @@ html:has(.modal[style*="flex"]) {
 #actionModal .detail-photo {
   grid-column: 2;
   grid-row: 2 / span 3;
-  margin: 10px 0 0;
+  margin: 0;
+  align-self: center;   /* 글이 사진보다 길면 사진을 글 높이 가운데에 */
 }
 
 #actionModal #modalTitle { grid-column: 1; grid-row: 2; }
 #actionModal #modalDate { grid-column: 1; grid-row: 3; }
-/* 내용은 사진 밑에 가로로 꽉 차게 */
+/* 내용은 사진 밑에 가로로 꽉 차게, 위쪽(제목·사진)과 얇은 선으로 구분 */
 #actionModal .detail-head #modalContent {
   grid-column: 1 / -1;
   grid-row: 5;
-  margin: 10px 0 0;
+  margin: 12px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid #F0EEF6;
 }
 /* 링크: 내용 밑에 글자 길이만큼만 작은 칩으로 */
 #actionModal .detail-head #modalLink {
@@ -4883,10 +4903,8 @@ function openScheduleModal(it, key, skipPush){
   actionModal.querySelector(".modal-content").style.setProperty("--c", typeColors[it.type] || "#e0e7ff");
   const itemUrl = safeUrl(it.url);
   modalLink.style.display = itemUrl ? "flex" : "none";
-  // 링크 줄에 사이트 이름 표시 (예: instagram.com)
-  let host = "링크 열기";
-  try { if(itemUrl) host = new URL(itemUrl).hostname.replace(/^www\./, ""); } catch {}
-  document.getElementById("modalLinkHost").textContent = host;
+  // 링크 칩 글자는 사이트 상관없이 "링크 열기"
+  document.getElementById("modalLinkHost").textContent = "링크 열기";
   modalLink.href = itemUrl || "#";
 
   // 사진 주소가 있으면 상세 창 위에 사진 표시 (못 불러오면 조용히 숨김)
@@ -4899,7 +4917,12 @@ function openScheduleModal(it, key, skipPush){
   photo.classList.remove("portrait");
   // 새 사진을 다 불러오기 전까지는 안 보이게 (이전 사진 깜빡임 방지)
   photo.style.opacity = "0";
-  photo.onload = () => { photo.classList.toggle("portrait", photo.naturalHeight > photo.naturalWidth); photo.style.opacity = ""; };
+  photoLink.style.width = photoLink.style.height = "";
+  photo.onload = () => {
+    photo.classList.toggle("portrait", photo.naturalHeight > photo.naturalWidth);
+    fitDetailPhoto();
+    photo.style.opacity = "";
+  };
   photo.src = imageUrl || "";
 
   // 날짜 · 시간을 한 줄로 (예: 2026년 9월 27일 (일) · 종일)
@@ -4918,6 +4941,27 @@ function openScheduleModal(it, key, skipPush){
     });
   actionModal.style.display = "flex";
   if(!skipPush) pushModalState();
+}
+
+// 상세 창 사진 크기: 높이는 옆의 제목+날짜 높이에 맞추고(빈 여백 없음),
+// 너비는 사진 원래 비율대로(가로 사진도 안 잘림)
+function fitDetailPhoto(){
+  const box = document.getElementById("modalImageLink");
+  const img = document.getElementById("modalImage");
+  if(box.hidden || !img.naturalWidth) return;
+  const ratio = img.naturalWidth / img.naturalHeight;
+  // 사진 너비가 바뀌면 제목 줄 수도 바뀌니까 두 번 맞춤
+  for(let i = 0; i < 2; i++){
+    const textH = modalDate.getBoundingClientRect().bottom - modalTitle.getBoundingClientRect().top;
+    // 너무 작아지지 않게 최소 높이: 세로 사진 104px, 가로 사진 76px
+    const minH = ratio < 1 ? 104 : 76;
+    let h = Math.min(Math.max(textH, minH), 120);
+    let w = h * ratio;
+    if(w > 104){ w = 104; h = w / ratio; }   // 가로 사진은 너비를 104px까지만 (제목 칸이 너무 좁아지지 않게)
+    if(w < 48) w = 48;                         // 아주 길쭉한 세로 사진은 살짝만 잘림
+    box.style.width = Math.round(w) + "px";
+    box.style.height = Math.round(h) + "px";
+  }
 }
 
 /******** 다가오는 일정 ********/
@@ -5513,6 +5557,5 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; history.back
 
 </body>
 </html>
-
 
 
