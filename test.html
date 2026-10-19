@@ -4410,21 +4410,6 @@ viewTabs.querySelectorAll("button").forEach(b => {
 // 목록 탭 유형 색 (달력 탭과 같은 원래 파스텔 색)
 const listColors = typeColors;
 const listColorOf = t => listColors[t] || listColors["기타"];
-
-// 작은 달력 점 · 범례 점 전용 색: 파스텔보다 한 단계 진하게 (서로 구분되면서 너무 튀지 않게)
-const dotColors = {
-  콘서트: "#F78FB3",           // 분홍
-  유튜브: "#F28585",           // 빨강
-  행사: "#B29AF4",             // 보라
-  방송: "#6ACF9C",             // 초록
-  "팬사인회/팬미팅": "#6CCEDD", // 청록
-  발매: "#7FA2EC",             // 파랑
-  기념일: "#F5B35C",           // 주황
-  SNS: "#EDD45A",              // 노랑
-  버블: "#E1A2F0",             // 자주
-  기타: "#BCB9CF"              // 회색
-};
-const dotColorOf = t => dotColors[t] || dotColors["기타"];
 const LEGEND_ORDER = ["콘서트","방송","유튜브","발매","행사","팬사인회/팬미팅","기념일","버블","SNS","기타"];
 
 // 목록 위에 붙는 작은 달력 (날짜마다 유형 색깔 점)
@@ -4480,7 +4465,7 @@ function buildMiniCal(y, m, todayKey, weekdays){
     dots.className = "mini-dots";
     items.slice(0, 4).forEach(it => {
       const dot = document.createElement("i");
-      dot.style.background = dotColorOf(it.type);
+      dot.style.background = listColorOf(it.type);
       dots.appendChild(dot);
     });
     if(items.length > 4){
@@ -4515,7 +4500,7 @@ function buildMiniCal(y, m, todayKey, weekdays){
       if(!monthTypes.has(name)) return;
       const chip = document.createElement("span");
       chip.className = "mini-legend-chip";
-      chip.style.setProperty("--c", dotColorOf(name));
+      chip.style.setProperty("--c", listColorOf(name));
       chip.textContent = name;
       legend.appendChild(chip);
     });
@@ -5776,4 +5761,3 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; history.back
 
 </body>
 </html>
-
