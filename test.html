@@ -5409,6 +5409,7 @@ function openScheduleModal(it, key, skipPush){
     // 세로 사진은 세로 칸, 가로 사진은 가로 칸
     photoLink.classList.toggle("wide", !isPortrait);
     photo.style.opacity = "";
+    fitDetailTitle();
   };
   photo.src = imageUrl || "";
 
@@ -5427,7 +5428,31 @@ function openScheduleModal(it, key, skipPush){
       modalDate.appendChild(line);
     });
   actionModal.style.display = "flex";
+  fitDetailTitle();
   if(!skipPush) pushModalState();
+}
+
+// 사진 옆 제목이 3줄을 넘으면 3줄에 들어갈 때까지 글씨를 1px씩 줄임 (최소 14px)
+// → 폰이 글씨를 크게 키워도 "제목 3줄 + 옆에 사진" 구도 유지
+function fitDetailTitle(){
+  modalTitle.style.fontSize = "";
+  modalDate.style.fontSize = "";
+  if(document.getElementById("modalImageLink").hidden) return;
+  const lines = () => modalTitle.offsetHeight / (parseFloat(getComputedStyle(modalTitle).lineHeight) || 24);
+  let size = parseFloat(getComputedStyle(modalTitle).fontSize);
+  while(lines() > 3.2 && size > 14){
+    size -= 1;
+    modalTitle.style.fontSize = size + "px";
+  }
+  // 날짜도 한 줄에 다 들어가게 (예: "(금)"만 다음 줄로 넘어가지 않게, 최소 11px)
+  const first = modalDate.querySelector(".d-line");
+  if(!first) return;
+  let ds = parseFloat(getComputedStyle(modalDate).fontSize);
+  const lh = () => parseFloat(getComputedStyle(first).lineHeight) || ds * 1.4;
+  while(first.offsetHeight > lh() * 1.5 && ds > 11){
+    ds -= 0.5;
+    modalDate.style.fontSize = ds + "px";
+  }
 }
 
 /******** 다가오는 일정 ********/
