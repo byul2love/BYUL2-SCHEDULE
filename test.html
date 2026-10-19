@@ -3455,10 +3455,15 @@ html.modal-lock {
   overscroll-behavior: none;
 }
 
-/* :has를 모르는 옛날 폰 브라우저용 (스크립트가 html에 modal-lock을 붙임) */
+/* 창이 열려 있는 동안 뒤 페이지를 화면에 못 박기 (스크립트가 html에 modal-lock을 붙임)
+   → 스크롤할 데가 없으니 폰 주소창 · 메뉴바가 숨지 않아 창이 들썩이지 않음 */
 html.modal-lock body {
   overflow: hidden;
   overscroll-behavior: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
 }
 
 #actionModal {
@@ -4015,13 +4020,23 @@ onSnapshot(schedulesCol, snapshot=>{
 function scrollToSelectedDay(){
   requestAnimationFrame(() => {
     // 목록 탭에서는 목록의 그 날짜 묶음으로 이동
+    // 창이 열려 페이지가 고정돼 있으면, 창을 닫았을 때 그 날짜가 보이도록 돌아갈 위치만 바꿔 둠
+    const locked = document.documentElement.classList.contains("modal-lock");
+    const moveLocked = (el, block) => {
+      const r = el.getBoundingClientRect();
+      const docTop = r.top + lockY;
+      setLockedScroll(block === "center" ? docTop - (window.innerHeight - r.height) / 2 : docTop);
+    };
     if (viewMode === "list") {
       const group = document.querySelector(`.list-day[data-key="${selectedDateKey}"]`);
-      if (group) group.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (!group) return;
+      if (locked) moveLocked(group, "start");
+      else group.scrollIntoView({ behavior: "smooth", block: "start" });
       return;
     }
     const selectedEl = document.querySelector(".day.selected");
     if (!selectedEl) return;
+    if (locked) { moveLocked(selectedEl, "center"); return; }
     selectedEl.scrollIntoView({
       behavior: "smooth",
       block: "center"
@@ -4959,11 +4974,28 @@ function closeAllOverlays() {
 
 // ⭐ 창이 열려 있는 동안 뒤 페이지 스크롤 잠그기 (모든 폰 브라우저에서 확실하게)
 // 창이 열리고 닫힐 때(style 변경)를 지켜보다가 html에 modal-lock을 붙였다 뗌
+// 뒤 페이지를 화면에 못 박아서(position: fixed) 스크롤할 데가 아예 없게
+// → 폰 브라우저가 주소창 · 아래 메뉴바를 숨기지 않아서 창이 들썩이지 않음
+let lockY = 0;
+function setLockedScroll(y){
+  lockY = Math.max(0, Math.round(y));
+  document.body.style.top = `-${lockY}px`;
+}
 (() => {
   const overlays = [...document.querySelectorAll(".modal"), document.getElementById("inputBox")].filter(Boolean);
+  const root = document.documentElement;
   const sync = () => {
     const open = overlays.some(el => el.style.display === "flex" || el.style.display === "block");
-    document.documentElement.classList.toggle("modal-lock", open);
+    if(open === root.classList.contains("modal-lock")) return;
+    if(open){
+      const y = window.scrollY;
+      root.classList.add("modal-lock");
+      setLockedScroll(y);
+    } else {
+      root.classList.remove("modal-lock");
+      document.body.style.top = "";
+      window.scrollTo({ top: lockY, behavior: "instant" });
+    }
   };
   const mo = new MutationObserver(sync);
   overlays.forEach(el => mo.observe(el, { attributes: true, attributeFilter: ["style"] }));
