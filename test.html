@@ -3121,14 +3121,14 @@ header::after {
 
 #actionModal .modal-title-text {
   margin: 10px 0 4px;
-  font-size: calc(18px * var(--text-comp, 1));   /* 폰 글씨 확대만큼 되돌려서 어디서나 같은 크기로 */
+  font-size: 18px;
   font-weight: 700;
 }
 
 /* 날짜 · 시간: 상자 없이 한 줄 */
 #actionModal .modal-date-text {
   margin: 0;
-  font-size: calc(13px * var(--text-comp, 1));
+  font-size: 13px;
   font-weight: 500;
   color: #8B8798;
 }
@@ -3577,8 +3577,7 @@ html.modal-lock body {
   grid-column: 2;
   grid-row: 2 / span 3;
   margin: 0;
-  align-self: start;    /* 사진 윗선을 제목 첫 줄에 맞춤 */
-  margin-top: 4px;
+  align-self: center;   /* 글이 사진보다 길면 사진을 글 높이 가운데에 */
   /* 세로 사진은 모두 같은 세로 칸(3:4) */
   width: 78px;
   height: 104px;
@@ -3679,14 +3678,14 @@ html.modal-lock body {
 }
 
 /* 줄바꿈: 영어도 한글처럼 글자 단위로 (줄 끝까지 꽉 채우고 넘어감)
-   → 공간이 좁은 달력 칸 일정, 목록 일정
-   (상세창 제목·내용은 읽기 편하게 영어 단어째로 넘어감, 아주 긴 주소만 중간에서 끊김) */
-#modalTitle,
-#modalContent {
+   → 상세창 내용, 달력 칸 일정, 목록 일정
+   (상세창 제목은 읽기 편하게 영어 단어째로 넘어감) */
+#modalTitle {
   word-break: normal;
   overflow-wrap: anywhere;
 }
 
+#modalContent,
 .schedule .title,
 .list-title,
 .list-snippet {
@@ -3838,14 +3837,6 @@ body.list-mode #siteFooter {
   pointer-events: none;
 }
 
-/* 일정 창 제목 · 날짜 부분은 폰 브라우저가 글씨를 자동으로 키우지 않게
-   (카카오톡 · 삼성 인터넷 등의 "글꼴 크기" 자동 확대 막기 → 컴퓨터와 같은 구도) */
-#actionModal .detail-head,
-#actionModal .detail-head * {
-  -webkit-text-size-adjust: none;
-  text-size-adjust: none;
-}
-
 /* 사진이 없으면 오른쪽 칸 간격도 없앰 */
 #actionModal .detail-head:has(.detail-photo[hidden]) { column-gap: 0; }
 
@@ -3857,6 +3848,53 @@ body.list-mode #siteFooter {
   align-self: stretch;
   justify-self: start;
   margin-left: -24px;   /* 왼쪽 여백 끝(창 가장자리)에 붙이기 */
+}
+
+/* 사진 위치: 날짜 밑에 크게 (제목 · 날짜는 항상 가로로 꽉)
+   [유형 배지]
+   [제목 ··············]
+   [날짜 ··············]
+   [   사진 / 썸네일   ]
+   ─────────────
+   [내용] */
+#actionModal .detail-head {
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 0;
+}
+
+#actionModal #modalTitle,
+#actionModal #modalDate {
+  grid-column: 1;
+}
+
+#actionModal .detail-photo {
+  grid-column: 1;
+  grid-row: 4;
+  align-self: start;
+  justify-self: start;
+  margin: 12px 0 0;
+  /* 세로 사진: 세로 칸 */
+  width: 150px;
+  height: 200px;
+}
+
+/* 가로 사진 · 유튜브 썸네일: 창 너비 가득 (16:9) */
+#actionModal .detail-photo.wide {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+}
+
+/* 썸네일이 커졌으니 ▶ 표시도 조금 크게 */
+#actionModal .detail-photo.is-video::after {
+  width: 40px;
+  height: 40px;
+  background-size: 22px;
+}
+
+/* 왼쪽 유형 색 띠는 배지 ~ 날짜 옆까지만 (사진 옆으로는 안 내려가게) */
+#actionModal .detail-head::before {
+  grid-row: 1 / 4;
 }
 
 /* 🔗 링크 아이콘 작게 (잘못 눌리는 일 줄이기) */
@@ -5409,7 +5447,6 @@ function openScheduleModal(it, key, skipPush){
     // 세로 사진은 세로 칸, 가로 사진은 가로 칸
     photoLink.classList.toggle("wide", !isPortrait);
     photo.style.opacity = "";
-    fitDetailTitle();
   };
   photo.src = imageUrl || "";
 
@@ -5428,31 +5465,7 @@ function openScheduleModal(it, key, skipPush){
       modalDate.appendChild(line);
     });
   actionModal.style.display = "flex";
-  fitDetailTitle();
   if(!skipPush) pushModalState();
-}
-
-// 사진 옆 제목이 3줄을 넘으면 3줄에 들어갈 때까지 글씨를 1px씩 줄임 (최소 14px)
-// → 폰이 글씨를 크게 키워도 "제목 3줄 + 옆에 사진" 구도 유지
-function fitDetailTitle(){
-  modalTitle.style.fontSize = "";
-  modalDate.style.fontSize = "";
-  if(document.getElementById("modalImageLink").hidden) return;
-  const lines = () => modalTitle.offsetHeight / (parseFloat(getComputedStyle(modalTitle).lineHeight) || 24);
-  let size = parseFloat(getComputedStyle(modalTitle).fontSize);
-  while(lines() > 3.2 && size > 14){
-    size -= 1;
-    modalTitle.style.fontSize = size + "px";
-  }
-  // 날짜도 한 줄에 다 들어가게 (예: "(금)"만 다음 줄로 넘어가지 않게, 최소 11px)
-  const first = modalDate.querySelector(".d-line");
-  if(!first) return;
-  let ds = parseFloat(getComputedStyle(modalDate).fontSize);
-  const lh = () => parseFloat(getComputedStyle(first).lineHeight) || ds * 1.4;
-  while(first.offsetHeight > lh() * 1.5 && ds > 11){
-    ds -= 0.5;
-    modalDate.style.fontSize = ds + "px";
-  }
 }
 
 /******** 다가오는 일정 ********/
@@ -5942,34 +5955,6 @@ todayBtn.onclick = () => {
 
 };
 
-/******** 폰 글씨 확대 감지 ********/
-// 카카오톡 브라우저나 폰 글꼴 크기 설정 때문에 글씨가 커지면
-// 일정 창 제목 · 날짜만 그만큼 줄여서 컴퓨터에서 보는 것과 같은 모양으로
-(() => {
-  const probe = document.createElement("span");
-  probe.textContent = "가";
-  probe.style.cssText = "position:absolute;visibility:hidden;left:-999px;top:0;font-size:100px;line-height:1;white-space:nowrap;-webkit-text-size-adjust:none;text-size-adjust:none";
-  document.body.appendChild(probe);
-  const scale = probe.getBoundingClientRect().height / 100;
-  probe.remove();
-  if(scale > 1.05 && scale < 3){
-    document.documentElement.style.setProperty("--text-comp", (1 / scale).toFixed(3));
-  }
-  // 점검용: 주소 끝에 ?debug 를 붙이면 화면 아래에 글씨 크기 정보 표시
-  if(location.search.includes("debug")){
-    const box = document.createElement("div");
-    box.style.cssText = "position:fixed;left:8px;bottom:8px;z-index:9999;background:#000c;color:#fff;font:12px/1.4 monospace;padding:8px;border-radius:8px;max-width:90vw;white-space:pre-wrap;-webkit-text-size-adjust:none;text-size-adjust:none";
-    const t = document.createElement("span");
-    t.textContent = "가나다";
-    t.style.cssText = "font-size:20px;line-height:1";
-    document.body.appendChild(t);
-    const h20 = t.getBoundingClientRect().height;
-    t.remove();
-    box.textContent = `probe=${scale.toFixed(3)}  plain20px=${h20.toFixed(1)}\nwidth=${innerWidth}  dpr=${devicePixelRatio}\n${navigator.userAgent.slice(-80)}`;
-    document.body.appendChild(box);
-  }
-})();
-
 /******** 📢 업데이트 소식 ********/
 const noticeBtn = document.getElementById("noticeBtn");
 const noticeModal = document.getElementById("noticeModal");
@@ -6196,4 +6181,5 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; history.back
 
 </body>
 </html>
+
 
