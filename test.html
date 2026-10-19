@@ -3449,7 +3449,14 @@ body:has(#inputBox[style*="block"]) {
 /* 상세 창 흔들림 방지:
    창 위나 어두운 바깥을 끌어도 뒤 페이지가 늘어나거나(바운스) 주소창이 움직이지 않게,
    스크롤은 상세 내용 부분에서만 */
-html:has(.modal[style*="flex"]) {
+html:has(.modal[style*="flex"]),
+html.modal-lock {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+/* :has를 모르는 옛날 폰 브라우저용 (스크립트가 html에 modal-lock을 붙임) */
+html.modal-lock body {
   overflow: hidden;
   overscroll-behavior: none;
 }
@@ -4949,6 +4956,19 @@ function closeAllOverlays() {
   searchModal.style.display = "none";
   document.getElementById("monthPickerModal").style.display = "none";
 }
+
+// ⭐ 창이 열려 있는 동안 뒤 페이지 스크롤 잠그기 (모든 폰 브라우저에서 확실하게)
+// 창이 열리고 닫힐 때(style 변경)를 지켜보다가 html에 modal-lock을 붙였다 뗌
+(() => {
+  const overlays = [...document.querySelectorAll(".modal"), document.getElementById("inputBox")].filter(Boolean);
+  const sync = () => {
+    const open = overlays.some(el => el.style.display === "flex" || el.style.display === "block");
+    document.documentElement.classList.toggle("modal-lock", open);
+  };
+  const mo = new MutationObserver(sync);
+  overlays.forEach(el => mo.observe(el, { attributes: true, attributeFilter: ["style"] }));
+  sync();
+})();
 
 /******** 일정 상세 모달 (달력 칸 + 다가오는 일정 공용) ********/
 function openScheduleModal(it, key, skipPush){
