@@ -3590,6 +3590,9 @@ html.modal-lock body {
 }
 
 #actionModal #modalTitle { grid-column: 1; grid-row: 2; }
+/* 제목이 길 때: 제목은 가로로 꽉, 사진은 날짜 옆 */
+#actionModal .detail-head.title-wide #modalTitle { grid-column: 1 / -1; }
+#actionModal .detail-head.title-wide .detail-photo { grid-row: 3 / span 2; margin-top: 6px; }
 #actionModal #modalDate { grid-column: 1; grid-row: 3; }
 /* 내용은 사진 밑에 가로로 꽉 차게, 위쪽(제목·사진)과 얇은 선으로 구분 */
 #actionModal .detail-head #modalContent {
@@ -5400,6 +5403,7 @@ function openScheduleModal(it, key, skipPush){
     // 세로 사진은 세로 칸, 가로 사진은 가로 칸
     photoLink.classList.toggle("wide", !isPortrait);
     photo.style.opacity = "";
+    fitDetailTitle();
   };
   photo.src = imageUrl || "";
 
@@ -5418,7 +5422,17 @@ function openScheduleModal(it, key, skipPush){
       modalDate.appendChild(line);
     });
   actionModal.style.display = "flex";
+  fitDetailTitle();
   if(!skipPush) pushModalState();
+}
+
+// 제목이 사진 옆 좁은 칸에서 3줄을 넘으면 → 제목은 가로로 넓게, 사진은 날짜 옆으로
+function fitDetailTitle(){
+  const head = actionModal.querySelector(".detail-head");
+  head.classList.remove("title-wide");
+  if(document.getElementById("modalImageLink").hidden) return;
+  const lh = parseFloat(getComputedStyle(modalTitle).lineHeight) || 24;
+  if(modalTitle.offsetHeight / lh > 3.2) head.classList.add("title-wide");
 }
 
 /******** 다가오는 일정 ********/
