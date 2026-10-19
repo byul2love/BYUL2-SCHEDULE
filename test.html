@@ -3549,13 +3549,13 @@ html.modal-lock body {
 
   /* 날짜 칸을 조금 더 넓게, 글씨는 더 작게 → "2026. 12. 05." 이 잘리지 않게 */
   #editModal .datetime-row input[type="date"],
-  #inputBox .datetime-row input[type="date"] { flex: 1.6 1 0; }
+  #inputBox .datetime-row input[type="date"] { flex: 1 1 0; }
   #editModal .datetime-row input[type="date"],
   #editModal .datetime-row input[type="time"],
   #inputBox .datetime-row input[type="date"],
   #inputBox .datetime-row input[type="time"] {
     font-size: 13px;
-    padding: 0 6px;
+    padding: 0 8px;
   }
 }
 
@@ -3617,6 +3617,66 @@ html.modal-lock body {
 }
 #actionModal .detail-head #modalLink .link-host { flex: 0 1 auto; }
 #actionModal .detail-head #modalLink .link-arrow { font-size: 15px; }
+/* 입력칸 안 오른쪽 ✕ (고치고 있는 칸에만 보임) */
+.clear-wrap {
+  position: relative;
+  display: block;
+}
+
+.clear-wrap > input,
+.clear-wrap > textarea {
+  display: block;
+  padding-right: 32px;
+}
+
+#editModal .clear-btn,
+#inputBox .clear-btn {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  translate: 0 -50%;
+  width: 18px;
+  height: 18px;
+  min-width: 0;
+  min-height: 0;
+  flex: none;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 50%;
+  background: #ECE9F5;
+  color: #8A84A6;
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 18px;
+  text-align: center;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+/* 버튼은 작아도 누르는 범위는 넉넉하게 (보이지 않는 터치 영역) */
+#editModal .clear-btn::after,
+#inputBox .clear-btn::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+}
+
+#editModal .clear-btn:active,
+#inputBox .clear-btn:active { background: #DDD8EE; }
+
+/* 내용칸(여러 줄)은 오른쪽 위에 */
+#editModal .clear-wrap.is-area .clear-btn,
+#inputBox .clear-wrap.is-area .clear-btn {
+  top: 10px;
+  translate: none;
+}
+
+#editModal .clear-btn[hidden],
+#inputBox .clear-btn[hidden] {
+  display: none;
+}
+
 /* 사진이 없으면 오른쪽 칸 간격도 없앰 */
 #actionModal .detail-head:has(.detail-photo[hidden]) { column-gap: 0; }
 
@@ -3769,7 +3829,7 @@ html.modal-lock body {
     <label>일정 제목</label><input id="editTitleInput" placeholder="일정 제목">
     <label>일정 내용 (선택)</label>
 <textarea id="editDescInput" placeholder="상세 내용을 입력하세요"></textarea>
-    <label>링크 (선택)</label><input id="editUrlInput">
+    <label>링크 (선택)</label><input id="editUrlInput" placeholder="https://...">
     <label>사진 주소 (선택)</label><input id="editImageInput" placeholder="이미지 주소 붙여넣기" inputmode="url" autocomplete="off">
 <div class="form-divider"></div>
 <label>날짜 및 시간</label>
@@ -4971,6 +5031,41 @@ function closeAllOverlays() {
   searchModal.style.display = "none";
   document.getElementById("monthPickerModal").style.display = "none";
 }
+
+// ⭐ 입력칸 안 오른쪽 ✕: 누르면 그 칸 내용을 한 번에 지움
+// 지금 고치고 있는 칸(커서가 있는 칸)에만, 글이 있을 때만 보임
+// → 스크롤 · 드래그할 때는 ✕가 없어서 실수로 지워질 일이 없음
+["titleInput","descInput","urlInput","imageInput",
+ "editTitleInput","editDescInput","editUrlInput","editImageInput"].forEach(id => {
+  const field = document.getElementById(id);
+  if(!field) return;
+  const wrap = document.createElement("span");
+  wrap.className = "clear-wrap" + (field.tagName === "TEXTAREA" ? " is-area" : "");
+  field.parentNode.insertBefore(wrap, field);
+  wrap.appendChild(field);
+
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "clear-btn";
+  btn.setAttribute("aria-label", "내용 지우기");
+  btn.textContent = "✕";
+  wrap.appendChild(btn);
+
+  let editing = false;
+  const update = () => { btn.hidden = !editing || field.value === ""; };
+  field.addEventListener("focus", () => { editing = true; update(); });
+  field.addEventListener("blur", () => { editing = false; update(); });
+  field.addEventListener("input", update);
+  // 버튼을 눌러도 칸에서 커서가 빠지지 않게 (키보드도 그대로)
+  btn.addEventListener("pointerdown", e => e.preventDefault());
+  btn.addEventListener("mousedown", e => e.preventDefault());
+  btn.addEventListener("click", () => {
+    field.value = "";
+    field.dispatchEvent(new Event("input", { bubbles: true }));
+    field.focus();
+  });
+  update();
+});
 
 // ⭐ 창이 열려 있는 동안 뒤 페이지 스크롤 잠그기 (모든 폰 브라우저에서 확실하게)
 // 창이 열리고 닫힐 때(style 변경)를 지켜보다가 html에 modal-lock을 붙였다 뗌
