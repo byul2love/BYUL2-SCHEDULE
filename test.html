@@ -3727,6 +3727,13 @@ body.list-mode #siteFooter {
 
 #noticeBtn[hidden] { display: none; }
 
+/* 지금 폰에 뜬 코드가 최신인지 확인용 작은 버전 표시 (코드 올릴 때 숫자만 바꾸기) */
+#siteVersion {
+  margin-top: 2px;
+  font-size: 10px;
+  color: #CFC9E6;
+}
+
 #siteFooter .footer-dot {
   margin: 0 4px;
   color: #CFC9E6;
@@ -3970,7 +3977,7 @@ body.list-mode #siteFooter {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.20-c</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
