@@ -3904,6 +3904,20 @@ body.list-mode #siteFooter {
   grid-row: 1 / 4;
 }
 
+/* 사진이 있으면 구분선을 제목 · 날짜 바로 밑으로 (사진과 내용은 한 덩어리로)
+   [배지 · 제목 · 날짜]
+   ─────────────
+   [사진]
+   [내용] */
+#actionModal .detail-head:has(.detail-photo:not([hidden])) #modalDate {
+  padding-bottom: 12px;
+  border-bottom: 1px solid #F0EEF6;
+}
+#actionModal .detail-head:has(.detail-photo:not([hidden])) #modalContent {
+  padding-top: 0;
+  border-top: none;
+}
+
 /* 링크: 상세창 오른쪽 위, 유형 배지와 같은 줄에 작은 칩으로 */
 #actionModal .detail-head #modalLink {
   grid-column: 1 / -1;
@@ -3993,7 +4007,7 @@ body.list-mode #siteFooter {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.20-g</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.20-h</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
