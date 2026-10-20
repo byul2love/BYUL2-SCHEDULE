@@ -4007,7 +4007,7 @@ body.list-mode #siteFooter {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.20-h</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.20-i</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
@@ -4128,44 +4128,71 @@ body.list-mode #siteFooter {
     <div class="modal-title-text notice-title">📖 사용법</div>
     <div id="guideList">
       <div class="notice-item">
-        <div class="notice-date">📅 달력</div>
+        <div class="notice-date">📅 달력 보기</div>
         <ul>
-          <li>일정 누르면 자세한 내용 · 사진 · 링크 보기</li>
-          <li>🔗 아이콘 누르면 링크로 바로 이동</li>
-          <li>옆으로 밀면 달 넘기기</li>
-          <li>가운데 년월 누르면 원하는 달로 이동</li>
+          <li>달력을 왼쪽 · 오른쪽으로 밀거나 ‹ › 버튼으로 달 넘기기</li>
+          <li>가운데 년월(예: 2026년 10월)을 누르면 원하는 달로 바로 이동</li>
+          <li>[Today]를 누르면 오늘 날짜로 돌아오기</li>
+          <li>달력 칸의 🔗 아이콘을 누르면 상세 창 없이 링크로 바로 이동</li>
+        </ul>
+      </div>
+      <div class="notice-item">
+        <div class="notice-date">🗂️ 일정 상세 창</div>
+        <ul>
+          <li>일정을 누르면 제목 · 날짜 · 사진 · 내용 보기</li>
+          <li>오른쪽 위 [링크]를 누르면 관련 페이지로 이동</li>
+          <li>아래 버튼으로 복사 · 수정 · 삭제, [취소]나 폰의 뒤로가기로 닫기</li>
         </ul>
       </div>
       <div class="notice-item">
         <div class="notice-date">⏰ 다가오는 일정</div>
         <ul>
-          <li>위쪽 카드에 다가오는 일정 표시 (SNS · 버블 · 기타 제외)</li>
+          <li>맨 위 카드에 오늘부터 가까운 일정 5개를 D-day와 함께 표시</li>
+          <li>카드를 누르면 그 날짜로 이동해서 상세 창 열기</li>
+          <li>SNS · 버블 · 기타 일정은 카드에서 제외 (달력 · 목록에는 그대로 있음)</li>
         </ul>
       </div>
       <div class="notice-item">
-        <div class="notice-date">📝 목록</div>
+        <div class="notice-date">📝 목록 보기</div>
         <ul>
-          <li>이번 달 일정을 날짜순으로 보기</li>
-          <li>작은 달력 날짜 누르면 그 날짜로 이동</li>
+          <li>달력 오른쪽 [목록]을 누르면 이번 달 일정을 날짜순으로 보기</li>
+          <li>위쪽 작은 달력에서 날짜를 누르면 그 날짜 일정으로 이동</li>
+          <li>[달력]을 누르면 다시 달력으로</li>
         </ul>
       </div>
       <div class="notice-item">
         <div class="notice-date">🔍 찾기</div>
         <ul>
-          <li>년월 왼쪽 메뉴(전체)에서 유형별로 보기</li>
-          <li>오른쪽 위 검색에서 제목 · 내용으로 찾기</li>
+          <li>년월 왼쪽 [전체] 메뉴에서 유형(콘서트 · 방송 · 유튜브 …)을 고르면 그 유형만 보기</li>
+          <li>오른쪽 위 [검색]에 단어를 넣으면 제목 · 내용에 그 단어가 있는 일정 찾기</li>
         </ul>
       </div>
       <div class="notice-item">
-        <div class="notice-date">✏️ 추가 · 수정</div>
+        <div class="notice-date">✏️ 일정 추가하기</div>
         <ul>
-          <li>날짜 두 번 누르면 일정 추가 (목록 탭은 + 버튼)</li>
-          <li>사진 주소 넣으면 일정 창에 사진 표시</li>
-          <li>유튜브 링크는 썸네일이 저절로 표시 (사진 주소 넣으면 그 사진으로)</li>
-          <li>칸 누르면 나오는 ✕로 내용 한 번에 지우기</li>
-          <li>일정 창에서 복사 → 다른 날짜에 붙여넣기</li>
-          <li>일정 길게 눌러 끌면 순서 변경</li>
-          <li>실수로 삭제했으면 아래 알림의 [되돌리기]로 복구 (6초 안에)</li>
+          <li>① 달력에서 날짜 칸을 두 번 누르기 (목록 보기에서는 오른쪽 아래 ＋)</li>
+          <li>② 제목은 꼭 쓰기, 시간은 안 정하면 날짜만 표시</li>
+          <li>③ 유형 고르기 (유형마다 색이 다름)</li>
+          <li>④ 필요하면 링크 · 사진 주소 · 내용 넣고 [추가]</li>
+          <li>사진 주소를 넣으면 상세 창에 사진 표시</li>
+          <li>유튜브 링크만 넣어도 썸네일 자동 표시 (사진 주소를 넣으면 그 사진으로)</li>
+          <li>입력 칸을 누르면 나오는 ✕로 그 칸 내용을 한 번에 지우기</li>
+        </ul>
+      </div>
+      <div class="notice-item">
+        <div class="notice-date">📋 다른 날짜로 복사하기</div>
+        <ul>
+          <li>① 복사할 일정의 상세 창에서 [복사]</li>
+          <li>② 넣을 날짜 칸을 두 번 눌러 추가 창 열기</li>
+          <li>③ 추가 창 오른쪽 위 [붙여넣기] → 내용이 채워지면 확인하고 [추가]</li>
+        </ul>
+      </div>
+      <div class="notice-item">
+        <div class="notice-date">🛠️ 수정 · 순서 · 삭제</div>
+        <ul>
+          <li>상세 창에서 [수정]을 눌러 내용 고치기</li>
+          <li>같은 날 일정은 길게 누른 채 끌면 순서 바꾸기</li>
+          <li>실수로 삭제했으면 아래에 뜨는 알림의 [되돌리기]로 복구하기 (6초 안에)</li>
         </ul>
       </div>
     </div>
