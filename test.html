@@ -3097,21 +3097,17 @@ header {
   #siteTitle .title-line1 { transform: translateX(-34px); }
   #siteTitle .title-line2 { transform: translateX(34px); }
 }
-/* 달력 깔끔하게 */
-#calendar { background: #EFEDF7; }              /* 칸 사이 선을 더 연하게 */
-.schedule .title {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;                          /* 일정 이름은 두 줄까지만, 넘치면 … */
-  overflow: hidden;
-  word-break: keep-all;                           /* 단어 중간에서 줄 안 바뀌게 (너무 긴 단어만 끊기) */
-  overflow-wrap: anywhere;
-}
 
-/* 휴대폰: 일정 없는 칸이 쓸데없이 길지 않게 */
-@media (max-width: 600px) {
-  .day { min-height: 92px; }
+/* 제목 달 · 별: 반짝이는 이모지 대신 단정한 노란 그림으로 */
+#siteTitle .title-moon,
+#siteTitle .title-star {
+  display: inline-block;
+  width: .8em;
+  height: .8em;
+  fill: #FFE3A3;
 }
+#siteTitle .title-moon { vertical-align: -.06em; margin-right: .18em; }
+#siteTitle .title-star { vertical-align: .02em; margin-left: .16em; width: .72em; height: .72em; }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -3120,7 +3116,7 @@ header {
 <header>
   <div class="stars" id="stars" aria-hidden="true"></div>
   <button id="searchBtn"><svg class="tab-ic" viewBox="0 0 16 16" aria-hidden="true"><circle class="ring" cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>검색</button>
-  <div id="siteTitle"><span class="title-line title-line1">🌙MOONBYUL</span><span class="title-line title-line2"> SCHEDULE🌟</span></div>
+  <div id="siteTitle"><span class="title-line title-line1"><svg class="title-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>MOONBYUL</span><span class="title-line title-line2"> SCHEDULE<svg class="title-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 8.7l7.1-.6z"/></svg></span></div>
 <div id="navControls">
 
   <select id="typeFilter">
@@ -3161,7 +3157,7 @@ header {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.20-k</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.20-l</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
