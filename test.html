@@ -3098,20 +3098,25 @@ header {
   #siteTitle .title-line2 { transform: translateX(34px); }
 }
 
-/* 제목 달 · 별: 반짝이는 이모지 대신 단정한 금색 그림으로 (별은 빛줄기 포함) */
+/* 제목 달 · 별: 반짝이는 이모지 대신 SCHEDULE과 같은 노란색 그림으로
+   (별은 글씨처럼 모서리를 둥글게, 빛줄기 포함) */
 #siteTitle .title-moon,
 #siteTitle .title-star {
   display: inline-block;
   width: .8em;
   height: .8em;
-  fill: #FFC94D;
+  fill: #FFE3A3;
 }
 #siteTitle .title-moon { vertical-align: -.06em; margin-right: .18em; }
 #siteTitle .title-star { vertical-align: -.14em; margin-left: .06em; width: 1.05em; height: 1.05em; }
+#siteTitle .title-star path {
+  stroke: #FFE3A3;
+  stroke-width: 2.6;
+  stroke-linejoin: round;
+}
 #siteTitle .title-star .rays {
   fill: none;
-  stroke: #FFC94D;
-  stroke-width: 2;
+  stroke-width: 3;
   stroke-linecap: round;
 }
 </style>
@@ -3163,7 +3168,7 @@ header {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.20-l</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.20-m</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
