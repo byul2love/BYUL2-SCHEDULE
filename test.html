@@ -3077,22 +3077,25 @@ header {
   border-radius: 0 0 26px 26px;
 }
 
-/* 휴대폰: 제목 두 줄을 지그재그 없이 가운데로, 조금 작게 (헤더 높이 줄이기) */
+/* 휴대폰: 제목 두 줄을 조금 작게 (헤더 높이 줄이기) */
 @media (max-width: 600px) {
   header {
     padding-bottom: 22px;
   }
 
   #siteTitle {
-    font-size: clamp(26px, 7.2vw, 32px);
+    font-size: clamp(30px, 8.8vw, 38px);
     line-height: 1.15;
     margin: 2px 0 12px;
   }
 
   #siteTitle .title-line {
     display: block;
-    transform: none;
   }
+
+  /* 두 줄을 살짝 엇갈리게 (지그재그) */
+  #siteTitle .title-line1 { transform: translateX(-34px); }
+  #siteTitle .title-line2 { transform: translateX(34px); }
 }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
