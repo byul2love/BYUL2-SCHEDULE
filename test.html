@@ -3097,6 +3097,21 @@ header {
   #siteTitle .title-line1 { transform: translateX(-34px); }
   #siteTitle .title-line2 { transform: translateX(34px); }
 }
+/* 달력 깔끔하게 */
+#calendar { background: #EFEDF7; }              /* 칸 사이 선을 더 연하게 */
+.schedule .title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;                          /* 일정 이름은 두 줄까지만, 넘치면 … */
+  overflow: hidden;
+  word-break: keep-all;                           /* 단어 중간에서 줄 안 바뀌게 (너무 긴 단어만 끊기) */
+  overflow-wrap: anywhere;
+}
+
+/* 휴대폰: 일정 없는 칸이 쓸데없이 길지 않게 */
+@media (max-width: 600px) {
+  .day { min-height: 92px; }
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
