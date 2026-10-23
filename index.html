@@ -3066,6 +3066,37 @@ body.list-mode #siteFooter {
   max-height: calc(var(--stable-vh, 1svh) * 85);
   top: var(--modal-top, calc(var(--stable-vh, 1svh) * 50));
 }
+/* 헤더 깔끔하게: 아래 구름 없애고 모서리만 둥글게 */
+header::before,
+header::after {
+  display: none;
+}
+
+header {
+  padding-bottom: 22px;
+  border-radius: 0 0 26px 26px;
+}
+
+/* 휴대폰: 제목 두 줄을 조금 작게 (헤더 높이 줄이기) */
+@media (max-width: 600px) {
+  header {
+    padding-bottom: 22px;
+  }
+
+  #siteTitle {
+    font-size: clamp(30px, 8.8vw, 38px);
+    line-height: 1.15;
+    margin: 2px 0 12px;
+  }
+
+  #siteTitle .title-line {
+    display: block;
+  }
+
+  /* 두 줄을 살짝 엇갈리게 (지그재그) */
+  #siteTitle .title-line1 { transform: translateX(-34px); }
+  #siteTitle .title-line2 { transform: translateX(34px); }
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -3115,7 +3146,7 @@ body.list-mode #siteFooter {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.20-j</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.20-k</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
