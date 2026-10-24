@@ -10,7 +10,7 @@
 <meta property="og:site_name" content="MOONBYUL SCHEDULE">
 <meta property="og:title" content="🌙 MOONBYUL SCHEDULE 🌟">
 <meta property="og:description" content="문별의 일정을 한눈에">
-<meta property="og:url" content="https://byul2love.github.io/BYUL2-SCHEDULE/">
+<meta property="og:url" content="https://byul2love.github.io/BYUL2-SCHEDULE/test.html">
 <meta property="og:image" content="https://byul2love.github.io/BYUL2-SCHEDULE/icons/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -18,13 +18,13 @@
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
 <!-- 홈 화면에 추가하면 앱처럼 (주소창 없이) 열리게 -->
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="manifest" href="test.webmanifest">
 <meta name="theme-color" content="#15132B">
-<link rel="icon" href="icons/icon-192.png" type="image/png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/test/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/test/apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="MOONBYUL">
+<meta name="apple-mobile-web-app-title" content="문별 테스트">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
@@ -3133,6 +3133,99 @@ header {
   border-radius: 10px;
   pointer-events: none;
 }
+
+/* =========================
+   PC(넓은 화면)에서 비율 맞추기 — 폰 화면은 그대로
+========================= */
+@media (min-width: 601px) {
+  /* 1) 일정 추가 창: 화면 아래로 길게 늘어나는 대신 가운데 카드로 */
+  #inputBox {
+    top: 50%;
+    bottom: auto;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 32px);
+    max-width: 400px;
+    height: auto;
+    max-height: 85vh;
+    padding: 24px;
+    border-radius: 12px;
+    /* 뒤를 살짝 어둡게 (다른 창들과 같은 느낌) */
+    box-shadow: 0 6px 24px rgba(0,0,0,.15), 0 0 0 100vmax rgba(20,18,35,.45);
+  }
+
+  /* 수정 창도 입력 창과 같은 크기로 (폭 400 · 안쪽 여백 24 · 모서리 12) */
+  #editModal .modal-content {
+    max-width: 400px;
+    padding: 24px;
+    border-radius: 12px;
+  }
+
+  /* 스크롤바 자리를 두 창 모두 똑같이 비워 둬서 안쪽 칸 폭도 똑같게 */
+  #inputBox,
+  #editModal .modal-content {
+    scrollbar-gutter: stable;
+  }
+
+  /* 아래에서 올라오는 창 손잡이는 PC에선 필요 없음 */
+  #inputBox::before {
+    display: none;
+  }
+
+}
+
+@media (min-width: 1000px) {
+  /* 2) 목록 탭 (PC처럼 넓은 화면, 1000px 이상만): 위 다가오는 일정 · 달력 탭과 같은 폭으로 맞추고,
+        왼쪽엔 작은 달력(스크롤해도 따라옴) · 오른쪽엔 일정 목록
+        → 태블릿 세로(1000px 미만)는 폰처럼 작은 달력 위 · 목록 아래 */
+  body.list-mode #listView {
+    display: grid;
+    grid-template-columns: minmax(0, 46%) minmax(0, 1fr);   /* 작은 달력 칸을 넓게(화면의 46%) → 목록은 그만큼 좁아짐 */
+    column-gap: 24px;
+    align-items: start;
+    margin: 4px 12px 0;
+    padding: 0 0 120px;
+  }
+
+  #listView > .mini-cal {
+    grid-column: 1;
+    grid-row: 1 / span 400;
+    position: sticky;
+    top: 12px;
+  }
+
+  #listView > :not(.mini-cal) {
+    grid-column: 2;
+  }
+
+  /* 작은 달력이 넓어진 만큼 날짜 칸 · 숫자도 조금 크게 */
+  #listView > .mini-cal {
+    padding: 14px 10px 10px;
+  }
+  #listView .mini-wd { font-size: 13.5px; margin-bottom: 8px; }
+  #listView .mini-grid { gap: 4px; }
+  #listView .mini-day { height: 66px; padding-top: 8px; }
+  #listView .mini-num { width: 34px; height: 34px; font-size: 16px; }
+  #listView .mini-dots { height: 8px; margin-top: 4px; gap: 3px; }
+  #listView .mini-dots i { width: 8px; height: 8px; }
+  #listView .mini-legend-chip { font-size: 12.5px; }
+
+  /* 오른쪽 목록 첫 날짜도 위쪽 여백 맞추기 */
+  #listView > .mini-cal + .list-day {
+    margin-top: 4px;
+  }
+
+}
+
+@media (min-width: 601px) {
+  /* 3) 다가오는 일정 카드: 왼쪽에 몰리지 않고 가로를 고르게 나눠 쓰기 */
+  .upcoming-card {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 152px;
+    max-width: 240px;
+  }
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -3182,7 +3275,7 @@ header {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.20-l</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.24-a</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
@@ -5481,5 +5574,4 @@ if("serviceWorker" in navigator && location.protocol === "https:"){
 </script>
 </body>
 </html>
-
 
