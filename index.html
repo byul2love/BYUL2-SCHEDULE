@@ -3327,6 +3327,27 @@ header {
   color: #5B5566;
 }
 
+/* 오른쪽 위 ✕ (취소) */
+#tfCancel {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 50%;
+  background: #F4F3F8;
+  color: #8A84A6;
+  font-size: 11px;
+  line-height: 26px;
+  text-align: center;
+}
+
+/* ✕와 제목이 겹치지 않게 */
+.tf-title {
+  padding-right: 30px;
+}
+
 #tfDone {
   background: var(--purple);
   color: white;
@@ -3355,6 +3376,7 @@ header {
 <!-- 유형 여러 개 고르기 (왼쪽 위 [전체] 버튼을 누르면 뜸) -->
 <div id="typeFilterPanel" hidden>
   <div class="tf-title">보고 싶은 유형 <span>(여러 개 선택 가능)</span></div>
+  <button id="tfCancel" type="button" aria-label="취소">✕</button>
   <div id="tfChips" class="tf-chips"></div>
   <div class="tf-actions">
     <button id="tfAll" type="button">전체 선택</button>
@@ -5473,8 +5495,11 @@ LEGEND_ORDER.forEach(t => {
   tfChips.appendChild(chip);
 });
 
+let tfBefore = null;   // 창을 연 순간의 선택 (취소하면 이걸로 되돌림)
 function openTypePanel(){
+  tfBefore = new Set(selectedTypes);
   tfPanel.hidden = false;
+  pushModalState();   // 폰 뒤로가기로 닫히게
   typeFilter.setAttribute("aria-expanded", "true");
   // [전체] 버튼 바로 아래에 (화면 밖으로 안 나가게)
   const r = typeFilter.getBoundingClientRect();
@@ -5482,9 +5507,12 @@ function openTypePanel(){
   tfPanel.style.top = `${Math.round(r.bottom + 8)}px`;
   tfPanel.style.left = `${Math.round(Math.max(8, Math.min(r.left, innerWidth - w - 8)))}px`;
 }
-function closeTypePanel(){
+// fromBack: 폰 뒤로가기로 닫힌 경우 (이미 기록이 빠졌으니 history.back() 안 함)
+function closeTypePanel(fromBack){
+  if(tfPanel.hidden) return;
   tfPanel.hidden = true;
   typeFilter.setAttribute("aria-expanded", "false");
+  if(!fromBack) history.back();
 }
 
 typeFilter.onclick = e => {
@@ -5496,10 +5524,18 @@ document.getElementById("tfAll").onclick = () => {
   else LEGEND_ORDER.forEach(t => selectedTypes.add(t));                  // 전체 선택
   applyTypeFilter();
 };
-document.getElementById("tfDone").onclick = closeTypePanel;
+document.getElementById("tfDone").onclick = () => closeTypePanel();
+document.getElementById("tfCancel").onclick = () => {
+  if(tfBefore){ selectedTypes = new Set(tfBefore); applyTypeFilter(); }
+  closeTypePanel();
+};
 // 바깥을 누르거나 스크롤 · 화면 크기가 바뀌면 닫기
 document.addEventListener("click", e => {
   if(!tfPanel.hidden && !tfPanel.contains(e.target) && e.target !== typeFilter) closeTypePanel();
+});
+// 폰 뒤로가기
+addEventListener("popstate", () => {
+  if(!tfPanel.hidden) closeTypePanel(true);
 });
 addEventListener("scroll", () => { if(!tfPanel.hidden) closeTypePanel(); }, { passive: true });
 addEventListener("resize", () => { if(!tfPanel.hidden) closeTypePanel(); });
@@ -5736,7 +5772,5 @@ if("serviceWorker" in navigator && location.protocol === "https:"){
 </script>
 </body>
 </html>
-
-
 
 
