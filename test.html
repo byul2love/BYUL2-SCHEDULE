@@ -3122,10 +3122,16 @@ header {
 /* 달력 선 조금 연하게 */
 #calendar { background: #F0EEF8; box-shadow: 0 0 0 1px #F0EEF8; }
 #weekdays { box-shadow: 0 0 0 1px #F0EEF8; border-bottom-color: #F0EEF8; }
-/* 달력 아래 양쪽 모서리 칸: 달력 둥근 모서리에 맞춰 칸도 둥글게
-   (선택했을 때 보라 테두리가 모서리에서 잘려 보이지 않게) */
-#calendar .day:nth-last-child(7) { border-bottom-left-radius: 10px; }
-#calendar .day:last-child { border-bottom-right-radius: 10px; }
+/* 선택한 날짜는 모든 칸에서 둥근 테두리로 (모서리 칸도 안 잘리게 살짝 안쪽에) */
+.day.selected { box-shadow: none; }
+.day.selected::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border: 2px solid var(--purple);
+  border-radius: 8px;
+  pointer-events: none;
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
