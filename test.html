@@ -3362,12 +3362,12 @@ header {
 #calendar .day:nth-last-child(7).selected::after { border-bottom-left-radius: 13px; }
 #calendar .day:last-child.selected::after { border-bottom-right-radius: 13px; }
 
-/* 다가오는 일정 카드: 흰 카드에 얇은 그림자로 달력과 구분 */
+/* 다가오는 일정 카드: 흰 카드 + 연한 테두리 */
 .upcoming-card,
 .upcoming-card:first-child {
   background: #FFFFFF;
   border: 1px solid #ECE8F8;
-  box-shadow: var(--shadow-down);
+  box-shadow: none;
 }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
