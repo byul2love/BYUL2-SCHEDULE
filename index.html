@@ -3731,7 +3731,8 @@ const typeColors = {
   기타: "#DEDBF5"
 };
 
-let currentDate=new Date(),
+// 달 이동은 항상 1일 기준 (31일에 다음 달로 가면 11월 31일 → 12월 1일로 건너뛰던 문제 방지)
+let currentDate=new Date(new Date().getFullYear(), new Date().getMonth(), 1),
 selectedDateKey=null,
 activeGroupId=null,
 dragSrcEl=null,
@@ -4281,7 +4282,7 @@ function buildMiniCal(y, m, todayKey, weekdays){
     const dx = x - sx, dy = y - sy;
     if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5){
       const dir = dx < 0 ? "next" : "prev";
-      currentDate.setMonth(currentDate.getMonth() + (dir === "next" ? 1 : -1));
+      currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + (dir === "next" ? 1 : -1), 1);
       renderCalendar(dir);   // 목록(작은 달력 포함)도 같이 다시 그려짐
       const fresh = listView.querySelector(".mini-cal");
       if(fresh) fresh.classList.add(dir === "next" ? "slide-next" : "slide-prev");
@@ -5402,8 +5403,8 @@ window.addEventListener("popstate", () => {
 });
 
 /******** 이전/다음/Today ********/
-prevBtn.onclick=()=>{ currentDate.setMonth(currentDate.getMonth()-1); renderCalendar("prev"); prevBtn.blur(); };
-nextBtn.onclick=()=>{ currentDate.setMonth(currentDate.getMonth()+1); renderCalendar("next"); nextBtn.blur(); };
+prevBtn.onclick=()=>{ currentDate=new Date(currentDate.getFullYear(), currentDate.getMonth()-1, 1); renderCalendar("prev"); prevBtn.blur(); };
+nextBtn.onclick=()=>{ currentDate=new Date(currentDate.getFullYear(), currentDate.getMonth()+1, 1); renderCalendar("next"); nextBtn.blur(); };
 
 // ⭐ 모바일 스와이프로 월 이동
 let swipeStartX = 0, swipeStartY = 0;
@@ -5417,7 +5418,7 @@ calendar.addEventListener("touchend", e => {
   const dy = e.changedTouches[0].clientY - swipeStartY;
   if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5){
     const dir = dx < 0 ? "next" : "prev";
-    currentDate.setMonth(currentDate.getMonth() + (dir==="next" ? 1 : -1));
+    currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + (dir==="next" ? 1 : -1), 1);
     renderCalendar(dir);
   }
 }, {passive:true});
