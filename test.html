@@ -3377,7 +3377,12 @@ header {
   color: var(--purple);
   font-size: 10px;
   font-weight: 600;
-  white-space: nowrap;
+  word-break: keep-all;   /* 좁은 칸에서는 "더보기"만 다음 줄로 (한 줄 고정하면 칸이 가로로 늘어났음) */
+}
+/* 날짜 칸 7개는 내용과 상관없이 항상 같은 너비 */
+#calendar,
+#weekdays {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 .schedule-more:hover { color: #5143C9; background: none; text-decoration: underline; }
 </style>
