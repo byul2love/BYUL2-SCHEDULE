@@ -3331,8 +3331,13 @@ header {
   background: var(--purple);
   color: white;
 }
-/* 사이트 배경을 아주 밝은 하늘빛으로 (연보라 오늘 칸과 구분되고 흰색보다 눈 편하게) */
-:root { --paper: #F5F8FD; }
+/* 사이트 배경은 흰색, 다가오는 일정 카드 · 목록 일정은 아주 연한 회색으로 구분 */
+:root { --paper: #FFFFFF; }
+.upcoming-card,
+.upcoming-card:first-child,
+.list-item {
+  background: #F7F7F9;
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
