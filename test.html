@@ -3596,6 +3596,80 @@ header {
 }
 #siteFooter { padding-top: 28px; padding-bottom: 72px; }
 #guideBtn, #noticeBtn { color: var(--sub); }
+/* =========================================================
+   새 디자인 2단계: 헤더 · 일정 칩 · 창(추가 · 수정 · 상세 · 검색)
+========================================================= */
+
+/* ---------- 헤더: 조금 더 짧고 정돈되게 ---------- */
+@media (max-width: 600px) {
+  header { padding-top: 16px; padding-bottom: 18px; }
+  #siteTitle { margin-bottom: 10px; }
+}
+#navControls { gap: 6px; }
+
+/* ---------- 창 공통 ---------- */
+.modal { background: rgba(20, 16, 44, .42); }
+.modal-content,
+#actionModal .modal-content {
+  border-radius: 22px;
+  border: none;
+  box-shadow: 0 18px 50px rgba(20, 16, 60, .22);
+}
+
+/* 입력 칸: 연한 바탕의 둥근 칸, 누르면 보라 테두리 */
+#inputBox input,
+#inputBox select,
+#inputBox textarea,
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+  background: #F7F6FB;
+  border: 1px solid transparent;
+  border-radius: 12px;
+}
+#inputBox input:focus,
+#inputBox select:focus,
+#inputBox textarea:focus,
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+  background: #fff;
+  border-color: #B7ACF6;
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, .10);
+}
+#inputBox label,
+.modal-content label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sub);
+}
+
+/* 추가 · 저장 버튼: 보라 알약 */
+#addBtn,
+#saveEditBtn {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 14px;
+  font-weight: 700;
+  box-shadow: 0 6px 14px rgba(108, 92, 231, .28);
+}
+
+/* 아래에서 올라오는 추가 창: 위쪽 모서리 둥글게 */
+#inputBox {
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -10px 40px rgba(20, 16, 60, .18);
+}
+
+/* 상세창 아래 버튼들: 둥글고 가볍게 */
+#actionModal .modal-actions button {
+  border-radius: 14px;
+  background: #F5F4FA;
+}
+
+/* 검색 결과 · 소식 · 사용법 목록 */
+.search-result-item {
+  border-radius: 12px;
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
