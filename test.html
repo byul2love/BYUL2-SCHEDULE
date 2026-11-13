@@ -3762,6 +3762,92 @@ header {
 
 /* 되돌리기 알림 */
 .toast { border-radius: 14px; }
+/* =========================================================
+   새 디자인 4단계: 목록 탭 날짜 줄 · 빈 화면 · 알림 · 작은 움직임
+========================================================= */
+
+/* 목록 탭: 날짜 줄을 작은 제목처럼, 오늘은 보라 배지 */
+.list-day-head {
+  padding: 2px 4px 8px;
+  font-size: 15px;
+  letter-spacing: -.2px;
+}
+.list-day-head .wd,
+.list-day-head .count { color: var(--sub); font-weight: 500; }
+.list-day-head .today-badge {
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  padding: 2px 8px;
+}
+.list-day + .list-day { margin-top: 14px; }
+
+/* 목록 탭 작은 달력: 일정 점 테두리 없이 선명하게 */
+.mini-dots i { box-shadow: none; }
+
+/* 일정이 없을 때 안내 */
+.upcoming-empty,
+.list-empty {
+  color: var(--sub);
+  text-align: center;
+}
+.list-empty {
+  margin: 14px 0;
+  padding: 36px 0;
+  border: 1px dashed var(--hair);
+  border-radius: 18px;
+  background: var(--surface);
+}
+.list-empty::before {
+  content: "🌙";
+  display: block;
+  font-size: 26px;
+  margin-bottom: 6px;
+  opacity: .8;
+}
+.upcoming-empty {
+  width: 100%;
+  padding: 16px 0;
+  border: 1px dashed var(--hair);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+/* 알림(토스트): 밤하늘 색 알약 */
+.toast {
+  border-radius: 999px;
+  background: #241F4F;
+  padding: 11px 20px;
+}
+
+/* 누를 때 살짝 눌리는 느낌 (손가락으로 누른 게 보이게) */
+.upcoming-card,
+.list-item,
+#calendar .schedule,
+#todayBtn,
+#searchBtn,
+#typeFilter,
+#viewTabs button,
+#listAddBtn {
+  transition: transform .12s ease, background-color .15s ease, box-shadow .15s ease;
+}
+.upcoming-card:active,
+.list-item:active,
+#todayBtn:active,
+#searchBtn:active,
+#typeFilter:active,
+#listAddBtn:active { transform: scale(.97); }
+#calendar .schedule:active { transform: scale(.96); }
+
+/* 다가오는 일정 가로 스크롤: 스크롤 막대 숨기기 */
+#upcomingList { scrollbar-width: none; }
+#upcomingList::-webkit-scrollbar { display: none; }
+
+/* 움직임을 줄이도록 설정한 폰에서는 눌림 효과 없음 */
+@media (prefers-reduced-motion: reduce) {
+  .upcoming-card:active, .list-item:active, #todayBtn:active, #searchBtn:active,
+  #typeFilter:active, #listAddBtn:active, #calendar .schedule:active { transform: none; }
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
