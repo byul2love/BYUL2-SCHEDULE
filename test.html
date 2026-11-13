@@ -3454,8 +3454,15 @@ header {
   color: rgba(255,255,255,.85);
   font-size: 22px;
 }
-#prevBtn:hover,
-#nextBtn:hover { background: rgba(255,255,255,.10); }
+/* 마우스가 있는 PC에서만 올렸을 때 색 (폰에서는 누른 뒤 색이 남아 있어 보여서 뺌) */
+@media (hover: hover) and (pointer: fine) {
+  #prevBtn:hover,
+  #nextBtn:hover { background: rgba(255,255,255,.10); }
+}
+#prevBtn:focus,
+#nextBtn:focus { outline: none; }
+#prevBtn:active,
+#nextBtn:active { background: rgba(255,255,255,.14); }
 #monthText {
   background: transparent;
   border: none;
