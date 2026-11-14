@@ -3894,6 +3894,14 @@ html body #upcomingTitle { font-size: 12px; letter-spacing: 2.5px; }
   }
   html body #viewTabs { flex: none; }
 }
+
+/* 일정 순서 바꾸는 동안 화면이 같이 스크롤되지 않게 */
+html.reordering,
+html.reordering body {
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -4989,6 +4997,24 @@ function renderList(){
 /******** 목록: 순서 바꾸기 (같은 날짜 안에서) ********/
 let listDragId = null;
 
+// 일정 순서 바꾸기(길게 눌러 끌기) 중에는 화면 스크롤 잠그기
+// (끌기 직전 손가락이 살짝 움직이면 폰이 스크롤로 받아들여 화면이 같이 움직이던 문제)
+let reorderLockY = null;
+function lockScrollForReorder(){
+  reorderLockY = window.scrollY;
+  document.documentElement.classList.add("reordering");
+}
+function keepScrollLocked(){
+  if(reorderLockY !== null && window.scrollY !== reorderLockY) window.scrollTo(0, reorderLockY);
+}
+function unlockScrollForReorder(){
+  reorderLockY = null;
+  document.documentElement.classList.remove("reordering");
+}
+// 안전장치: 손을 떼거나 터치가 취소되면 항상 잠금 풀기
+document.addEventListener("touchend", unlockScrollForReorder, true);
+document.addEventListener("touchcancel", unlockScrollForReorder, true);
+
 async function reorderDay(key, fromId, toId){
   const list = (firestoreData[key] || []).slice().sort((a,b) => (a.order??0) - (b.order??0));
   const fi = list.findIndex(x => x.id === fromId);
@@ -5031,6 +5057,7 @@ function enableListReorder(row, group, key){
     timer = setTimeout(() => {
       canDrag = true;
       row.classList.add("dragging");
+      lockScrollForReorder();
       navigator.vibrate?.(12);
     }, 320);
   }, { passive: true });
@@ -5042,12 +5069,14 @@ function enableListReorder(row, group, key){
       if(Math.abs(dy) > 8 || Math.abs(dx) > 8) clearTimeout(timer);
       return;
     }
-    e.preventDefault();
+    if(e.cancelable) e.preventDefault();
+    keepScrollLocked();
     row.style.transform = `translateY(${dy}px) scale(.97)`;
   }, { passive: false });
 
   row.addEventListener("touchend", e => {
     clearTimeout(timer);
+    unlockScrollForReorder();
     row.style.transform = "";
     row.classList.remove("dragging");
     if(!canDrag) return;
@@ -5063,6 +5092,7 @@ function enableListReorder(row, group, key){
 
   row.addEventListener("touchcancel", () => {
     clearTimeout(timer);
+    unlockScrollForReorder();
     canDrag = false;
     row.style.transform = "";
     row.classList.remove("dragging");
@@ -5210,6 +5240,7 @@ function addMobileTouchDrag(el, container, dateKey) {
 
         canDrag = true;
         el.classList.add("dragging");
+        lockScrollForReorder();
 
       }
 
@@ -5241,7 +5272,8 @@ function addMobileTouchDrag(el, container, dateKey) {
     if(!canDrag) return;
 
 
-    e.preventDefault();
+    if(e.cancelable) e.preventDefault();
+    keepScrollLocked();
 
 
     el.style.transform =
@@ -5256,6 +5288,7 @@ function addMobileTouchDrag(el, container, dateKey) {
   el.addEventListener("touchend", async e=>{
 
     clearTimeout(pressTimer);
+    unlockScrollForReorder();
 
 
     el.style.transform="";
