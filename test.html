@@ -4555,6 +4555,20 @@ html body #saveEditBtn { box-shadow: none; background: var(--navy); color: #fff;
 html body #noticeOkBtn,
 html body #guideOkBtn { background: var(--navy); color: #fff; box-shadow: none; }
 html body #noticeModal .notice-item.latest .notice-date { color: var(--navy); }
+
+/* 모바일: 제목 · UPCOMING · 카드 · [전체] 줄 왼쪽 시작을 16px로 맞춤
+   (카드 줄은 옆으로 넘길 때 화면 끝까지 밀리도록 바깥으로 넓힘) */
+@media (max-width: 600px) {
+  html body #upcomingSection { padding-left: 16px; padding-right: 16px; }
+  html body #upcomingList {
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    scroll-padding-left: 16px;
+  }
+  html body #navControls { padding-left: 16px; padding-right: 16px; }
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
