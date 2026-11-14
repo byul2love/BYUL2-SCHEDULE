@@ -4550,6 +4550,11 @@ html body #actionModal #actionEditBtn { color: var(--navy); }
 /* 추가 · 저장(수정) 버튼: 그림자 없이, 남색 */
 html body #addBtn,
 html body #saveEditBtn { box-shadow: none; background: var(--navy); color: #fff; }
+
+/* 업데이트 소식 · 사용법 [확인] 버튼과 최신 소식 날짜: 남색 */
+html body #noticeOkBtn,
+html body #guideOkBtn { background: var(--navy); color: #fff; box-shadow: none; }
+html body #noticeModal .notice-item.latest .notice-date { color: var(--navy); }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -4841,6 +4846,12 @@ html body #saveEditBtn { box-shadow: none; background: var(--navy); color: #fff;
    - 오래된 소식은 지워도 괜찮아요
 ========================================================= */
 const UPDATES = [
+  {
+    date: "2026-11-14",
+    items: [
+      "사이트 디자인이 새로워졌어요!"
+    ]
+  },
   {
     date: "2026-10-19",
     items: [
@@ -6762,8 +6773,8 @@ const noticeBtn = document.getElementById("noticeBtn");
 const noticeModal = document.getElementById("noticeModal");
 const noticeList = document.getElementById("noticeList");
 // 새 소식인지 알아보는 표시: 맨 위 소식의 날짜만 봄 (문장만 고치면 다시 안 뜸)
-// 새 소식은 올린 날 포함 7일(일주일) 동안만 저절로 뜨고 NEW 표시 (그 뒤엔 맨 아래 글씨로만 보기)
-const NOTICE_DAYS = 7;
+// 새 소식은 올린 날 포함 3일 동안만 저절로 뜨고 NEW 표시 (그 뒤엔 맨 아래 글씨로만 보기)
+const NOTICE_DAYS = 3;
 const noticeIsFresh = (() => {
   if(!UPDATES.length) return false;
   const [y, m, d] = UPDATES[0].date.split("-").map(Number);
