@@ -4239,10 +4239,111 @@ html body #noticeBtn { color: var(--sub); }
 
 /* 창 뒤 어두운 배경: 보랏빛 대신 중성 회색 */
 html body .modal { background: rgba(24, 23, 28, .42); }
+
+/* =========================================================
+   맨 위 하늘 장식 (달빛 숨쉬기 + 별 + 가끔 별똥별)
+   - 제목 위쪽만 은은하게 어두운 하늘색 → 아래로 갈수록 흰색
+   - 움직임은 아주 느리게, '동작 줄이기'를 켠 폰에서는 멈춤
+========================================================= */
+#skyDecor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 300px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  /* 띠처럼 끊기지 않게: 위쪽에서 둥글게 퍼지다가 아주 천천히 흰색으로 */
+  background:
+    radial-gradient(ellipse 70% 55% at 85% 0%, rgba(239, 197, 96, .10), transparent 70%),
+    radial-gradient(ellipse 130% 90% at 50% -10%, #E7E2F7 0%, #F0EDFA 40%, rgba(255, 255, 255, 0) 78%);
+}
+html body header { position: relative; z-index: 1; padding-top: 62px; }
+html body #upcomingSection { position: relative; z-index: 1; }
+@media (min-width: 601px) {
+  html body header { padding-top: 72px; }
+}
+
+/* 초승달: 아주 천천히 달빛이 밝아졌다 어두워짐 */
+#skyDecor .sky-moon {
+  position: absolute;
+  right: 34px;
+  top: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  box-shadow: -9px 6px 0 0 #EFC560;
+  transform: rotate(-12deg);
+  filter: drop-shadow(0 0 6px rgba(239, 197, 96, .35));
+  animation: skyMoonGlow 7s ease-in-out infinite;
+}
+@keyframes skyMoonGlow {
+  50% { filter: drop-shadow(0 0 14px rgba(239, 197, 96, .85)); }
+}
+@media (min-width: 601px) {
+  #skyDecor .sky-moon { right: max(34px, calc(50% - 570px)); }
+}
+
+/* 별: 제자리에서 천천히 흐려졌다 또렷해짐 */
+#skyDecor .sky-star {
+  position: absolute;
+  display: block;
+  opacity: .4;
+  animation: skyTwinkle 8s ease-in-out infinite;
+}
+@keyframes skyTwinkle {
+  0%, 100% { opacity: .35; }
+  50% { opacity: 1; }
+}
+
+/* 별똥별: 11초에 한 번, 1초 남짓 가늘게 스윽 */
+#skyDecor .sky-shoot {
+  position: absolute;
+  right: 22%;
+  top: 8px;
+  width: 70px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, rgba(150, 128, 230, 0), rgba(150, 128, 230, .75) 75%, #fff);
+  box-shadow: 0 0 6px rgba(170, 150, 240, .6);
+  opacity: 0;
+  transform: rotate(-20deg);
+  transform-origin: right center;
+  animation: skyShoot 11s ease-out 3s infinite;
+}
+@keyframes skyShoot {
+  0%   { opacity: 0; translate: 0 0; }
+  2%   { opacity: .9; }
+  10%  { opacity: 0; translate: -110px 40px; }
+  100% { opacity: 0; translate: -110px 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #skyDecor .sky-moon,
+  #skyDecor .sky-star,
+  #skyDecor .sky-shoot { animation: none; }
+  #skyDecor .sky-shoot { display: none; }
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
 <body>
+
+<!-- 맨 위 하늘 장식: 달 · 별 · 가끔 지나가는 별똥별 (누르기 등에는 영향 없음) -->
+<div id="skyDecor" aria-hidden="true">
+  <div class="sky-moon"></div>
+  <svg class="sky-star" style="left:7%;top:14px;width:9px;height:9px;animation-delay:-1s" viewBox="0 0 24 24"><path fill="#B9A8F0" d="M12 0C12.8 7.2 16.8 11.2 24 12 16.8 12.8 12.8 16.8 12 24 11.2 16.8 7.2 12.8 0 12 7.2 11.2 11.2 7.2 12 0Z"/></svg>
+  <svg class="sky-star" style="left:19%;top:34px;width:7px;height:7px;animation-delay:-4s" viewBox="0 0 24 24"><path fill="#E9C46A" d="M12 0C12.8 7.2 16.8 11.2 24 12 16.8 12.8 12.8 16.8 12 24 11.2 16.8 7.2 12.8 0 12 7.2 11.2 11.2 7.2 12 0Z"/></svg>
+  <svg class="sky-star" style="left:31%;top:10px;width:11px;height:11px;animation-delay:-6s" viewBox="0 0 24 24"><path fill="#C9BCF5" d="M12 0C12.8 7.2 16.8 11.2 24 12 16.8 12.8 12.8 16.8 12 24 11.2 16.8 7.2 12.8 0 12 7.2 11.2 11.2 7.2 12 0Z"/></svg>
+  <svg class="sky-star" style="left:44%;top:30px;width:6px;height:6px;animation-delay:-2.5s" viewBox="0 0 24 24"><path fill="#F2B8D2" d="M12 0C12.8 7.2 16.8 11.2 24 12 16.8 12.8 12.8 16.8 12 24 11.2 16.8 7.2 12.8 0 12 7.2 11.2 11.2 7.2 12 0Z"/></svg>
+  <svg class="sky-star" style="left:55%;top:16px;width:9px;height:9px;animation-delay:-5.5s" viewBox="0 0 24 24"><path fill="#B9A8F0" d="M12 0C12.8 7.2 16.8 11.2 24 12 16.8 12.8 12.8 16.8 12 24 11.2 16.8 7.2 12.8 0 12 7.2 11.2 11.2 7.2 12 0Z"/></svg>
+  <svg class="sky-star" style="left:66%;top:38px;width:7px;height:7px;animation-delay:-0.5s" viewBox="0 0 24 24"><path fill="#E9C46A" d="M12 0C12.8 7.2 16.8 11.2 24 12 16.8 12.8 12.8 16.8 12 24 11.2 16.8 7.2 12.8 0 12 7.2 11.2 11.2 7.2 12 0Z"/></svg>
+  <svg class="sky-star" style="left:76%;top:8px;width:6px;height:6px;animation-delay:-3.5s" viewBox="0 0 24 24"><path fill="#C9BCF5" d="M12 0C12.8 7.2 16.8 11.2 24 12 16.8 12.8 12.8 16.8 12 24 11.2 16.8 7.2 12.8 0 12 7.2 11.2 11.2 7.2 12 0Z"/></svg>
+  <svg class="sky-star" style="left:4%;top:44px;width:5px;height:5px;animation-delay:-7s" viewBox="0 0 24 24"><path fill="#F2B8D2" d="M12 0C12.8 7.2 16.8 11.2 24 12 16.8 12.8 12.8 16.8 12 24 11.2 16.8 7.2 12.8 0 12 7.2 11.2 11.2 7.2 12 0Z"/></svg>
+  <svg class="sky-star" style="left:90%;top:56px;width:7px;height:7px;animation-delay:-2s" viewBox="0 0 24 24"><path fill="#B9A8F0" d="M12 0C12.8 7.2 16.8 11.2 24 12 16.8 12.8 12.8 16.8 12 24 11.2 16.8 7.2 12.8 0 12 7.2 11.2 11.2 7.2 12 0Z"/></svg>
+  <div class="sky-shoot"></div>
+</div>
 
 <header>
   <div id="siteTitle"><span class="title-line title-line1"><svg class="title-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>MOONBYUL</span><span class="title-line title-line2"> SCHEDULE<svg class="title-star" viewBox="-7 -7 38 38" aria-hidden="true"><path class="rays" d="M19.9 1.7L22 -1.2M25.4 16.8L28.8 17.9M12 26.1L12 29.6M-1.4 16.8L-4.8 17.9M4.1 1.7L2 -1.2"/><path d="M12 1.5l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 8.7l7.1-.6z"/></svg></span></div>
