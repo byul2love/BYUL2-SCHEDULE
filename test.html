@@ -4258,13 +4258,13 @@ html body .modal { background: rgba(24, 23, 28, .42); }
      (경계가 보이지 않게 색마다 여러 단계로 서서히 투명해짐) */
   background:
     radial-gradient(ellipse 85% 75% at 92% -8%,
-      rgba(255, 196, 222, .30) 0%, rgba(255, 196, 222, .19) 30%, rgba(255, 196, 222, .08) 55%, rgba(255, 196, 222, 0) 80%),
+      rgba(255, 196, 222, .42) 0%, rgba(255, 196, 222, .27) 30%, rgba(255, 196, 222, .12) 55%, rgba(255, 196, 222, 0) 80%),
     radial-gradient(ellipse 95% 80% at 6% -8%,
-      rgba(184, 168, 255, .30) 0%, rgba(184, 168, 255, .19) 30%, rgba(184, 168, 255, .08) 55%, rgba(184, 168, 255, 0) 80%),
+      rgba(184, 168, 255, .42) 0%, rgba(184, 168, 255, .27) 30%, rgba(184, 168, 255, .12) 55%, rgba(184, 168, 255, 0) 80%),
     radial-gradient(ellipse 60% 50% at 50% -5%,
-      rgba(222, 200, 250, .20) 0%, rgba(222, 200, 250, 0) 75%),
+      rgba(222, 200, 250, .28) 0%, rgba(222, 200, 250, 0) 75%),
     linear-gradient(180deg,
-      rgba(249, 247, 254, 1) 0%, rgba(249, 247, 254, .7) 35%, rgba(249, 247, 254, .3) 65%, rgba(255, 255, 255, 0) 100%);
+      rgba(246, 242, 253, 1) 0%, rgba(246, 242, 253, .7) 35%, rgba(246, 242, 253, .3) 65%, rgba(255, 255, 255, 0) 100%);
 }
 html body header { position: relative; z-index: 1; padding-top: 62px; }
 html body #upcomingSection { position: relative; z-index: 1; }
@@ -4470,6 +4470,67 @@ html body #searchBtn {
   backdrop-filter: blur(6px);
 }
 html body #searchBtn .tab-ic { width: 15px; height: 15px; }
+
+/* =========================================================
+   헤더 밤하늘 (차분하게, 덜 빛나게)
+   - 위는 깊은 남색 → 보라 → 아래로 흰색
+   - 달빛 번짐 · 반짝임은 줄이고 금색은 차분하게
+   - 진한 배경 위 글씨(제목 · UPCOMING)는 흰색 계열
+========================================================= */
+#skyDecor {
+  height: 330px;
+  background:
+    radial-gradient(ellipse 70% 70% at 96% -10%, rgba(214, 140, 190, .30), transparent 70%),
+    radial-gradient(ellipse 85% 80% at 0% -10%, rgba(110, 90, 210, .35), transparent 72%),
+    linear-gradient(180deg,
+      #1D1A42 0%,
+      #2C2763 26%,
+      #4A4091 44%,
+      #9D92CF 60%,
+      #DCD6EF 74%,
+      rgba(255, 255, 255, 0) 100%);
+}
+/* 별 · 달 · 별똥별: 은은하게 */
+#skyDecor .sky-star { animation-name: skyTwinkleSoft; }
+@keyframes skyTwinkleSoft {
+  0%, 100% { opacity: .35; }
+  50% { opacity: .7; }
+}
+#skyDecor .sky-moon {
+  box-shadow: -9px 6px 0 0 #E2C27E;
+  filter: none;
+  animation: none;
+}
+#skyDecor .sky-shoot {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .55));
+  box-shadow: none;
+}
+
+/* 제목 · 버튼 */
+html body #siteTitle .title-line1 { color: #F4F2FA; }
+html body #siteTitle .title-line2 { color: #E2C27E; }
+html body header::after {
+  background: linear-gradient(90deg, rgba(255, 255, 255, .5), rgba(255, 255, 255, .12) 85%, transparent);
+}
+html body #searchBtn {
+  background: rgba(255, 255, 255, .1);
+  border-color: rgba(255, 255, 255, .22);
+  color: #E9E6F5;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* 다가오는 일정 제목 줄 (보라 배경 위) */
+html body #upcomingTitle { color: #F1EEFA; }
+html body #viewTabs { background: rgba(255, 255, 255, .16); }
+html body #viewTabs button { color: rgba(255, 255, 255, .8); }
+html body #viewTabs button.active { background: #fff; color: var(--ink); }
+html body #viewTabs button + button::before,
+html body #viewTabs::after { background: rgba(255, 255, 255, .25); }
+
+/* 달 이동 줄: 평소엔 투명(하늘이 이어지게), 위에 붙었을 때만 흰색 */
+html body #navControls { background: transparent; }
+html body #navControls.stuck { background: #fff; }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
