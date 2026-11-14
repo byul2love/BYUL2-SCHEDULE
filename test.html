@@ -4332,6 +4332,93 @@ html body #upcomingSection { position: relative; z-index: 1; }
   #skyDecor .sky-shoot { animation: none; }
   #skyDecor .sky-shoot { display: none; }
 }
+
+/* =========================================================
+   창들도 같은 컨셉으로
+   - 제목 이모지 빼고 깔끔하게, 닫기는 선 아이콘
+   - 창 맨 위 가운데 작은 금빛 초승달
+   - [수정]은 먹색, [삭제]만 빨간색
+   - 년월 고르기: 12달 바둑판
+========================================================= */
+html body .modal-content {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23EFC560' d='M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 13px 13px;
+  background-position: center 9px;
+}
+html body .modal-title-text { letter-spacing: -.3px; }
+html body #guideModal .notice-date {
+  background: var(--hair-soft);
+  color: var(--ink);
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+.x-ic {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  vertical-align: middle;
+}
+html body #closeSearchBtn,
+html body #closeInputBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sub);
+}
+html body #actionModal #actionEditBtn { color: var(--ink); }
+
+/* 년월 고르기 */
+#monthPickerModal .modal-content { padding-top: 30px; }
+.mp-year {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.mp-year button {
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--sub);
+  font-size: 24px;
+  cursor: pointer;
+}
+.mp-year button:active { background: var(--hair-soft); }
+#mpYear {
+  font-family: var(--serif);
+  font-weight: 900;
+  font-size: 26px;
+  color: var(--ink);
+}
+.mp-months {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+html body .mp-month {
+  height: 46px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--hair);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+html body .mp-month.now { border-color: var(--violet); color: var(--violet); }
+html body .mp-month.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+html body .mp-month:active { transform: scale(.96); }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -4408,7 +4495,7 @@ html body #upcomingSection { position: relative; z-index: 1; }
   <div id="selectedDate"></div>
   <div class="input-actions">
   <button id="pasteBtn"> 붙여넣기</button>
-  <button id="closeInputBtn">✖</button>
+  <button id="closeInputBtn" aria-label="닫기"><svg class="x-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
   </div>
   <label>일정 제목</label><input id="titleInput" placeholder="일정 제목">
@@ -4464,7 +4551,7 @@ html body #upcomingSection { position: relative; z-index: 1; }
 
 <div id="editModal" class="modal">
   <div class="modal-content">
-    <div class="modal-title-text" style="margin-bottom:2px;">✏️ 일정 수정</div>
+    <div class="modal-title-text" style="margin-bottom:2px;">일정 수정</div>
     <label>일정 제목</label><input id="editTitleInput" placeholder="일정 제목">
     <label>일정 내용 (선택)</label>
 <textarea id="editDescInput" placeholder="상세 내용을 입력하세요"></textarea>
@@ -4508,7 +4595,7 @@ html body #upcomingSection { position: relative; z-index: 1; }
 <!-- 📢 업데이트 소식 창 (내용은 아래 스크립트의 UPDATES에 적기) -->
 <div id="noticeModal" class="modal">
   <div class="modal-content">
-    <div class="modal-title-text notice-title">📢 업데이트 소식</div>
+    <div class="modal-title-text notice-title">업데이트 소식</div>
     <div id="noticeList"></div>
     <button id="noticeOkBtn">확인</button>
   </div>
@@ -4517,26 +4604,26 @@ html body #upcomingSection { position: relative; z-index: 1; }
 <!-- 📖 사이트 사용법 창 -->
 <div id="guideModal" class="modal">
   <div class="modal-content">
-    <div class="modal-title-text notice-title">📖 사용법</div>
+    <div class="modal-title-text notice-title">사용법</div>
     <div id="guideList">
       <div class="notice-item">
-        <div class="notice-date">⚠️ 주의사항</div>
+        <div class="notice-date">주의사항</div>
         <ul>
           <li>이 사이트는 누구나 일정을 추가 · 수정 · 삭제할 수 있도록 열어 두었어요</li>
           <li>모두가 함께 쓰는 공간이니 무분별한 사용은 삼가 주세요 (장난 · 광고 · 확인되지 않은 일정 · 함부로 삭제 등)</li>
         </ul>
       </div>
       <div class="notice-item">
-        <div class="notice-date">📅 달력 보기</div>
+        <div class="notice-date">달력 보기</div>
         <ul>
           <li>달력을 왼쪽 · 오른쪽으로 밀거나 ‹ › 버튼으로 달 넘기기</li>
           <li>가운데 년월(예: 2026년 10월)을 누르면 원하는 달로 바로 이동</li>
-          <li>[Today]를 누르면 오늘 날짜로 돌아오기</li>
+          <li>[오늘]을 누르면 오늘 날짜로 돌아오기</li>
           <li>달력 칸의 🔗 아이콘을 누르면 상세 창 없이 링크로 바로 이동</li>
         </ul>
       </div>
       <div class="notice-item">
-        <div class="notice-date">🗂️ 일정 상세 창</div>
+        <div class="notice-date">일정 상세 창</div>
         <ul>
           <li>일정을 누르면 제목 · 날짜 · 사진 · 내용 보기</li>
           <li>오른쪽 위 [링크]를 누르면 관련 페이지로 이동</li>
@@ -4544,7 +4631,7 @@ html body #upcomingSection { position: relative; z-index: 1; }
         </ul>
       </div>
       <div class="notice-item">
-        <div class="notice-date">⏰ 다가오는 일정</div>
+        <div class="notice-date">다가오는 일정</div>
         <ul>
           <li>맨 위 카드에 오늘부터 가까운 일정 5개를 D-day와 함께 표시</li>
           <li>카드를 누르면 그 날짜로 이동해서 상세 창 열기</li>
@@ -4552,7 +4639,7 @@ html body #upcomingSection { position: relative; z-index: 1; }
         </ul>
       </div>
       <div class="notice-item">
-        <div class="notice-date">📝 목록 보기</div>
+        <div class="notice-date">목록 보기</div>
         <ul>
           <li>달력 오른쪽 [목록]을 누르면 이번 달 일정을 날짜순으로 보기</li>
           <li>위쪽 작은 달력에서 날짜를 누르면 그 날짜 일정으로 이동</li>
@@ -4560,14 +4647,14 @@ html body #upcomingSection { position: relative; z-index: 1; }
         </ul>
       </div>
       <div class="notice-item">
-        <div class="notice-date">🔍 찾기</div>
+        <div class="notice-date">찾기</div>
         <ul>
           <li>년월 왼쪽 [전체]를 누르고 유형(콘서트 · 방송 · 유튜브 …)을 고르면 그 유형만 보기 (여러 개 골라도 돼요, [전체 선택] 후 빼고 싶은 것만 끄기도 가능)</li>
           <li>오른쪽 위 [검색]에 단어를 넣으면 제목 · 내용에 그 단어가 있는 일정 찾기</li>
         </ul>
       </div>
       <div class="notice-item">
-        <div class="notice-date">✏️ 일정 추가하기</div>
+        <div class="notice-date">일정 추가하기</div>
         <ul>
           <li>① 달력에서 날짜 칸을 두 번 누르기 (목록 보기에서는 오른쪽 아래 ＋)</li>
           <li>② 제목은 꼭 쓰기, 시간은 안 정하면 날짜만 표시</li>
@@ -4579,7 +4666,7 @@ html body #upcomingSection { position: relative; z-index: 1; }
         </ul>
       </div>
       <div class="notice-item">
-        <div class="notice-date">📋 다른 날짜로 복사하기</div>
+        <div class="notice-date">다른 날짜로 복사하기</div>
         <ul>
           <li>① 복사할 일정의 상세 창에서 [복사]</li>
           <li>② 넣을 날짜 칸을 두 번 눌러 추가 창 열기</li>
@@ -4587,13 +4674,13 @@ html body #upcomingSection { position: relative; z-index: 1; }
         </ul>
       </div>
       <div class="notice-item">
-        <div class="notice-date">📱 앱처럼 쓰기</div>
+        <div class="notice-date">앱처럼 쓰기</div>
         <ul>
           <li>브라우저 메뉴에서 [홈 화면에 추가]를 누르면 주소창 없이 앱처럼 열기</li>
         </ul>
       </div>
       <div class="notice-item">
-        <div class="notice-date">🛠️ 수정 · 순서 · 삭제</div>
+        <div class="notice-date">수정 · 순서 · 삭제</div>
         <ul>
           <li>상세 창에서 [수정]을 눌러 내용 고치기</li>
           <li>같은 날 일정은 길게 누른 채 끌면 순서 바꾸기</li>
@@ -4609,7 +4696,7 @@ html body #upcomingSection { position: relative; z-index: 1; }
   <div class="modal-content">
     <div class="input-header">
       <div id="searchTitle" class="modal-title-text" style="margin-bottom:0;">일정 검색</div>
-      <button id="closeSearchBtn" style="width:32px;height:32px;padding:0;background:#F4F3F7;color:#777;margin-top:0;">✖</button>
+      <button id="closeSearchBtn" aria-label="닫기" style="width:32px;height:32px;padding:0;background:#F4F3F7;color:#777;margin-top:0;"><svg class="x-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
     <input id="searchInput" placeholder="제목이나 내용으로 검색..." style="margin-top:16px;">
     <div id="searchResults" style="margin-top:10px;"></div>
@@ -6709,37 +6796,42 @@ searchInput.addEventListener("input", () => renderSearchResults(searchInput.valu
 
 /******** 연/월 선택 모달 ********/
 const monthPickerModal=document.getElementById("monthPickerModal");
-const yearSelect=document.getElementById("yearSelect");
-const monthSelect=document.getElementById("monthSelect");
-const applyMonthBtn=document.getElementById("applyMonthBtn");
 const cancelMonthBtn=document.getElementById("cancelMonthBtn");
+const mpYear=document.getElementById("mpYear");
+const mpMonths=document.getElementById("mpMonths");
+let mpShownYear=new Date().getFullYear();
 
-function fillYearOptions(){
-  yearSelect.innerHTML="";
-  const currentYear=new Date().getFullYear();
-  for(let y=currentYear-50; y<=currentYear+50; y++){
-    const opt=document.createElement("option");
-    opt.value=y; opt.textContent=`${y}년`; yearSelect.appendChild(opt);
+// 년월 고르기: 위에서 해를 넘기고, 12달 중 하나를 누르면 바로 이동
+function renderMonthPicker(){
+  mpYear.textContent=`${mpShownYear}`;
+  mpMonths.innerHTML="";
+  const now=new Date();
+  for(let m=0; m<12; m++){
+    const btn=document.createElement("button");
+    btn.type="button";
+    btn.className="mp-month";
+    btn.textContent=`${m+1}월`;
+    if(mpShownYear===currentDate.getFullYear() && m===currentDate.getMonth()) btn.classList.add("on");
+    if(mpShownYear===now.getFullYear() && m===now.getMonth()) btn.classList.add("now");
+    btn.onclick=()=>{
+      currentDate=new Date(mpShownYear,m,1);
+      selectedDateKey=null;
+      monthPickerModal.style.display="none";
+      history.back();
+      renderCalendar();
+    };
+    mpMonths.appendChild(btn);
   }
 }
+document.getElementById("mpPrevYear").onclick=()=>{ mpShownYear--; renderMonthPicker(); };
+document.getElementById("mpNextYear").onclick=()=>{ mpShownYear++; renderMonthPicker(); };
 
 monthText.style.cursor="pointer";
 monthText.onclick=()=>{
-  fillYearOptions();
-  yearSelect.value=currentDate.getFullYear();
-  monthSelect.value=currentDate.getMonth();
+  mpShownYear=currentDate.getFullYear();
+  renderMonthPicker();
   monthPickerModal.style.display="flex";
   pushModalState();   // 폰 뒤로가기로 닫히게
-};
-
-applyMonthBtn.onclick=()=>{
-  const y=parseInt(yearSelect.value);
-  const m=parseInt(monthSelect.value);
-  currentDate=new Date(y,m,1);
-  selectedDateKey=null;
-  monthPickerModal.style.display="none";
-  history.back();
-  renderCalendar();
 };
 
 cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; history.back(); };
@@ -6747,15 +6839,12 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; history.back
 
 <div id="monthPickerModal" class="modal">
   <div class="modal-content">
-    <label>연도</label>
-    <select id="yearSelect"></select>
-    <label>월</label>
-    <select id="monthSelect">
-      <option value="0">1월</option><option value="1">2월</option><option value="2">3월</option><option value="3">4월</option>
-      <option value="4">5월</option><option value="5">6월</option><option value="6">7월</option><option value="7">8월</option>
-      <option value="8">9월</option><option value="9">10월</option><option value="10">11월</option><option value="11">12월</option>
-    </select>
-    <button id="applyMonthBtn">이동</button>
+    <div class="mp-year">
+      <button id="mpPrevYear" type="button" aria-label="이전 해">‹</button>
+      <span id="mpYear"></span>
+      <button id="mpNextYear" type="button" aria-label="다음 해">›</button>
+    </div>
+    <div id="mpMonths" class="mp-months"></div>
     <button id="cancelMonthBtn">취소</button>
   </div>
 </div>
