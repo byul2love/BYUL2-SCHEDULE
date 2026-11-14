@@ -11,7 +11,7 @@
 <meta property="og:title" content="🌙 MOONBYUL SCHEDULE 🌟">
 <meta property="og:description" content="문별의 일정을 한눈에">
 <meta property="og:url" content="https://byul2love.github.io/BYUL2-SCHEDULE/test.html">
-<meta property="og:image" content="https://byul2love.github.io/BYUL2-SCHEDULE/icons/og-image.jpg">
+<meta property="og:image" content="https://byul2love.github.io/BYUL2-SCHEDULE/icons/og-image-v2.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="MOONBYUL SCHEDULE">
@@ -4412,6 +4412,48 @@ html body .mp-month {
 html body .mp-month.now { border-color: var(--violet); color: var(--violet); }
 html body .mp-month.on { background: var(--ink); border-color: var(--ink); color: #fff; }
 html body .mp-month:active { transform: scale(.96); }
+
+/* =========================================================
+   일정 칩 · 꼬리말
+========================================================= */
+/* 일정 칩: 바탕은 더 연하게, 글씨는 먹색 (유형 색은 왼쪽 선) */
+html body #calendar .schedule,
+html body #calendar .schedule .title { color: var(--ink); }
+html body #calendar .schedule { font-weight: 500; letter-spacing: -.2px; }
+
+/* 꼬리말: 위쪽 "UPCOMING"처럼 작은 대문자 느낌으로 정돈 */
+html body #siteFooter .footer-line {
+  margin-bottom: 8px;
+  font-size: 12px;
+  letter-spacing: .2px;
+  color: var(--sub);
+}
+html body #siteFooter .footer-line::before,
+html body #siteFooter .footer-line::after {
+  content: "";
+  display: inline-block;
+  width: 18px;
+  height: 1px;
+  margin: 0 8px;
+  vertical-align: middle;
+  background: var(--hair);
+}
+html body #guideBtn,
+html body #noticeBtn {
+  padding: 4px 6px;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-decoration: none;
+}
+html body #siteFooter .footer-dot { color: var(--hair); }
+html body #siteVersion {
+  margin-top: 4px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #C9C7D0;
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -4479,7 +4521,7 @@ html body .mp-month:active { transform: scale(.96); }
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.14-a</div></div>
+<div id="siteFooter"><div class="footer-line">누구나 함께 채우는 문별 일정 달력</div><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.14-a</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
@@ -5026,8 +5068,8 @@ visibleSchedules.forEach((it,idx)=>{
   s.dataset.id=it.id;
 
   const typeColor = typeColors[it.type] || "#e0e7ff";
-  s.style.background = `color-mix(in srgb, ${typeColor} 30%, white)`;
-  s.style.borderLeft = `3px solid ${typeColor}`;
+  s.style.background = `color-mix(in srgb, ${typeColor} 18%, white)`;   // 바탕은 연하게, 유형 색은 왼쪽 선으로
+  s.style.borderLeft = `2.5px solid ${typeColor}`;
 
   if(isSpecialAnniversary(key)){
     s.style.border = `1.5px dashed ${typeColor}`;
