@@ -3909,6 +3909,12 @@ html.reordering body {
   user-select: none;
   -webkit-touch-callout: none;
 }
+
+/* 끄는 동안엔 움직임 애니메이션 없이 손가락을 바로 따라오게 */
+#calendar .schedule.dragging,
+.list-item.dragging {
+  transition: none !important;
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -3975,7 +3981,7 @@ html.reordering body {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.14-d</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.14-e</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
@@ -5020,22 +5026,18 @@ function unlockScrollForReorder(){
   reorderLockY = null;
   document.documentElement.classList.remove("reordering");
 }
-// 끄는 일정이 항상 손가락 바로 밑에 있게
-// (예전엔 처음 누른 곳에서 움직인 거리만큼 옮겨서, 카톡 등에서 주소창이 나와 화면이 밀리면 일정이 튀었음)
+// 끄는 일정이 손가락을 따라오게
+// - 끄는 동안엔 일정 위치를 다시 재지 않음 (누름 · 애니메이션 효과 때문에 중간값이 읽혀 흔들렸음)
+// - 시작할 때 손가락 · 스크롤 위치만 기억하고, 그 뒤 손가락이 움직인 만큼 + 스크롤이 바뀐 만큼 옮김
 const dragFollowState = new WeakMap();
 function dragBegin(el, clientY){
-  const r = el.getBoundingClientRect();
-  dragFollowState.set(el, { grab: clientY - r.top, ty: 0, s: 1 });
+  dragFollowState.set(el, { y0: clientY, s0: window.scrollY });
 }
 function dragFollow(el, clientY, scale){
   const st = dragFollowState.get(el);
   if(!st) return;
-  const r = el.getBoundingClientRect();
-  const h = el.offsetHeight;
-  const base = r.top - st.ty - h * (1 - st.s) / 2;   // 옮기기 전 원래 자리 (지금 화면 기준)
-  st.ty = clientY - st.grab - base;
-  st.s = scale;
-  el.style.transform = `translateY(${st.ty}px) scale(${scale})`;
+  const ty = (clientY - st.y0) + (window.scrollY - st.s0);
+  el.style.transform = `translateY(${ty}px) scale(${scale})`;
 }
 function dragEnd(el){ dragFollowState.delete(el); }
 
