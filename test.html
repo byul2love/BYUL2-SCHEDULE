@@ -4570,8 +4570,8 @@ html body #noticeModal .notice-item.latest .notice-date { color: var(--navy); }
   html body #navControls { padding-left: 16px; padding-right: 16px; }
 }
 
-/* "다가오는 일정" 제목: 한글만 남아서 조금 크게 */
-html body #upcomingTitle { font-size: 13px; letter-spacing: .5px; }
+/* "다가오는 일정" 제목은 영어 UPCOMING으로 (작은 대문자, 글자 간격 넓게) */
+html body #upcomingTitle { font-size: 12px; letter-spacing: 2.5px; }
 
 /* 모바일: "다가오는 일정"이 두 줄로 내려가거나 잘리지 않게 (항상 한 줄, 모자라면 …) */
 @media (max-width: 600px) {
@@ -4623,7 +4623,7 @@ html body #upcomingTitle { font-size: 13px; letter-spacing: .5px; }
 
 <div id="upcomingSection">
   <div class="upcoming-head">
-    <div id="upcomingTitle">다가오는 일정</div>
+    <div id="upcomingTitle" aria-label="다가오는 일정">UPCOMING</div>
     <div id="viewTabs" role="tablist" aria-label="보기 방식">
       <button data-view="calendar" class="active" role="tab"><svg class="tab-ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3"/></svg>달력</button>
       <button data-view="list" role="tab"><svg class="tab-ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4h8M6 8h8M6 12h8"/><circle cx="2.8" cy="4" r=".9"/><circle cx="2.8" cy="8" r=".9"/><circle cx="2.8" cy="12" r=".9"/></svg>목록</button>
