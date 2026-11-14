@@ -11,7 +11,7 @@
 <meta property="og:title" content="🌙 MOONBYUL SCHEDULE 🌟">
 <meta property="og:description" content="문별의 일정을 한눈에">
 <meta property="og:url" content="https://byul2love.github.io/BYUL2-SCHEDULE/test.html">
-<meta property="og:image" content="https://byul2love.github.io/BYUL2-SCHEDULE/icons/og-image.jpg">
+<meta property="og:image" content="https://byul2love.github.io/BYUL2-SCHEDULE/icons/og-image-v2.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="MOONBYUL SCHEDULE">
@@ -4412,6 +4412,32 @@ html body .mp-month {
 html body .mp-month.now { border-color: var(--violet); color: var(--violet); }
 html body .mp-month.on { background: var(--ink); border-color: var(--ink); color: #fff; }
 html body .mp-month:active { transform: scale(.96); }
+
+/* =========================================================
+   일정 칩 · 꼬리말
+========================================================= */
+/* 일정 칩: 바탕은 더 연하게, 글씨는 먹색 (유형 색은 왼쪽 선) */
+html body #calendar .schedule,
+html body #calendar .schedule .title { color: var(--ink); }
+html body #calendar .schedule { font-weight: 500; letter-spacing: -.2px; }
+
+/* 꼬리말: 밑줄 링크 대신 작은 굵은 글씨로 정돈 */
+html body #guideBtn,
+html body #noticeBtn {
+  padding: 4px 6px;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-decoration: none;
+}
+html body #siteFooter .footer-dot { color: var(--hair); }
+html body #siteVersion {
+  margin-top: 4px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #C9C7D0;
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -5026,8 +5052,8 @@ visibleSchedules.forEach((it,idx)=>{
   s.dataset.id=it.id;
 
   const typeColor = typeColors[it.type] || "#e0e7ff";
-  s.style.background = `color-mix(in srgb, ${typeColor} 30%, white)`;
-  s.style.borderLeft = `3px solid ${typeColor}`;
+  s.style.background = `color-mix(in srgb, ${typeColor} 18%, white)`;   // 바탕은 연하게, 유형 색은 왼쪽 선으로
+  s.style.borderLeft = `2.5px solid ${typeColor}`;
 
   if(isSpecialAnniversary(key)){
     s.style.border = `1.5px dashed ${typeColor}`;
