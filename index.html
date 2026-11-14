@@ -3406,6 +3406,471 @@ header {
   grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 .schedule-more:hover { color: #5143C9; background: none; text-decoration: underline; }
+/* =========================================================
+   새 디자인 (보이는 모양만 바꿈, 기능 · 구조는 그대로)
+   - 차분한 밤하늘 헤더 + 연보랏빛 회색 바탕 + 흰 카드
+   - 보라는 강조에만, 선은 얇고 연하게, 모서리는 넉넉하게
+========================================================= */
+:root {
+  --paper: #F5F4FA;          /* 페이지 바탕 */
+  --surface: #FFFFFF;        /* 카드 · 달력 */
+  --hair: #ECEAF4;           /* 테두리 */
+  --hair-soft: #F2F0F8;      /* 안쪽 선 */
+  --ink: #23212F;            /* 본문 글씨 */
+  --sub: #7B7690;            /* 보조 글씨 */
+  --accent: #6C5CE7;         /* 강조 보라 */
+  --accent-soft: #EFECFF;
+}
+body { background: var(--paper); color: var(--ink); }
+
+/* ---------- 헤더 ---------- */
+header {
+  background:
+    radial-gradient(1.4px 1.4px at 12% 22%, rgba(255,255,255,.85), transparent 100%),
+    radial-gradient(1.2px 1.2px at 27% 68%, rgba(255,255,255,.5), transparent 100%),
+    radial-gradient(1.8px 1.8px at 41% 14%, rgba(255,255,255,.8), transparent 100%),
+    radial-gradient(1.2px 1.2px at 63% 52%, rgba(255,255,255,.45), transparent 100%),
+    radial-gradient(1.6px 1.6px at 78% 20%, rgba(255,255,255,.75), transparent 100%),
+    radial-gradient(1.2px 1.2px at 90% 60%, rgba(255,255,255,.5), transparent 100%),
+    radial-gradient(ellipse 80% 70% at 50% 120%, rgba(140,124,255,.55), transparent 70%),
+    linear-gradient(175deg, #14122A 0%, #262056 55%, #4B3DB8 100%);
+  border-radius: 0 0 28px 28px;
+}
+#siteTitle::before { display: none; }   /* PC 오른쪽 위에 남아 있던 흐린 달 장식 */
+
+/* 검색 · 유형: 반투명 유리 버튼 */
+#searchBtn,
+#typeFilter {
+  background-color: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.20);
+  color: #fff;
+  border-radius: 999px;
+}
+/* 달 이동: 테두리 없이 "‹ 2026년 10월 ›" 한 줄로 */
+#prevBtn,
+#nextBtn {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,.85);
+  font-size: 22px;
+}
+/* 마우스가 있는 PC에서만 올렸을 때 색 (폰에서는 누른 뒤 색이 남아 있어 보여서 뺌) */
+@media (hover: hover) and (pointer: fine) {
+  #prevBtn:hover,
+  #nextBtn:hover { background: rgba(255,255,255,.10); }
+}
+#prevBtn:focus,
+#nextBtn:focus { outline: none; }
+#prevBtn:active,
+#nextBtn:active { background: rgba(255,255,255,.14); }
+#monthText {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: .2px;
+}
+#todayBtn {
+  background: #fff;
+  color: #2C2470;
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+/* ---------- 다가오는 일정 ---------- */
+.upcoming-head { align-items: center; }
+#upcomingTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -.2px;
+}
+/* 달력 / 목록 전환: 둥근 토글 */
+#viewTabs {
+  display: inline-flex;
+  gap: 0;
+  padding: 3px;
+  background: #E9E6F4;
+  border-radius: 999px;
+}
+#viewTabs button {
+  padding: 5px 12px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--sub);
+  box-shadow: none;
+}
+#viewTabs button.active {
+  background: #fff;
+  color: var(--accent);
+  box-shadow: 0 1px 2px rgba(40,30,90,.10);
+}
+#viewTabs button::after { display: none; }
+
+.upcoming-card,
+.upcoming-card:first-child {
+  background: var(--surface);
+  border: 1px solid var(--hair);
+  border-radius: 16px;
+  box-shadow: none;
+}
+.upcoming-card .upcoming-dday,
+.upcoming-card:first-child .upcoming-dday {
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.upcoming-card.is-today .upcoming-dday {
+  color: #fff;
+  background: var(--accent);
+}
+.upcoming-card .upcoming-title { color: var(--ink); font-weight: 700; }
+.upcoming-card .upcoming-date { color: var(--sub); }
+
+/* ---------- 달력 ---------- */
+#weekdays {
+  background: var(--surface);
+  border: 1px solid var(--hair);
+  border-bottom: 1px solid var(--hair-soft);
+  border-radius: 18px 18px 0 0;
+}
+.weekday {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sub);
+  letter-spacing: .5px;
+}
+#calendar {
+  background: var(--hair-soft);
+  border: 1px solid var(--hair);
+  border-top: none;
+  border-radius: 0 0 18px 18px;
+}
+#calendar .day { background: var(--surface); }
+#calendar .day.other-month { background: #FBFAFD; }
+#calendar .day.other-month .day-number { opacity: .55; }
+#calendar .day:nth-last-child(7),
+#calendar .day:nth-last-child(7).selected::after { border-bottom-left-radius: 17px; }
+#calendar .day:last-child,
+#calendar .day:last-child.selected::after { border-bottom-right-radius: 17px; }
+/* 날짜 숫자: 칸 가운데 위 */
+#calendar .day-number-wrap { margin: 0 auto 4px; }
+.day-number { font-weight: 600; font-size: 13px; }
+/* 주말 칸은 아주 살짝만 구분 */
+#calendar .day:nth-child(7n+1):not(.other-month) { background: #FFFCFD; }
+#calendar .day:nth-child(7n):not(.other-month) { background: #FCFCFF; }
+.day.selected::after { border-color: var(--accent); }
+
+/* 일정 칩: 조금 더 얇고 단정하게 */
+.schedule {
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+/* ---------- 목록 탭 ---------- */
+.mini-cal {
+  background: var(--surface);
+  border: 1px solid var(--hair);
+  border-radius: 18px;
+  box-shadow: none;
+}
+.list-day-head { color: var(--ink); }
+.list-item {
+  background: var(--surface);
+  border: 1px solid var(--hair);
+  border-left: 4px solid var(--c);
+  border-radius: 12px;
+  box-shadow: none;
+}
+.list-type { border-radius: 999px; }
+
+/* ---------- 떠 있는 버튼 · 아래쪽 ---------- */
+#listAddBtn {
+  background: var(--accent);
+  box-shadow: 0 6px 16px rgba(108,92,231,.35);
+}
+#topBtn {
+  background: #fff;
+  color: var(--accent);
+  border: 1px solid var(--hair);
+  box-shadow: 0 4px 12px rgba(40,30,90,.10);
+}
+#siteFooter { padding-top: 28px; padding-bottom: 72px; }
+#guideBtn, #noticeBtn { color: var(--sub); }
+/* =========================================================
+   새 디자인 2단계: 헤더 · 일정 칩 · 창(추가 · 수정 · 상세 · 검색)
+========================================================= */
+
+/* ---------- 헤더: 조금 더 짧고 정돈되게 ---------- */
+@media (max-width: 600px) {
+  header { padding-top: 16px; padding-bottom: 18px; }
+  #siteTitle { margin-bottom: 10px; }
+}
+#navControls { gap: 6px; }
+
+/* ---------- 창 공통 ---------- */
+.modal { background: rgba(20, 16, 44, .42); }
+.modal-content,
+#actionModal .modal-content {
+  border-radius: 22px;
+  border: none;
+  box-shadow: 0 18px 50px rgba(20, 16, 60, .22);
+}
+
+/* 입력 칸: 연한 바탕의 둥근 칸, 누르면 보라 테두리 */
+#inputBox input,
+#inputBox select,
+#inputBox textarea,
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+  background: #F7F6FB;
+  border: 1px solid transparent;
+  border-radius: 12px;
+}
+#inputBox input:focus,
+#inputBox select:focus,
+#inputBox textarea:focus,
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+  background: #fff;
+  border-color: #B7ACF6;
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, .10);
+}
+#inputBox label,
+.modal-content label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sub);
+}
+
+/* 추가 · 저장 버튼: 보라 알약 */
+#addBtn,
+#saveEditBtn {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 14px;
+  font-weight: 700;
+  box-shadow: 0 6px 14px rgba(108, 92, 231, .28);
+}
+
+/* 아래에서 올라오는 추가 창: 위쪽 모서리 둥글게 */
+#inputBox {
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -10px 40px rgba(20, 16, 60, .18);
+}
+
+/* 상세창 아래 버튼들: 둥글고 가볍게 */
+#actionModal .modal-actions button {
+  border-radius: 14px;
+  background: #F5F4FA;
+}
+
+/* 검색 결과 · 소식 · 사용법 목록 */
+.search-result-item {
+  border-radius: 12px;
+}
+/* =========================================================
+   새 디자인 3단계: 검색 · 유형 선택 · 사용법/소식 · 삭제 확인 · 닫기 버튼
+========================================================= */
+
+/* 닫기(✖) 버튼: 둥근 회색 원으로 통일 */
+#closeSearchBtn,
+#closeInputBtn {
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: #F2F1F7 !important;
+  color: #8A84A6 !important;
+  font-size: 12px !important;
+  border: none !important;
+}
+
+/* 검색창: 입력 칸 앞에 돋보기, 결과는 둥근 줄 */
+#searchInput {
+  padding-left: 38px !important;
+  background: #F7F6FB url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%238A84A6' stroke-width='1.6' stroke-linecap='round'%3E%3Ccircle cx='7' cy='7' r='4.5'/%3E%3Cpath d='M10.5 10.5L14 14'/%3E%3C/svg%3E") no-repeat 13px center / 16px !important;
+}
+#searchInput:focus { background-color: #fff !important; }
+.search-result-item {
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: none;
+  background: #FAF9FD;
+  margin-bottom: 6px;
+}
+.search-result-item:hover { background: var(--accent-soft); }
+
+/* 유형 선택 창 */
+#typeFilterPanel {
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 18px 44px rgba(20, 16, 60, .22);
+}
+.tf-chip { border-radius: 999px; }
+.tf-actions button { border-radius: 12px; }
+#tfDone {
+  background: var(--accent);
+  box-shadow: 0 4px 10px rgba(108, 92, 231, .25);
+}
+#tfCancel { background: #F2F1F7; color: #8A84A6; }
+
+/* 사용법 · 업데이트 소식: 항목 제목을 작은 보라 라벨로, 항목 사이 여백 넉넉하게 */
+#guideModal .notice-title,
+#noticeModal .notice-title { font-size: 19px; }
+.notice-item + .notice-item {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #F1EFF6;
+}
+#guideModal .notice-date {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: #5143C9;
+  font-size: 12px;
+}
+.notice-item ul { color: #3A3550; }
+#guideOkBtn,
+#noticeOkBtn {
+  border-radius: 14px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+}
+
+/* 삭제 확인 창 */
+#deleteConfirmModal .modal-content { text-align: center; }
+#confirmDeleteBtn,
+#cancelDeleteBtn {
+  border-radius: 14px !important;
+  font-weight: 700;
+}
+#confirmDeleteBtn {
+  background: #E35D6A !important;
+  border: none !important;
+  color: #fff !important;
+}
+#cancelDeleteBtn {
+  background: #F2F1F7 !important;
+  border: none !important;
+  color: #5A5570 !important;
+}
+
+/* 되돌리기 알림 */
+.toast { border-radius: 14px; }
+/* =========================================================
+   새 디자인 4단계: 목록 탭 날짜 줄 · 빈 화면 · 알림 · 작은 움직임
+========================================================= */
+
+/* 목록 탭: 날짜 줄을 작은 제목처럼, 오늘은 보라 배지 */
+.list-day-head {
+  padding: 2px 4px 8px;
+  font-size: 15px;
+  letter-spacing: -.2px;
+}
+.list-day-head .wd,
+.list-day-head .count { color: var(--sub); font-weight: 500; }
+.list-day-head .today-badge {
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  padding: 2px 8px;
+}
+.list-day + .list-day { margin-top: 14px; }
+
+/* 목록 탭 작은 달력: 일정 점 테두리 없이 선명하게 */
+.mini-dots i { box-shadow: none; }
+
+/* 일정이 없을 때 안내 */
+.upcoming-empty,
+.list-empty {
+  color: var(--sub);
+  text-align: center;
+}
+.list-empty {
+  margin: 14px 0;
+  padding: 36px 0;
+  border: 1px dashed var(--hair);
+  border-radius: 18px;
+  background: var(--surface);
+}
+.list-empty::before {
+  content: "🌙";
+  display: block;
+  font-size: 26px;
+  margin-bottom: 6px;
+  opacity: .8;
+}
+.upcoming-empty {
+  width: 100%;
+  padding: 16px 0;
+  border: 1px dashed var(--hair);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+/* 알림(토스트): 밤하늘 색 알약 */
+.toast {
+  border-radius: 999px;
+  background: #241F4F;
+  padding: 11px 20px;
+}
+
+/* 누를 때 살짝 눌리는 느낌 (손가락으로 누른 게 보이게) */
+.upcoming-card,
+.list-item,
+#calendar .schedule,
+#todayBtn,
+#searchBtn,
+#typeFilter,
+#viewTabs button,
+#listAddBtn {
+  transition: transform .12s ease, background-color .15s ease, box-shadow .15s ease;
+}
+.upcoming-card:active,
+.list-item:active,
+#todayBtn:active,
+#searchBtn:active,
+#typeFilter:active,
+#listAddBtn:active { transform: scale(.97); }
+#calendar .schedule:active { transform: scale(.96); }
+
+/* 다가오는 일정 가로 스크롤: 스크롤 막대 숨기기 */
+#upcomingList { scrollbar-width: none; }
+#upcomingList::-webkit-scrollbar { display: none; }
+
+/* 움직임을 줄이도록 설정한 폰에서는 눌림 효과 없음 */
+@media (prefers-reduced-motion: reduce) {
+  .upcoming-card:active, .list-item:active, #todayBtn:active, #searchBtn:active,
+  #typeFilter:active, #listAddBtn:active, #calendar .schedule:active { transform: none; }
+}
+/* 헤더 버튼 줄: 년월 글씨 조금 작게, [유형] · [Today]를 가운데 쪽으로 모으기 */
+#monthText {
+  font-size: 15px;
+  min-width: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+#navControls { gap: 2px; }
+#prevBtn,
+#nextBtn {
+  width: 26px;
+  min-width: 26px;
+  padding: 0;
+}
+#typeFilter { margin-right: 6px; }
+#todayBtn { margin-left: 6px; }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -3454,7 +3919,7 @@ header {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v10.31-a</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.14-a</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
