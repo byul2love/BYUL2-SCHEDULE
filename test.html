@@ -4327,7 +4327,6 @@ html body #upcomingSection { position: relative; z-index: 1; }
    창들도 같은 컨셉으로
    - 제목 이모지 빼고 깔끔하게, 닫기는 선 아이콘
    - [수정]은 먹색, [삭제]만 빨간색
-   - 년월 고르기: 12달 바둑판
 ========================================================= */
 html body .modal-title-text { letter-spacing: -.3px; }
 html body #guideModal .notice-date {
@@ -4354,54 +4353,8 @@ html body #closeInputBtn {
 }
 html body #actionModal #actionEditBtn { color: var(--ink); }
 
-/* 년월 고르기 */
-#monthPickerModal .modal-content { padding-top: 30px; }
-.mp-year {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-.mp-year button {
-  width: 40px;
-  height: 40px;
-  margin: 0;
-  padding: 0;
-  border: none;
-  border-radius: 10px;
-  background: transparent;
-  color: var(--sub);
-  font-size: 24px;
-  cursor: pointer;
-}
-.mp-year button:active { background: var(--hair-soft); }
-#mpYear {
-  font-family: var(--serif);
-  font-weight: 900;
-  font-size: 26px;
-  color: var(--ink);
-}
-.mp-months {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-bottom: 12px;
-}
-html body .mp-month {
-  height: 46px;
-  margin: 0;
-  padding: 0;
-  border: 1px solid var(--hair);
-  border-radius: 10px;
-  background: var(--surface);
-  color: var(--ink);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-html body .mp-month.now { border-color: var(--violet); color: var(--violet); }
-html body .mp-month.on { background: var(--ink); border-color: var(--ink); color: #fff; }
-html body .mp-month:active { transform: scale(.96); }
+/* 년월 고르기: [이동]은 남색 */
+html body #applyMonthBtn { background: var(--navy); color: #fff; box-shadow: none; }
 
 /* =========================================================
    일정 칩 · 꼬리말
@@ -4556,7 +4509,6 @@ html body .mini-day.today .mini-num,
 html body .list-day-head .today-badge,
 html body .upcoming-card.is-today .upcoming-dday { background: var(--navy); color: #fff; }
 html body #typeFilter.filtered { background: var(--navy); border-color: var(--navy); color: #fff; }
-html body .mp-month.on { background: var(--navy); border-color: var(--navy); }
 html body .day.selected::after { border-color: var(--navy); }
 
 html body #navControls.stuck {
@@ -6974,42 +6926,37 @@ searchInput.addEventListener("input", () => renderSearchResults(searchInput.valu
 
 /******** 연/월 선택 모달 ********/
 const monthPickerModal=document.getElementById("monthPickerModal");
+const yearSelect=document.getElementById("yearSelect");
+const monthSelect=document.getElementById("monthSelect");
+const applyMonthBtn=document.getElementById("applyMonthBtn");
 const cancelMonthBtn=document.getElementById("cancelMonthBtn");
-const mpYear=document.getElementById("mpYear");
-const mpMonths=document.getElementById("mpMonths");
-let mpShownYear=new Date().getFullYear();
 
-// 년월 고르기: 위에서 해를 넘기고, 12달 중 하나를 누르면 바로 이동
-function renderMonthPicker(){
-  mpYear.textContent=`${mpShownYear}`;
-  mpMonths.innerHTML="";
-  const now=new Date();
-  for(let m=0; m<12; m++){
-    const btn=document.createElement("button");
-    btn.type="button";
-    btn.className="mp-month";
-    btn.textContent=`${m+1}월`;
-    if(mpShownYear===currentDate.getFullYear() && m===currentDate.getMonth()) btn.classList.add("on");
-    if(mpShownYear===now.getFullYear() && m===now.getMonth()) btn.classList.add("now");
-    btn.onclick=()=>{
-      currentDate=new Date(mpShownYear,m,1);
-      selectedDateKey=null;
-      monthPickerModal.style.display="none";
-      history.back();
-      renderCalendar();
-    };
-    mpMonths.appendChild(btn);
+function fillYearOptions(){
+  yearSelect.innerHTML="";
+  const currentYear=new Date().getFullYear();
+  for(let y=currentYear-50; y<=currentYear+50; y++){
+    const opt=document.createElement("option");
+    opt.value=y; opt.textContent=`${y}년`; yearSelect.appendChild(opt);
   }
 }
-document.getElementById("mpPrevYear").onclick=()=>{ mpShownYear--; renderMonthPicker(); };
-document.getElementById("mpNextYear").onclick=()=>{ mpShownYear++; renderMonthPicker(); };
 
 monthText.style.cursor="pointer";
 monthText.onclick=()=>{
-  mpShownYear=currentDate.getFullYear();
-  renderMonthPicker();
+  fillYearOptions();
+  yearSelect.value=currentDate.getFullYear();
+  monthSelect.value=currentDate.getMonth();
   monthPickerModal.style.display="flex";
   pushModalState();   // 폰 뒤로가기로 닫히게
+};
+
+applyMonthBtn.onclick=()=>{
+  const y=parseInt(yearSelect.value);
+  const m=parseInt(monthSelect.value);
+  currentDate=new Date(y,m,1);
+  selectedDateKey=null;
+  monthPickerModal.style.display="none";
+  history.back();
+  renderCalendar();
 };
 
 cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; history.back(); };
@@ -7017,12 +6964,15 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; history.back
 
 <div id="monthPickerModal" class="modal">
   <div class="modal-content">
-    <div class="mp-year">
-      <button id="mpPrevYear" type="button" aria-label="이전 해">‹</button>
-      <span id="mpYear"></span>
-      <button id="mpNextYear" type="button" aria-label="다음 해">›</button>
-    </div>
-    <div id="mpMonths" class="mp-months"></div>
+    <label>연도</label>
+    <select id="yearSelect"></select>
+    <label>월</label>
+    <select id="monthSelect">
+      <option value="0">1월</option><option value="1">2월</option><option value="2">3월</option><option value="3">4월</option>
+      <option value="4">5월</option><option value="5">6월</option><option value="6">7월</option><option value="7">8월</option>
+      <option value="8">9월</option><option value="9">10월</option><option value="10">11월</option><option value="11">12월</option>
+    </select>
+    <button id="applyMonthBtn">이동</button>
     <button id="cancelMonthBtn">취소</button>
   </div>
 </div>
