@@ -4421,23 +4421,7 @@ html body #calendar .schedule,
 html body #calendar .schedule .title { color: var(--ink); }
 html body #calendar .schedule { font-weight: 500; letter-spacing: -.2px; }
 
-/* 꼬리말: 위쪽 "UPCOMING"처럼 작은 대문자 느낌으로 정돈 */
-html body #siteFooter .footer-line {
-  margin-bottom: 8px;
-  font-size: 12px;
-  letter-spacing: .2px;
-  color: var(--sub);
-}
-html body #siteFooter .footer-line::before,
-html body #siteFooter .footer-line::after {
-  content: "";
-  display: inline-block;
-  width: 18px;
-  height: 1px;
-  margin: 0 8px;
-  vertical-align: middle;
-  background: var(--hair);
-}
+/* 꼬리말: 밑줄 링크 대신 작은 굵은 글씨로 정돈 */
 html body #guideBtn,
 html body #noticeBtn {
   padding: 4px 6px;
@@ -4521,7 +4505,7 @@ html body #siteVersion {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><div class="footer-line">누구나 함께 채우는 문별 일정 달력</div><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.14-a</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.14-a</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
