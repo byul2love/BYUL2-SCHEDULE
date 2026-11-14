@@ -4250,14 +4250,21 @@ html body .modal { background: rgba(24, 23, 28, .42); }
   left: 0;
   right: 0;
   top: 0;
-  height: 300px;
+  height: 340px;
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
-  /* 띠처럼 끊기지 않게: 위쪽에서 둥글게 퍼지다가 아주 천천히 흰색으로 */
+  /* 오로라: 왼쪽 보라 · 오른쪽 분홍이 크게 겹쳐 번지고, 아래로 아주 천천히 흰색으로
+     (경계가 보이지 않게 색마다 여러 단계로 서서히 투명해짐) */
   background:
-    radial-gradient(ellipse 70% 55% at 85% 0%, rgba(239, 197, 96, .10), transparent 70%),
-    radial-gradient(ellipse 130% 90% at 50% -10%, #E7E2F7 0%, #F0EDFA 40%, rgba(255, 255, 255, 0) 78%);
+    radial-gradient(ellipse 85% 75% at 92% -8%,
+      rgba(255, 196, 222, .50) 0%, rgba(255, 196, 222, .32) 30%, rgba(255, 196, 222, .14) 55%, rgba(255, 196, 222, 0) 80%),
+    radial-gradient(ellipse 95% 80% at 6% -8%,
+      rgba(184, 168, 255, .50) 0%, rgba(184, 168, 255, .32) 30%, rgba(184, 168, 255, .14) 55%, rgba(184, 168, 255, 0) 80%),
+    radial-gradient(ellipse 60% 50% at 50% -5%,
+      rgba(222, 200, 250, .35) 0%, rgba(222, 200, 250, 0) 75%),
+    linear-gradient(180deg,
+      rgba(246, 242, 253, 1) 0%, rgba(246, 242, 253, .7) 35%, rgba(246, 242, 253, .3) 65%, rgba(255, 255, 255, 0) 100%);
 }
 html body header { position: relative; z-index: 1; padding-top: 62px; }
 html body #upcomingSection { position: relative; z-index: 1; }
