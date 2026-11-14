@@ -3895,12 +3895,11 @@ html body #upcomingTitle { font-size: 12px; letter-spacing: 2.5px; }
   html body #viewTabs { flex: none; }
 }
 
-/* 일정 순서 바꾸는 동안 화면이 같이 스크롤되지 않게 */
+/* 일정 순서 바꾸는 동안: 화면 끝에서 당겨지는 효과만 막음
+   (overflow: hidden은 앱 안 브라우저 주소창이 튀어나오게 해서 쓰지 않음) */
 html.reordering,
 html.reordering body {
-  overflow: hidden;
   overscroll-behavior: none;
-  touch-action: none;
 }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3968,7 +3967,7 @@ html.reordering body {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.14-b</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.14-c</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
@@ -5002,6 +5001,8 @@ let listDragId = null;
 let reorderLockY = null;
 function lockScrollForReorder(){
   reorderLockY = window.scrollY;
+  // 페이지 overflow를 막으면 카톡 등 앱 안 브라우저가 주소창 · 버튼 줄을 꺼내며 화면이 밀려서,
+  // 스크롤 자체는 그대로 두고 끄는 동안의 터치만 막음 (touchmove preventDefault)
   document.documentElement.classList.add("reordering");
 }
 function keepScrollLocked(){
@@ -5024,6 +5025,31 @@ async function reorderDay(key, fromId, toId){
   list.splice(ti, 0, moved);
   const batch = writeBatch(db);
   list.forEach((it, i) => batch.update(doc(schedulesCol, it.id), { order: i }));
+  try { await batch.commit(); } catch { showToast("순서를 바꾸지 못했어요."); }
+}
+
+// 손을 뗀 위치로 새 순서 정하기 (끌고 있는 일정 자신은 빼고, 나머지 일정들 사이 어디에 넣을지 계산)
+// 예전엔 자신까지 넣고 계산해서 아래로 옮기면 한 칸 더 내려가던 문제가 있었음
+async function reorderByDrop(key, fromId, rowEls, touchY){
+  const list = (firestoreData[key] || []).slice().sort((a,b) => (a.order??0) - (b.order??0));
+  const moved = list.find(x => x.id === fromId);
+  if(!moved) return;
+  const rest = list.filter(x => x.id !== fromId);
+  const others = rowEls.filter(r => r.dataset.id && r.dataset.id !== fromId);
+  let idx = others.findIndex(r => { const b = r.getBoundingClientRect(); return touchY < b.top + b.height / 2; });
+  let pos;
+  if(idx === -1){
+    // 보이는 일정들 맨 아래로 (접혀서 안 보이는 일정이 있으면 그 앞)
+    const last = others[others.length - 1];
+    pos = last ? rest.findIndex(x => x.id === last.dataset.id) + 1 : rest.length;
+  } else {
+    pos = rest.findIndex(x => x.id === others[idx].dataset.id);
+  }
+  if(pos < 0) return;
+  rest.splice(pos, 0, moved);
+  if(rest.every((x, i) => x.id === list[i].id)) return;   // 순서 그대로면 저장 안 함
+  const batch = writeBatch(db);
+  rest.forEach((it, i) => batch.update(doc(schedulesCol, it.id), { order: i }));
   try { await batch.commit(); } catch { showToast("순서를 바꾸지 못했어요."); }
 }
 
@@ -5084,10 +5110,7 @@ function enableListReorder(row, group, key){
     row.dataset.dragged = "1";
 
     const y = e.changedTouches[0].clientY;
-    const rows = [...group.querySelectorAll(".list-item")];
-    let target = rows.find(r => { const b = r.getBoundingClientRect(); return y < b.top + b.height / 2; });
-    if(!target) target = rows[rows.length - 1];
-    if(target && target.dataset.id !== row.dataset.id) reorderDay(key, row.dataset.id, target.dataset.id);
+    reorderByDrop(key, row.dataset.id, [...group.querySelectorAll(".list-item")], y);
   });
 
   row.addEventListener("touchcancel", () => {
@@ -5324,69 +5347,7 @@ function addMobileTouchDrag(el, container, dateKey) {
 
 
 
-    const items =
-      Array.from(container.children)
-      .filter(x=>x.dataset.id);
-
-
-
-    let targetIndex = items.findIndex(item=>{
-
-      const rect =
-        item.getBoundingClientRect();
-
-      return touchY <
-        rect.top + rect.height/2;
-
-    });
-
-
-
-    if(targetIndex===-1)
-      targetIndex=items.length-1;
-
-
-
-    const toId =
-      items[targetIndex]?.dataset.id;
-
-
-    const toIndex =
-      list.findIndex(
-        x=>x.id===toId
-      );
-
-
-
-    if(
-      toIndex!==-1 &&
-      fromIndex!==toIndex
-    ){
-
-      const moved =
-        list.splice(fromIndex,1)[0];
-
-
-      list.splice(toIndex,0,moved);
-
-
-
-      const batch = writeBatch(db);
-
-
-      list.forEach((item,i)=>{
-
-        batch.update(
-          doc(schedulesCol,item.id),
-          {order:i}
-        );
-
-      });
-
-
-      await batch.commit();
-
-    }
+    await reorderByDrop(dateKey, startId, Array.from(container.children), touchY);
 
 
   });
