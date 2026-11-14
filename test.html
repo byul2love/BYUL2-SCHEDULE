@@ -3901,6 +3901,14 @@ html.reordering,
 html.reordering body {
   overscroll-behavior: none;
 }
+
+/* 길게 눌러 끌 때 앱 안 브라우저(카톡 등)에서 글자 선택 · 메뉴가 뜨며 화면이 스크롤되지 않게 */
+#calendar .schedule,
+.list-item {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -3967,7 +3975,7 @@ html.reordering body {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.14-c</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.14-d</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
@@ -5012,9 +5020,32 @@ function unlockScrollForReorder(){
   reorderLockY = null;
   document.documentElement.classList.remove("reordering");
 }
+// 끄는 일정이 항상 손가락 바로 밑에 있게
+// (예전엔 처음 누른 곳에서 움직인 거리만큼 옮겨서, 카톡 등에서 주소창이 나와 화면이 밀리면 일정이 튀었음)
+const dragFollowState = new WeakMap();
+function dragBegin(el, clientY){
+  const r = el.getBoundingClientRect();
+  dragFollowState.set(el, { grab: clientY - r.top, ty: 0, s: 1 });
+}
+function dragFollow(el, clientY, scale){
+  const st = dragFollowState.get(el);
+  if(!st) return;
+  const r = el.getBoundingClientRect();
+  const h = el.offsetHeight;
+  const base = r.top - st.ty - h * (1 - st.s) / 2;   // 옮기기 전 원래 자리 (지금 화면 기준)
+  st.ty = clientY - st.grab - base;
+  st.s = scale;
+  el.style.transform = `translateY(${st.ty}px) scale(${scale})`;
+}
+function dragEnd(el){ dragFollowState.delete(el); }
+
 // 안전장치: 손을 떼거나 터치가 취소되면 항상 잠금 풀기
 document.addEventListener("touchend", unlockScrollForReorder, true);
 document.addEventListener("touchcancel", unlockScrollForReorder, true);
+// 일정 칩 · 목록 줄을 길게 눌렀을 때 뜨는 메뉴(글자 선택 등) 막기
+document.addEventListener("contextmenu", e => {
+  if(e.target.closest && e.target.closest("#calendar .schedule, .list-item")) e.preventDefault();
+});
 
 async function reorderDay(key, fromId, toId){
   const list = (firestoreData[key] || []).slice().sort((a,b) => (a.order??0) - (b.order??0));
@@ -5084,6 +5115,7 @@ function enableListReorder(row, group, key){
       canDrag = true;
       row.classList.add("dragging");
       lockScrollForReorder();
+      dragBegin(row, startY);
       navigator.vibrate?.(12);
     }, 320);
   }, { passive: true });
@@ -5097,12 +5129,13 @@ function enableListReorder(row, group, key){
     }
     if(e.cancelable) e.preventDefault();
     keepScrollLocked();
-    row.style.transform = `translateY(${dy}px) scale(.97)`;
+    dragFollow(row, e.touches[0].clientY, .97);
   }, { passive: false });
 
   row.addEventListener("touchend", e => {
     clearTimeout(timer);
     unlockScrollForReorder();
+    dragEnd(row);
     row.style.transform = "";
     row.classList.remove("dragging");
     if(!canDrag) return;
@@ -5264,6 +5297,7 @@ function addMobileTouchDrag(el, container, dateKey) {
         canDrag = true;
         el.classList.add("dragging");
         lockScrollForReorder();
+        dragBegin(el, startY);
 
       }
 
@@ -5297,10 +5331,7 @@ function addMobileTouchDrag(el, container, dateKey) {
 
     if(e.cancelable) e.preventDefault();
     keepScrollLocked();
-
-
-    el.style.transform =
-      `translateY(${deltaY}px) scale(0.95)`;
+    dragFollow(el, e.touches[0].clientY, .95);
 
 
   },{passive:false});
@@ -5312,6 +5343,7 @@ function addMobileTouchDrag(el, container, dateKey) {
 
     clearTimeout(pressTimer);
     unlockScrollForReorder();
+    dragEnd(el);
 
 
     el.style.transform="";
