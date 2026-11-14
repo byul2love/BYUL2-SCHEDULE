@@ -4143,7 +4143,7 @@ html body #upcomingTitle {
   font-weight: 700;
   letter-spacing: 1.5px;
 }
-html body #upcomingTitle::before { content: "UPCOMING · "; }
+/* (UPCOMING은 "다가오는 일정"과 같은 뜻이라 뺌) */
 html body #viewTabs { background: var(--hair-soft); border-radius: 10px; }
 html body #viewTabs button { color: var(--sub); border-radius: 8px; }
 html body #viewTabs button.active { background: var(--surface); color: var(--ink); }
@@ -4568,6 +4568,22 @@ html body #noticeModal .notice-item.latest .notice-date { color: var(--navy); }
     scroll-padding-left: 16px;
   }
   html body #navControls { padding-left: 16px; padding-right: 16px; }
+}
+
+/* "다가오는 일정" 제목: 한글만 남아서 조금 크게 */
+html body #upcomingTitle { font-size: 13px; letter-spacing: .5px; }
+
+/* 모바일: "다가오는 일정"이 두 줄로 내려가거나 잘리지 않게 (항상 한 줄, 모자라면 …) */
+@media (max-width: 600px) {
+  html body .upcoming-head { gap: 8px; }
+  html body #upcomingTitle {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  html body #viewTabs { flex: none; }
 }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
