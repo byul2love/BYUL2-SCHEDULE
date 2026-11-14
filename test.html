@@ -4578,6 +4578,22 @@ html body #navControls.stuck #todayBtn { background: #fff; color: var(--navy); }
 html body .upcoming-card,
 html body .upcoming-card:first-child { border-left-color: #8F9BE3; }
 html body #actionModal #actionEditBtn { color: var(--navy); }
+
+/* 헤더 하늘이 "‹ 년월 ›" 줄 바로 위에서 끝나게
+   (높이는 스크립트가 달 이동 줄 위치에 맞춰 --sky-h로 정함, 없으면 280px) */
+#skyDecor {
+  height: var(--sky-h, 280px);
+  background:
+    radial-gradient(ellipse 70% 60% at 96% -10%, rgba(200, 150, 215, .20), transparent 70%),
+    radial-gradient(ellipse 85% 70% at 0% -10%, rgba(105, 95, 210, .28), transparent 72%),
+    linear-gradient(180deg,
+      #15193D 0%,
+      #1F2457 30%,
+      #3A3F84 52%,
+      #9596CB 72%,
+      #DAD9EF 88%,
+      rgba(255, 255, 255, 0) 100%);
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -7025,6 +7041,28 @@ if("serviceWorker" in navigator && location.protocol === "https:"){
   new IntersectionObserver(([e]) => {
     nav.classList.toggle("stuck", !e.isIntersecting && e.boundingClientRect.top < 0);
   }).observe(sentinel);
+})();
+
+// 헤더 하늘 높이 = 달 이동 줄이 시작하는 곳 (화면 크기 · 다가오는 일정 유무에 따라 다시 잼)
+(() => {
+  const sky = document.getElementById("skyDecor");
+  const nav = document.getElementById("navControls");
+  if(!sky || !nav) return;
+  let last = 0;
+  const fit = () => {
+    if(nav.classList.contains("stuck")) return;   // 위에 붙어 있을 땐 위치가 달라서 건너뜀
+    const h = Math.round(nav.getBoundingClientRect().top + window.scrollY);
+    if(h > 0 && h !== last){ last = h; sky.style.setProperty("--sky-h", h + "px"); }
+  };
+  fit();
+  addEventListener("resize", fit);
+  addEventListener("load", fit);
+  if("ResizeObserver" in window){
+    const up = document.getElementById("upcomingSection");
+    const ro = new ResizeObserver(fit);
+    ro.observe(document.querySelector("header"));
+    if(up) ro.observe(up);
+  }
 })();
 </script>
 </body>
