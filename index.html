@@ -3997,6 +3997,11 @@ html body #actionModal .type-badge {
   color: color-mix(in srgb, var(--c) 28%, #1E2350);
   font-weight: 700;
 }
+
+/* 일정 상세 창 왼쪽 선: 배지와 같은 색 계열 (유형 색을 조금 차분하고 진하게) */
+html body #actionModal .detail-head::before {
+  background: color-mix(in srgb, var(--c) 72%, #1E2350) !important;
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>

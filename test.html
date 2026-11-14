@@ -3997,6 +3997,11 @@ html body #actionModal .type-badge {
   color: color-mix(in srgb, var(--c) 28%, #1E2350);
   font-weight: 700;
 }
+
+/* 일정 상세 창 왼쪽 선: 배지와 같은 색 계열 (유형 색을 조금 차분하고 진하게) */
+html body #actionModal .detail-head::before {
+  background: color-mix(in srgb, var(--c) 72%, #1E2350) !important;
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -4063,7 +4068,7 @@ html body #actionModal .type-badge {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.15-f</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.15-g</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
