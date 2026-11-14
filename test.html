@@ -4438,6 +4438,38 @@ html body #siteVersion {
   letter-spacing: 1px;
   color: #C9C7D0;
 }
+
+/* =========================================================
+   헤더 정리 (A안)
+   - 제목 앞뒤 달 · 별 아이콘 없앰 (달은 하늘에 하나만)
+   - 검색은 동그란 돋보기 버튼
+   - 제목 아래 선은 오른쪽으로 갈수록 흐려지게
+========================================================= */
+html body header { border-bottom: none; }
+html body header::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(31, 30, 36, .55), rgba(31, 30, 36, .12) 85%, transparent);
+  pointer-events: none;
+}
+html body #searchBtn {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  gap: 0;
+  font-size: 0;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .7);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+html body #searchBtn .tab-ic { width: 15px; height: 15px; }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -4459,8 +4491,8 @@ html body #siteVersion {
 </div>
 
 <header>
-  <div id="siteTitle"><span class="title-line title-line1"><svg class="title-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>MOONBYUL</span><span class="title-line title-line2"> SCHEDULE<svg class="title-star" viewBox="-7 -7 38 38" aria-hidden="true"><path class="rays" d="M19.9 1.7L22 -1.2M25.4 16.8L28.8 17.9M12 26.1L12 29.6M-1.4 16.8L-4.8 17.9M4.1 1.7L2 -1.2"/><path d="M12 1.5l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 8.7l7.1-.6z"/></svg></span></div>
-  <button id="searchBtn"><svg class="tab-ic" viewBox="0 0 16 16" aria-hidden="true"><circle class="ring" cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>검색</button>
+  <div id="siteTitle"><span class="title-line title-line1">MOONBYUL</span><span class="title-line title-line2"> SCHEDULE</span></div>
+  <button id="searchBtn" aria-label="검색"><svg class="tab-ic" viewBox="0 0 16 16" aria-hidden="true"><circle class="ring" cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>검색</button>
 </header>
 
 <!-- 유형 여러 개 고르기 (왼쪽 위 [전체] 버튼을 누르면 뜸) -->
