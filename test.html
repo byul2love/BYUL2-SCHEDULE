@@ -27,7 +27,7 @@
 <meta name="apple-mobile-web-app-title" content="문별 테스트">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,900;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,900;1,900&display=swap");
 
 :root {
   --purple: #6C5CE7;
@@ -55,27 +55,14 @@ body {
 
 header {
   position: relative;
-  overflow: hidden;
-  color: white;
 }
 
 header::before {
-  position: absolute;
-  top: 10px;
-  left: 0;
-  width: 100%;
   font-size: 14px;
-  opacity: .5;
-  letter-spacing: 8px;
-  pointer-events: none;
 }
 
 #siteTitle {
   position: relative;
-  width: 100%;
-  text-align: center;
-  font-size: clamp(24px, 7.5vw, 38px);
-  line-height: 1.25;
   margin-top: 14px;
   margin-bottom: 16px;
 }
@@ -84,25 +71,9 @@ header::before {
    NAVIGATION
 ========================= */
 
-#navControls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  width: 100%;
-  margin: 0 auto;
-}
-
 #monthText {
-  min-width: 105px;
   text-align: center;
-  font-weight: 700;
-  font-size: 16px;
   cursor: pointer;
-  padding: 7px 10px;
-  border-radius: 20px;
-  background: rgba(255,255,255,.13);
-  backdrop-filter: blur(8px);
 }
 
 button {
@@ -122,12 +93,8 @@ button:active {
 
 /* 마우스가 있는 기기(PC)에서만 올렸을 때 밝아지게 — 폰에서 눌린 채로 남는 문제 방지 */
 @media (hover: hover) and (pointer: fine) {
-  #prevBtn:hover,
-  #nextBtn:hover {
-    background: rgba(255,255,255,.28);
-  }
-
-  #todayBtn:hover {
+  
+#todayBtn:hover {
     background: #F1EFFF;
   }
 
@@ -140,42 +107,20 @@ button:active {
 
 #prevBtn,
 #nextBtn {
-  width: 34px;
-  height: 34px;
-  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  background: rgba(255,255,255,.15);
-  border: 1px solid rgba(255,255,255,.15);
 }
 
 /* TODAY */
 
-#todayBtn {
-  height: 34px;
-  padding: 0 12px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
 /* 검색 */
 
 #searchBtn {
-  position: absolute;
   top: 20px;
   right: 16px;
   z-index: 2;
-  height: 30px;
-  padding: 0 10px;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  color: white;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 700;
 }
 
 /* 유형 필터 */
@@ -183,10 +128,7 @@ button:active {
 #typeFilter {
   position: static;
   left: 0;
-  height: 34px;
-  color: white;
   font-family: inherit;
-  font-size: 12px;
   cursor: pointer;
 }
 
@@ -217,8 +159,6 @@ button:active {
 
 .upcoming-empty {
   font-size: 12px;
-  color: var(--subtext);
-  padding: 6px 2px 10px;
 }
 
 .upcoming-card {
@@ -226,7 +166,6 @@ button:active {
   overflow: hidden;
   scroll-snap-align: start;
   cursor: pointer;
-  transition: transform .15s ease, box-shadow .15s ease;
 }
 
 .upcoming-ribbon {
@@ -237,13 +176,10 @@ button:active {
 
 .upcoming-card .upcoming-dday {
   display: inline-block;
-  font-weight: 700;
   border: 1px solid #9B8FEE;
 }
 
 .upcoming-card .upcoming-title {
-  font-weight: 700;
-  color: var(--text);
   line-height: 1.25;
   white-space: nowrap;
   overflow: hidden;
@@ -251,8 +187,6 @@ button:active {
 }
 
 .upcoming-card .upcoming-date {
-  color: var(--subtext);
-  font-weight: 500;
   white-space: nowrap;
 }
 
@@ -262,15 +196,10 @@ button:active {
 
 #weekdays {
   display: grid;
-  grid-template-columns: repeat(7,1fr);
-  background: white;
-  border-bottom: 1px solid var(--line);
 }
 
 .weekday {
   text-align: center;
-  font-weight: 700;
-  color: #777287;
 }
 
 .weekday:first-child {
@@ -287,8 +216,6 @@ button:active {
 
 #calendar {
   display: grid;
-  grid-template-columns: repeat(7,1fr);
-  border-top: 1px solid var(--line);
   border-left: 1px solid var(--line);
   margin-bottom: 450px;
   touch-action: pan-y;
@@ -349,8 +276,6 @@ button:active {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  font-size: 12px;
-  font-weight: 700;
 }
 
 .day-number-wrap {
@@ -407,24 +332,17 @@ button:active {
   width: 100%;
   padding: 5px 6px;
   margin-bottom: 4px;
-  border-radius: 8px;
   font-size: 10px;
-  font-weight: 500;
   line-height: 1.35;
   cursor: pointer;
   user-select: none;
   overflow-wrap: anywhere;
-  box-shadow:
-    0 2px 5px rgba(50,40,100,.08);
-  transition:
-    transform .15s ease,
+  transition: transform .15s ease,
     box-shadow .15s ease;
 }
 
 .schedule:hover {
   transform: translateY(-1px);
-  box-shadow:
-    0 5px 10px rgba(50,40,100,.12);
 }
 
 .schedule.dragging {
@@ -434,18 +352,13 @@ button:active {
 
 .schedule .title {
   width: 100%;
-  word-break: break-word;
 }
 
 /* 더보기 */
 
 .schedule-more {
-  margin-top: 5px;
-  padding: 5px;
   border-radius: 7px;
   text-align: center;
-  font-size: 10px;
-  font-weight: 600;
   cursor: pointer;
 }
 
@@ -484,10 +397,7 @@ button:active {
 #inputBox label,
 .modal-content label {
   display: block;
-  margin:
-    14px 0 6px;
-  font-size: 11px;
-  font-weight: 700;
+  margin: 14px 0 6px;
   letter-spacing: .04em;
 }
 
@@ -504,31 +414,12 @@ button:active {
 .modal-content select {
   width: 100%;
   padding: 0 10px;
-  border:
-    1px solid #E5E1F3;
-  background: #FAF9FD;
-  font-family: inherit;
   outline: none;
-  transition:
-    border .2s,
+  transition: border .2s,
     box-shadow .2s;
 }
 
-#inputBox input:focus,
-#inputBox select:focus,
-.modal-content input:focus,
-.modal-content select:focus {
-  border-color: var(--purple-light);
-  box-shadow:
-    0 0 0 3px rgba(108,92,231,.1);
-}
-
 /* 날짜 */
-
-.date-row {
-  display: flex;
-  gap: 8px;
-}
 
 /* =========================
    INPUT HEADER
@@ -558,31 +449,11 @@ button:active {
   font-weight: 700;
 }
 
-#closeInputBtn {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  background: #F4F3F7;
-  color: #777;
-}
-
 /* 추가 버튼 */
 
 #addBtn {
   width: 100%;
-  height: 42px;
   margin-top: 16px;
-  background:
-    linear-gradient(
-      135deg,
-      #5B4FCF,
-      #7A6CE0
-    );
-  color: white;
-  font-size: 14px;
-  font-weight: 700;
-  box-shadow:
-    0 4px 12px rgba(91,79,207,.22);
 }
 
 /* =========================
@@ -637,14 +508,7 @@ button:active {
 /* 저장 */
 
 #saveEditBtn {
-  background:
-    linear-gradient(
-      135deg,
-      #5B4FCF,
-      #7A6CE0
-    );
   border: 1px solid transparent;
-  color: white;
 }
 
 /* 링크 */
@@ -720,7 +584,6 @@ button:active {
   bottom: 40px;
   transform: translate(-50%, 12px);
   z-index: 2000;
-  padding: 12px 20px;
   color: white;
   font-size: 13px;
   font-weight: 600;
@@ -745,13 +608,8 @@ button:active {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 10px 6px;
   border-bottom: 1px solid #F0EEF8;
   cursor: pointer;
-}
-
-.search-result-item:hover {
-  background: #FAF9FD;
 }
 
 .search-result-row {
@@ -813,11 +671,6 @@ button:active {
   margin-top: 0;
 }
 
-.action-icon {
-  font-size: 14px;
-  line-height: 1;
-}
-
 .action-label {
   font-size: 13px;
   font-weight: 600;
@@ -835,13 +688,7 @@ button:active {
     margin: auto;
   }
 
-  #inputBox {
-    max-width: 1200px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  header {
+header {
     border-radius:
       0 0 24px 24px;
   }
@@ -866,12 +713,7 @@ button:active {
     padding: 6px 8px;
   }
 
-  #siteTitle {
-    font-size: clamp(28px, 10vw, 40px);
-    margin-bottom: 14px;
-  }
-
-  .title-line {
+.title-line {
     display: block;
   }
 
@@ -945,20 +787,11 @@ button:active {
   width: 100%;
   min-height: 90px;
   padding: 10px;
-  border: 1px solid #E5E1F3;
-  background: #FAF9FD;
-  font-family: inherit;
   line-height: 1.5;
   resize: vertical;
   outline: none;
 }
 
-#inputBox textarea:focus,
-.modal-content textarea:focus {
-  border-color: #A29BFE;
-  box-shadow:
-    0 0 0 3px rgba(108,92,231,.1);
-}
 .datetime-row {
   display: flex;
   gap: 8px;
@@ -975,10 +808,6 @@ button:active {
 /* =========================
    달력 / 목록 전환 탭
 ========================= */
-
-#viewTabs {
-  display: flex;
-}
 
 #viewTabs button {
   font-weight: 700;
@@ -1002,7 +831,6 @@ body.list-mode #listView {
 .mini-cal {
   padding: 10px 6px 8px;
   margin-bottom: 4px;
-  background: white;
 }
 
 .mini-wd,
@@ -1092,7 +920,6 @@ body.list-mode #listView {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,.12);
 }
 
 .mini-dots b {
@@ -1118,35 +945,27 @@ body.list-mode #listView {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 0 4px 7px;
-  font-size: 14px;
   font-weight: 700;
 }
 
 .list-day-head .wd {
   font-size: 12px;
-  font-weight: 600;
-  color: var(--subtext);
 }
 
 .list-day-head.sun { color: #FF6B81; }
 .list-day-head.sat { color: #6C7CFF; }
 
 .list-day-head .today-badge {
-  padding: 1px 8px;
   font-size: 10.5px;
 }
 
 .list-day-head .count {
   font-size: 11.5px;
-  font-weight: 600;
-  color: var(--subtext);
 }
 
 .list-item {
   user-select: none;
   -webkit-touch-callout: none;
-  transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
 }
 
 .list-item.dragging {
@@ -1188,7 +1007,6 @@ body.list-mode #listAddBtn {
   font-size: 19px;
   font-weight: 800;
   line-height: 1;
-  background: white;
   opacity: 0;
   pointer-events: none;
   transform: translateY(10px);
@@ -1211,7 +1029,6 @@ body.list-mode #listAddBtn {
   gap: 10px;
   margin-bottom: 6px;
   padding: 11px 12px;
-  background: white;
   cursor: pointer;
 }
 
@@ -1307,10 +1124,7 @@ body.list-mode #listAddBtn {
 }
 
 .list-empty {
-  padding: 50px 0;
-  text-align: center;
   font-size: 13px;
-  color: var(--subtext);
 }
 
 @media (max-width: 600px) {
@@ -1325,14 +1139,8 @@ body.list-mode #listAddBtn {
 ========================= */
 
 /* 헤더: 밤하늘 그라데이션 + 반짝이는 별 */
-header {
-  padding: 24px 16px 20px;
-}
 
 /* 예전 글자 별(✦ · ✧)은 숨기고 진짜 별로 대체 */
-header::before {
-  content: none;
-}
 
 .stars {
   position: absolute;
@@ -1359,44 +1167,12 @@ header::before {
 
 /* 아래쪽에 은은한 지평선 빛줄기 */
 header::after {
-  content: "";
-  position: absolute;
-  left: 10%;
-  right: 10%;
-  bottom: 0;
-  height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255,227,163,.6), transparent);
-  pointer-events: none;
-}
-
-#searchBtn {
-  background: rgba(255,255,255,.12);
-  border: 1px solid rgba(255,255,255,.22);
-  backdrop-filter: blur(6px);
-}
-
-#prevBtn,
-#nextBtn,
-#monthText,
-#typeFilter {
-  background-color: rgba(255,255,255,.12);
-  border: 1px solid rgba(255,255,255,.2);
-  backdrop-filter: blur(6px);
-}
-
-#navControls {
-  gap: 6px;
 }
 
 #prevBtn,
 #nextBtn {
-  font-size: 20px;
   line-height: 1;
-}
-
-#monthText {
-  border: 1px solid rgba(255,255,255,.16);
-  white-space: nowrap;
 }
 
 #todayBtn {
@@ -1414,10 +1190,6 @@ header::after {
   -webkit-appearance: none;
   appearance: none;
   max-width: 96px;
-  padding: 0 24px 0 12px;
-  border-radius: 20px;
-  border: 1px solid rgba(255,255,255,.16);
-  font-weight: 700;
   white-space: nowrap;
   text-overflow: ellipsis;
   background: rgba(255,255,255,.14) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='white' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 9px center / 9px;
@@ -1431,18 +1203,12 @@ header::after {
 }
 
 #upcomingTitle {
-  font-size: 13px;
   margin-bottom: 8px;
 }
 
 #upcomingList {
   gap: 8px;
   padding: 2px 2px 10px;
-  scrollbar-width: none;
-}
-
-#upcomingList::-webkit-scrollbar {
-  display: none;
 }
 
 .upcoming-card {
@@ -1451,13 +1217,10 @@ header::after {
   min-width: 0;
   max-width: none;
   padding: 9px 11px;
-  background: white;
 }
 
 .upcoming-card .upcoming-dday {
-  padding: 1px 7px;
   margin-bottom: 5px;
-  font-size: 10.5px;
   border-color: transparent;
 }
 
@@ -1473,7 +1236,6 @@ header::after {
 /* 탭: 다가오는 일정 제목 줄 오른쪽에 작은 토글로 */
 .upcoming-head {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   gap: 8px;
   margin-bottom: 8px;
@@ -1486,7 +1248,6 @@ header::after {
 #viewTabs {
   flex: none;
   margin: 0;
-  border-radius: 12px;
 }
 
 #viewTabs button {
@@ -1503,27 +1264,21 @@ header::after {
 /* 달력: 둥근 카드 */
 #weekdays {
   margin: 0 12px;
-  border: none;
 }
 
 .weekday {
   padding: 11px 0 9px;
-  font-size: 12px;
 }
 
 #calendar {
-  gap: 1px;
   margin: 1px 12px 450px;
-  border: none;
-  overflow: hidden;
-  background: var(--line);
 }
 
 .day {
   border: none;
 }
 
-#calendar .day:nth-child(7n+1) .day-number { color: #FF6B81; }
+#calendar .day:nth-child(7n/**/+1) .day-number { color: #FF6B81; }
 #calendar .day:nth-child(7n) .day-number { color: #6C7CFF; }
 #calendar .day.today .day-number { color: white; }
 
@@ -1537,13 +1292,11 @@ header::after {
 .modal-content input,
 .modal-content select {
   height: 42px;
-  border-radius: 11px;
   font-size: 14px;
 }
 
 #inputBox textarea,
 .modal-content textarea {
-  border-radius: 11px;
   font-size: 14px;
 }
 
@@ -1555,10 +1308,6 @@ header::after {
 
 .modal-content {
   padding: 24px;
-}
-
-.modal-content button {
-  border-radius: 12px;
 }
 
 .modal-title-text {
@@ -1578,10 +1327,6 @@ header::after {
   padding: 9px 14px;
   font-weight: 700;
   font-size: 13px;
-}
-
-.modal-actions button {
-  border-radius: 13px;
 }
 
 /* 휴대폰 */
@@ -1660,16 +1405,12 @@ header::after {
 ========================= */
 
 :root {
-  --navy: #23213F;
-  --moon: #C9C0FF;   /* 포인트 연보라 */
-  --ink: #2A2833;
+  --moon: #C9C0FF;
   --muted: #8A8592;
 }
 
 body {
-  font-family: 'Noto Sans KR', sans-serif;
-  color: var(--ink);
-  background: var(--paper);
+  font-family: "Noto Sans KR", sans-serif;
 }
 
 @media (min-width: 601px) {
@@ -1677,17 +1418,9 @@ body {
 }
 
 /* 헤더: 남색 단색, 효과 없음 */
-header {
-  box-shadow: none;
-}
-
-header::after,
-.stars {
-  display: none;
-}
 
 #siteTitle {
-  font-family: 'Jua', sans-serif;
+  font-family: "Jua", sans-serif;
   font-weight: 400;
   letter-spacing: .5px;
   text-shadow: none;
@@ -1703,14 +1436,8 @@ header::after,
 #monthText,
 #typeFilter {
   background-color: transparent;
-  border: 1px solid rgba(255,255,255,.3);
   backdrop-filter: none;
   box-shadow: none;
-}
-
-#prevBtn,
-#nextBtn {
-  border-radius: 8px;
 }
 
 #monthText,
@@ -1720,69 +1447,26 @@ header::after,
 }
 
 #todayBtn {
-  border-radius: 8px;
   box-shadow: none;
-}
-
-@media (hover: hover) {
 }
 
 /* 다가오는 일정 */
-#upcomingTitle {
-  color: var(--ink);
-  font-weight: 700;
-}
-
-.upcoming-card {
-  border-radius: 10px;
-  border: 1px solid var(--rule);
-  box-shadow: none;
-}
 
 .upcoming-card:hover {
   transform: none;
   box-shadow: none;
 }
 
-.upcoming-card .upcoming-dday {
-  border-radius: 4px;
-}
-
 /* 달력 / 목록 탭: 밑줄 탭 */
-#viewTabs {
-  padding: 0;
-  background: none;
-}
 
 #viewTabs button {
   height: 26px;
-  border-radius: 0;
-  color: var(--muted);
-  background: none;
   border-bottom: 2px solid transparent;
 }
 
-#viewTabs button.active {
-  background: none;
-  box-shadow: none;
-}
-
 /* 달력 */
-#weekdays {
-  border-radius: 10px 10px 0 0;
-}
-
-#calendar {
-  border-radius: 0 0 10px 10px;
-  box-shadow: 0 0 0 1px var(--rule);
-}
-
-#weekdays {
-  box-shadow: 0 0 0 1px var(--rule);
-}
 
 .day.today .day-number {
-  background: var(--navy);
   box-shadow: none;
 }
 
@@ -1791,69 +1475,18 @@ header::after,
   box-shadow: none;
 }
 
-.schedule-more {
-  color: var(--navy);
-  background: #EEEBF8;
-}
-
 /* 목록 */
-.mini-cal {
-  border-radius: 10px;
-  border: 1px solid var(--rule);
-  box-shadow: none;
-}
-
-.mini-day.today .mini-num {
-  background: var(--navy);
-}
-
-.list-day-head .today-badge {
-  border-radius: 4px;
-}
-
-.list-item {
-  border-radius: 8px;
-  border: 1px solid var(--rule);
-  border-left: 4px solid var(--c);
-  box-shadow: none;
-}
 
 .list-item:hover {
   box-shadow: none;
 }
 
-.list-type {
-  border-radius: 4px;
-}
-
-.list-link {
-  background: #EEEBF8;
-}
-
 /* 떠 있는 버튼: 단색, 그림자 최소 */
-#listAddBtn {
-  background: var(--navy);
-  box-shadow: 0 2px 6px rgba(0,0,0,.15);
-}
-
-#topBtn {
-  border: 1px solid var(--rule);
-  box-shadow: 0 2px 6px rgba(0,0,0,.08);
-}
 
 /* 입력창 / 팝업 */
-#inputBox {
-  border-radius: 14px 14px 0 0;
-  box-shadow: 0 -2px 12px rgba(0,0,0,.08);
-}
 
 #inputBox::before {
   background: var(--rule);
-}
-
-#inputBox label,
-.modal-content label {
-  color: var(--muted);
 }
 
 #inputBox input,
@@ -1862,43 +1495,16 @@ header::after,
 .modal-content input,
 .modal-content select,
 .modal-content textarea {
-  border-radius: 6px;
   border-color: var(--rule);
-  background: white;
   font-family: inherit;
 }
 
-#inputBox input:focus,
-#inputBox select:focus,
-#inputBox textarea:focus,
-.modal-content input:focus,
-.modal-content select:focus,
-.modal-content textarea:focus {
-  box-shadow: none;
-}
-
-#addBtn,
-#saveEditBtn {
-  border-radius: 8px;
-  background: var(--navy);
-  box-shadow: none;
-}
-
 #pasteBtn {
-  color: var(--navy);
-  background: #EEEBF8;
   border-radius: 6px;
 }
 
 .modal {
   backdrop-filter: none;
-  background: rgba(20,18,35,.45);
-}
-
-.modal-content {
-  border-radius: 12px;
-  border: none;
-  box-shadow: 0 6px 24px rgba(0,0,0,.15);
 }
 
 .modal-content button,
@@ -1907,14 +1513,10 @@ header::after,
 }
 
 #actionEditBtn {
-  color: var(--navy);
-  background: #EEEBF8;
   border-color: transparent;
 }
 
 #modalLink {
-  color: var(--navy);
-  background: #EEEBF8;
   border-radius: 6px;
 }
 
@@ -1926,17 +1528,12 @@ header::after,
   height: 46px;
 }
 
-.toast {
-  border-radius: 8px;
-}
-
 /* =========================
    색만 기존(tab.html)과 같게
    - 모양(테두리, 모서리, 효과 없음)은 담백한 버전 그대로
 ========================= */
 
 :root {
-  --paper: #F6F4FF;
   --rule: #E8E4FA;
   --soft: #F2F0FF;
 }
@@ -1950,15 +1547,6 @@ body,
   background: #FBFAFE;
 }
 
-#siteTitle .title-line2 {
-  color: #FFE3A3;
-}
-
-#todayBtn {
-  color: #3A2F7A;
-  background: white;
-}
-
 @media (hover: hover) {
   #todayBtn:hover { background: #F1EFFF; }
 }
@@ -1968,14 +1556,8 @@ body,
   border-color: var(--purple-light);
 }
 
-.upcoming-card .upcoming-dday {
-  color: #5143C9;
-  background: #EEEBFF;
-}
-
 /* 탭 */
 #viewTabs button.active {
-  color: var(--purple);
   border-bottom-color: var(--purple);
 }
 
@@ -1987,10 +1569,6 @@ body,
 .day.today .day-number,
 .mini-day.today .mini-num {
   background: linear-gradient(135deg, #6C5CE7, #A29BFE);
-}
-
-.day.selected {
-  box-shadow: inset 0 0 0 2px var(--purple);
 }
 
 .schedule-more,
@@ -2007,15 +1585,6 @@ body,
   background: var(--soft);
 }
 
-.list-day-head {
-  color: var(--purple-dark);
-}
-
-.list-day-head .today-badge {
-  color: white;
-  background: var(--purple);
-}
-
 .list-item:hover {
   border-color: #D6D0F2;
   border-left-color: var(--c);
@@ -2027,62 +1596,18 @@ body,
 }
 
 /* 버튼 */
-#listAddBtn,
-#addBtn,
-#saveEditBtn {
-  background: linear-gradient(135deg, #6C5CE7, #9B8CFF);
-}
-
-#topBtn {
-  color: var(--purple);
-}
-
-#inputBox input:focus,
-#inputBox select:focus,
-#inputBox textarea:focus,
-.modal-content input:focus,
-.modal-content select:focus,
-.modal-content textarea:focus {
-  border-color: var(--purple-light);
-}
 
 .modal-date-text {
   color: var(--purple);
-}
-
-.toast {
-  background: rgba(45,42,58,.92);
 }
 
 /* =========================
    헤더 꾸미기: 가만히 있는 별 + 아래쪽 구름 테두리
 ========================= */
 
-header {
-  padding-bottom: 38px;
-  border-radius: 0;
-  background:
-    /* 작은 별 (움직이지 않음) */
-    radial-gradient(1.6px 1.6px at 8% 18%, rgba(255,255,255,.9), transparent 100%),
-    radial-gradient(1.2px 1.2px at 21% 62%, rgba(255,255,255,.6), transparent 100%),
-    radial-gradient(2px 2px at 33% 12%, rgba(255,255,255,.85), transparent 100%),
-    radial-gradient(1.2px 1.2px at 47% 40%, rgba(255,255,255,.5), transparent 100%),
-    radial-gradient(1.6px 1.6px at 58% 9%, rgba(255,255,255,.8), transparent 100%),
-    radial-gradient(1.2px 1.2px at 69% 55%, rgba(255,255,255,.55), transparent 100%),
-    radial-gradient(2px 2px at 81% 24%, rgba(255,255,255,.85), transparent 100%),
-    radial-gradient(1.2px 1.2px at 92% 48%, rgba(255,255,255,.6), transparent 100%),
-    radial-gradient(1.6px 1.6px at 14% 80%, rgba(255,255,255,.5), transparent 100%),
-    radial-gradient(1.4px 1.4px at 88% 76%, rgba(255,255,255,.5), transparent 100%),
-    /* 기존 밤하늘 색 */
-    radial-gradient(ellipse 90% 60% at 50% 115%, rgba(162,155,254,.45), transparent 70%),
-    linear-gradient(165deg, #15132B 0%, #2A2560 45%, #5A4BD6 100%);
-}
-
 /* 아래쪽 구름: 뒤쪽 반투명 한 겹 + 앞쪽 배경색 한 겹 */
 header::before,
 header::after {
-  content: "";
-  display: block;
   position: absolute;
   left: 0;
   right: 0;
@@ -2125,11 +1650,8 @@ header::after {
 }
 
 @media (max-width: 600px) {
-  header {
-    padding-bottom: 34px;
-  }
-
-  #siteTitle::before {
+  
+#siteTitle::before {
     display: none;
   }
 }
@@ -2171,18 +1693,9 @@ header::after {
   stroke: currentColor;
 }
 
-#searchBtn {
-  gap: 4px;
-}
-
 /* 달력 | 목록 사이 구분선 */
 #viewTabs {
   align-items: center;
-  gap: 0;
-}
-
-#viewTabs button {
-  padding: 0 9px;
 }
 
 #viewTabs button + button {
@@ -2217,26 +1730,9 @@ header::after {
   border-color: #F6C6D8;
 }
 
-.upcoming-card.birthday:first-child {
-  border: none;
-}
-
 /* 다가오는 일정: 가장 가까운 일정 강조(보라 카드) 없애기 → 모든 카드 똑같이 */
-.upcoming-card:first-child {
-  background: white;
-  border: 1px solid var(--rule);
-}
-
-.upcoming-card:first-child .upcoming-dday {
-  color: #5143C9;
-  background: #EEEBFF;
-}
 
 /* 오늘(D-DAY) 일정만 가볍게 강조: D-DAY 배지만 진한 보라 */
-.upcoming-card.is-today .upcoming-dday {
-  color: white;
-  background: #6C5CE7;
-}
 
 .upcoming-card:first-child .upcoming-title {
   color: var(--text);
@@ -2261,7 +1757,6 @@ header::after {
 
 #actionModal .modal-content {
   padding: 0;
-  border-radius: 18px;
 }
 
 #actionModal .modal-info {
@@ -2330,14 +1825,8 @@ header::after {
   flex: 1;
   flex-direction: row;
   gap: 5px;
-  border-radius: 11px;
   border: none;
   color: #4A4560;
-  background: #F4F3F8;
-}
-
-#actionModal .action-icon {
-  font-size: 14px;
 }
 
 #actionModal .action-label {
@@ -2601,14 +2090,8 @@ html.modal-lock body {
 }
 
 #actionModal .modal-content {
-  max-height: 85vh;
-  max-height: 85svh;   /* 주소창이 보였다 숨었다 해도 높이가 안 바뀌게 */
-  /* 가운데 위치도 주소창과 상관없는 고정 기준(svh)으로
-     → 스크롤하다 주소창이 움직여도 창이 위아래로 들썩이지 않게 */
   position: absolute;
   left: 50%;
-  top: 50vh;
-  top: 50svh;
   translate: -50% -50%;
   width: calc(100% - 40px);
   max-width: 360px;
@@ -2694,18 +2177,14 @@ html.modal-lock body {
 
 #actionModal #modalType { grid-column: 1 / -1; grid-row: 1; }
 
-#actionModal .detail-photo {
-  /* 글이 사진보다 길면 사진을 글 높이 가운데에 */
-  /* 세로 사진은 모두 같은 세로 칸(3:4) */
-}
-
 /* 가로 사진은 모두 같은 가로 칸(4:3) */
-#actionModal .detail-photo.wide {
-  width: 104px;
-}
 
-#actionModal #modalTitle { grid-column: 1; grid-row: 2; }
-#actionModal #modalDate { grid-column: 1; grid-row: 3; }
+#actionModal #modalTitle {
+  grid-row: 2;
+}
+#actionModal #modalDate {
+  grid-row: 3;
+}
 /* 내용은 사진 밑에 가로로 꽉 차게, 위쪽(제목·사진)과 얇은 선으로 구분 */
 #actionModal .detail-head #modalContent {
   grid-column: 1 / -1;
@@ -2827,7 +2306,6 @@ body.list-mode #siteFooter {
   padding: 4px 6px;
   border: none;
   background: none;
-  color: #A29BBE;
   font-size: 12px;
   font-weight: 500;
   text-decoration: underline;
@@ -2884,12 +2362,6 @@ body.list-mode #siteFooter {
   overscroll-behavior: none;
 }
 
-.notice-item + .notice-item {
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid #F0EEF6;
-}
-
 .notice-date {
   font-size: 12px;
   font-weight: 700;
@@ -2906,7 +2378,6 @@ body.list-mode #siteFooter {
   padding-left: 18px;
   font-size: 13.5px;
   line-height: 1.6;
-  color: #3A3550;
 }
 
 #noticeOkBtn,
@@ -3067,23 +2538,15 @@ body.list-mode #siteFooter {
   top: var(--modal-top, calc(var(--stable-vh, 1svh) * 50));
 }
 /* 헤더 깔끔하게: 아래 구름 없애고 모서리만 둥글게 */
-header::before,
-header::after {
-  display: none;
-}
 
 header {
   padding-bottom: 22px;
-  border-radius: 0 0 26px 26px;
 }
 
 /* 휴대폰: 제목 두 줄을 조금 작게 (헤더 높이 줄이기) */
 @media (max-width: 600px) {
-  header {
-    padding-bottom: 22px;
-  }
-
-  #siteTitle {
+  
+#siteTitle {
     font-size: clamp(30px, 8.8vw, 38px);
     line-height: 1.15;
     margin: 2px 0 12px;
@@ -3100,28 +2563,12 @@ header {
 
 /* 제목 달 · 별: 반짝이는 이모지 대신 SCHEDULE과 같은 노란색 그림으로
    (별은 글씨처럼 모서리를 둥글게, 빛줄기 포함) */
-#siteTitle .title-moon,
-#siteTitle .title-star {
-  display: inline-block;
-  width: .8em;
-  height: .8em;
-  fill: #FFE3A3;
-}
-#siteTitle .title-moon { vertical-align: -.06em; margin-right: .18em; }
-#siteTitle .title-star { vertical-align: -.11em; margin-left: .06em; width: .95em; height: .95em; }
-#siteTitle .title-star path {
-  stroke: #FFE3A3;
-  stroke-width: 2.6;
-  stroke-linejoin: round;
-}
-#siteTitle .title-star .rays {
-  fill: none;
-  stroke-width: 3;
-  stroke-linecap: round;
-}
+
 /* 달력 선 조금 연하게 */
-#calendar { background: #F0EEF8; box-shadow: 0 0 0 1px #F0EEF8; }
-#weekdays { box-shadow: 0 0 0 1px #F0EEF8; border-bottom-color: #F0EEF8; }
+
+#weekdays {
+  border-bottom-color: #F0EEF8;
+}
 /* 선택한 날짜: 칸 전체를 감싸는 둥근 테두리
    (달력 모서리와 같은 둥글기라 모서리 칸에서도 안 잘림) */
 .day.selected { box-shadow: none; }
@@ -3237,20 +2684,13 @@ header {
 }
 
 /* 유형을 골라 둔 상태면 버튼을 살짝 밝게 */
-#typeFilter.filtered {
-  background-color: rgba(255,255,255,.22);
-  border-color: rgba(255,255,255,.55);
-}
 
 #typeFilterPanel {
   position: fixed;
   z-index: 1500;
   width: 272px;
   max-width: calc(100vw - 16px);
-  padding: 14px;
-  border-radius: 14px;
   background: white;
-  box-shadow: 0 8px 28px rgba(30,25,55,.22);
 }
 
 #typeFilterPanel[hidden] { display: none; }
@@ -3280,7 +2720,6 @@ header {
   gap: 5px;
   padding: 6px 10px;
   border: 1px solid #E8E4FA;
-  border-radius: 999px;
   background: white;
   color: #5B5566;
   font-size: 12.5px;
@@ -3317,7 +2756,6 @@ header {
 .tf-actions button {
   flex: 1;
   height: 36px;
-  border-radius: 9px;
   font-size: 13px;
   font-weight: 700;
 }
@@ -3336,8 +2774,6 @@ header {
   height: 26px;
   padding: 0;
   border-radius: 50%;
-  background: #F4F3F8;
-  color: #8A84A6;
   font-size: 11px;
   line-height: 26px;
   text-align: center;
@@ -3349,47 +2785,31 @@ header {
 }
 
 #tfDone {
-  background: var(--purple);
   color: white;
 }
 /* 달력: 아주 연한 보랏빛 배경 위에, 요일 줄 + 달력을 하나의 흰 판(둥근 바깥 테두리)으로
    안쪽 칸 사이는 아주 연한 선 */
-:root { --paper: #F7F5FC; --shadow-down: 0 1px 2px rgba(80, 60, 180, .10); }
+:root {
+  --shadow-down: 0 1px 2px rgba(80, 60, 180, .10);
+}
 
 #weekdays {
-  background: #FFFFFF;
-  border: 1px solid #E6E1F8;
-  border-bottom: 1px solid #F4F2FA;
-  border-radius: 14px 14px 0 0;
   box-shadow: none;
 }
 #calendar {
   gap: 1px;
-  background: #F4F2FA;   /* 칸 사이 아주 연한 선 */
-  border: 1px solid #E6E1F8;
-  border-top: none;
-  border-radius: 0 0 14px 14px;
   overflow: hidden;
   box-shadow: none;
-  margin-top: 0;   /* 요일 줄과 붙여서 사이에 배경색 줄이 안 보이게 */
+  margin-top: 0;
 }
-#calendar .day { background: #FFFFFF; }
+
 /* 지난달 · 다음달 칸 바탕은 원래보다 더 연하게 */
-#calendar .day.other-month { background: #FDFCFF; }
+
 #calendar .day.today { background: #FFFFFF; }   /* 오늘은 바탕 없이 숫자 동그라미로만 표시 */
 /* 맨 아래 양쪽 모서리 칸도 판 모서리에 맞춰 둥글게 (선택 테두리가 잘리지 않게) */
-#calendar .day:nth-last-child(7) { border-bottom-left-radius: 13px; }
-#calendar .day:last-child { border-bottom-right-radius: 13px; }
-#calendar .day:nth-last-child(7).selected::after { border-bottom-left-radius: 13px; }
-#calendar .day:last-child.selected::after { border-bottom-right-radius: 13px; }
 
 /* 다가오는 일정 카드: 흰 카드 + 연한 테두리 */
-.upcoming-card,
-.upcoming-card:first-child {
-  background: #FFFFFF;
-  border: 1px solid #ECE8F8;
-  box-shadow: none;
-}
+
 /* "+N개 더보기" · "접기": 배경 없이 작은 글씨 링크처럼 (일정보다 덜 튀게) */
 .schedule-more {
   margin-top: 2px;
@@ -3411,73 +2831,26 @@ header {
    - 차분한 밤하늘 헤더 + 연보랏빛 회색 바탕 + 흰 카드
    - 보라는 강조에만, 선은 얇고 연하게, 모서리는 넉넉하게
 ========================================================= */
-:root {
-  --paper: #F5F4FA;          /* 페이지 바탕 */
-  --surface: #FFFFFF;        /* 카드 · 달력 */
-  --hair: #ECEAF4;           /* 테두리 */
-  --hair-soft: #F2F0F8;      /* 안쪽 선 */
-  --ink: #23212F;            /* 본문 글씨 */
-  --sub: #7B7690;            /* 보조 글씨 */
-  --accent: #6C5CE7;         /* 강조 보라 */
-  --accent-soft: #EFECFF;
+
+body {
+  color: var(--ink);
 }
-body { background: var(--paper); color: var(--ink); }
 
 /* ---------- 헤더 ---------- */
-header {
-  background:
-    radial-gradient(1.4px 1.4px at 12% 22%, rgba(255,255,255,.85), transparent 100%),
-    radial-gradient(1.2px 1.2px at 27% 68%, rgba(255,255,255,.5), transparent 100%),
-    radial-gradient(1.8px 1.8px at 41% 14%, rgba(255,255,255,.8), transparent 100%),
-    radial-gradient(1.2px 1.2px at 63% 52%, rgba(255,255,255,.45), transparent 100%),
-    radial-gradient(1.6px 1.6px at 78% 20%, rgba(255,255,255,.75), transparent 100%),
-    radial-gradient(1.2px 1.2px at 90% 60%, rgba(255,255,255,.5), transparent 100%),
-    radial-gradient(ellipse 80% 70% at 50% 120%, rgba(140,124,255,.55), transparent 70%),
-    linear-gradient(175deg, #14122A 0%, #262056 55%, #4B3DB8 100%);
-  border-radius: 0 0 28px 28px;
-}
+
 #siteTitle::before { display: none; }   /* PC 오른쪽 위에 남아 있던 흐린 달 장식 */
 
 /* 검색 · 유형: 반투명 유리 버튼 */
 #searchBtn,
 #typeFilter {
   background-color: rgba(255,255,255,.10);
-  border: 1px solid rgba(255,255,255,.20);
-  color: #fff;
-  border-radius: 999px;
 }
 /* 달 이동: 테두리 없이 "‹ 2026년 10월 ›" 한 줄로 */
-#prevBtn,
-#nextBtn {
-  background: transparent;
-  border: none;
-  color: rgba(255,255,255,.85);
-  font-size: 22px;
-}
+
 /* 마우스가 있는 PC에서만 올렸을 때 색 (폰에서는 누른 뒤 색이 남아 있어 보여서 뺌) */
-@media (hover: hover) and (pointer: fine) {
-  #prevBtn:hover,
-  #nextBtn:hover { background: rgba(255,255,255,.10); }
-}
+
 #prevBtn:focus,
 #nextBtn:focus { outline: none; }
-#prevBtn:active,
-#nextBtn:active { background: rgba(255,255,255,.14); }
-#monthText {
-  background: transparent;
-  border: none;
-  color: #fff;
-  font-weight: 700;
-  font-size: 17px;
-  letter-spacing: .2px;
-}
-#todayBtn {
-  background: #fff;
-  color: #2C2470;
-  border: none;
-  border-radius: 999px;
-  font-weight: 700;
-}
 
 /* ---------- 다가오는 일정 ---------- */
 .upcoming-head { align-items: center; }
@@ -3563,7 +2936,7 @@ header {
 #calendar .day-number-wrap { margin: 0 auto 4px; }
 .day-number { font-weight: 600; font-size: 13px; }
 /* 주말 칸은 아주 살짝만 구분 */
-#calendar .day:nth-child(7n+1):not(.other-month) { background: #FFFCFD; }
+#calendar .day:nth-child(7n/**/+1):not(.other-month) { background: #FFFCFD; }
 #calendar .day:nth-child(7n):not(.other-month) { background: #FCFCFF; }
 .day.selected::after { border-color: var(--accent); }
 
@@ -3612,7 +2985,6 @@ header {
   header { padding-top: 16px; padding-bottom: 18px; }
   #siteTitle { margin-bottom: 10px; }
 }
-#navControls { gap: 6px; }
 
 /* ---------- 창 공통 ---------- */
 .modal { background: rgba(20, 16, 44, .42); }
@@ -3674,9 +3046,7 @@ header {
 }
 
 /* 검색 결과 · 소식 · 사용법 목록 */
-.search-result-item {
-  border-radius: 12px;
-}
+
 /* =========================================================
    새 디자인 3단계: 검색 · 유형 선택 · 사용법/소식 · 삭제 확인 · 닫기 버튼
 ========================================================= */
@@ -3768,7 +3138,7 @@ header {
 }
 
 /* 되돌리기 알림 */
-.toast { border-radius: 14px; }
+
 /* =========================================================
    새 디자인 4단계: 목록 탭 날짜 줄 · 빈 화면 · 알림 · 작은 움직임
 ========================================================= */
@@ -3857,18 +3227,10 @@ header {
 }
 /* 헤더 버튼 줄: 년월 글씨 조금 작게, [유형] · [Today]를 가운데 쪽으로 모으기 */
 #monthText {
-  font-size: 15px;
-  min-width: 0;
   padding-left: 4px;
   padding-right: 4px;
 }
-#navControls { gap: 2px; }
-#prevBtn,
-#nextBtn {
-  width: 26px;
-  min-width: 26px;
-  padding: 0;
-}
+
 #typeFilter { margin-right: 6px; }
 #todayBtn { margin-left: 6px; }
 
@@ -3877,11 +3239,7 @@ header {
    제목 → 다가오는 일정 → 달 이동 줄 → 달력 순서로.
    달 이동 줄은 스크롤하면 화면 위에 얇게 붙음
 ========================================================= */
-:root {
-  --paper: #F6F5FB;
-  --title-ink: #25204D;     /* 제목 MOONBYUL */
-  --gold: #F2B13C;          /* 제목 달 · 별 (밝은 바탕에서 보이게 조금 진한 금색) */
-}
+
 body { background: var(--paper); }
 
 /* 제목 줄: 왼쪽 제목, 오른쪽 검색 */
@@ -3921,10 +3279,6 @@ body #siteTitle .title-line {
 }
 #siteTitle .title-line1 { color: var(--title-ink); }
 #siteTitle .title-line2 { color: var(--accent); }
-#siteTitle .title-moon,
-#siteTitle .title-star { fill: var(--gold); }
-#siteTitle .title-star path { stroke: var(--gold); }
-#siteTitle .title-star .rays { fill: none; }
 
 /* 검색: 흰 동그라미 버튼 */
 #searchBtn,
@@ -4087,7 +3441,7 @@ body #todayBtn {
   --violet: #5B3DF5;        /* 보라 포인트 */
   --title-ink: #1F1E24;
   --gold: #1F1E24;
-  --serif: 'Playfair Display', 'Noto Sans KR', serif;
+  --serif: "Playfair Display", "Noto Sans KR", serif;
 }
 html body { background: var(--paper); color: var(--ink); }
 
@@ -4096,7 +3450,6 @@ html body header {
   margin: 0 16px;
   padding-left: 0;
   padding-right: 0;
-  border-bottom: 1px solid var(--ink);
 }
 html body #siteTitle {
   font-family: var(--serif);
@@ -4111,12 +3464,10 @@ html body #siteTitle { font-size: clamp(19px, 6.3vw, 34px); }
 @media (min-width: 601px) {
   html body #siteTitle { font-size: 46px; }
 }
-html body #siteTitle .title-line1 { color: var(--ink); }
-html body #siteTitle .title-line2 { color: var(--violet); font-style: italic; }
-html body #siteTitle .title-moon,
-html body #siteTitle .title-star { fill: var(--ink); }
-html body #siteTitle .title-star path { stroke: var(--ink); }
-html body #siteTitle .title-star .rays { fill: none; }
+
+html body #siteTitle .title-line2 {
+  font-style: italic;
+}
 
 /* 버튼: 흰 바탕 + 연한 테두리, 모서리 10px */
 html body #searchBtn,
@@ -4128,9 +3479,8 @@ html body #typeFilter {
 }
 html body #searchBtn,
 html body #typeFilter { border-radius: 10px; }
-html body #typeFilter.filtered { background: var(--ink); border-color: var(--ink); color: #fff; }
+
 html body #todayBtn {
-  background: var(--ink);
   color: #fff;
   border-radius: 10px;
 }
@@ -4138,15 +3488,16 @@ html body #todayBtn {
 /* 다가오는 일정: 작은 대문자 제목 + 왼쪽 보라 선 카드 */
 html body #upcomingSection { padding-top: 14px; }
 html body #upcomingTitle {
-  color: var(--ink);
-  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 1.5px;
 }
 /* (UPCOMING은 "다가오는 일정"과 같은 뜻이라 뺌) */
-html body #viewTabs { background: var(--hair-soft); border-radius: 10px; }
-html body #viewTabs button { color: var(--sub); border-radius: 8px; }
-html body #viewTabs button.active { background: var(--surface); color: var(--ink); }
+html body #viewTabs {
+  border-radius: 10px;
+}
+html body #viewTabs button {
+  border-radius: 8px;
+}
+
 html body .upcoming-card,
 html body .upcoming-card:first-child {
   background: var(--surface);
@@ -4158,11 +3509,9 @@ html body .upcoming-card:first-child {
 html body .upcoming-card .upcoming-title { color: var(--ink); }
 html body .upcoming-card .upcoming-date { color: var(--sub); }
 html body .upcoming-card .upcoming-dday { background: var(--hair-soft); color: var(--ink); }
-html body .upcoming-card.is-today .upcoming-dday { background: var(--ink); color: #fff; }
 
 /* 달 이동 줄: 년월도 세리프 */
-html body #navControls { background: var(--paper); }
-html body #navControls.stuck { background: #fff; }
+
 html body #monthText {
   font-family: var(--serif);
   font-weight: 900;
@@ -4187,45 +3536,40 @@ html body #calendar {
 }
 html body #calendar .day,
 html body #calendar .day.today,
-html body #calendar .day:nth-child(7n+1):not(.other-month),
+html body #calendar .day:nth-child(7n/**/+1):not(.other-month),
 html body #calendar .day:nth-child(7n):not(.other-month) { background: var(--surface); }
 html body #calendar .day.other-month { background: #FAFAFB; }
 html body #calendar .day .day-number { color: var(--ink); }
-html body #calendar .day:nth-child(7n+1) .day-number { color: #E5484D; }
+html body #calendar .day:nth-child(7n/**/+1) .day-number { color: #E5484D; }
 html body #calendar .day:nth-child(7n) .day-number { color: #3E63DD; }
 html body #calendar .day.today .day-number {
-  background: var(--ink);
-  color: #fff;
   box-shadow: none;
 }
 html body #calendar .day:nth-last-child(7),
 html body #calendar .day:nth-last-child(7).selected::after { border-bottom-left-radius: 11px; }
 html body #calendar .day:last-child,
 html body #calendar .day:last-child.selected::after { border-bottom-right-radius: 11px; }
-html body .day.selected::after { border-color: var(--ink); }
+
 html body #calendar .schedule { border-radius: 5px; }
 
 /* 목록 보기 */
 html body .mini-cal { border-radius: 12px; border-color: var(--hair); }
-html body .mini-day.today .mini-num { background: var(--ink); color: #fff; }
+
 html body .mini-day.sun .mini-num { color: #E5484D; }
 html body .mini-day.sat .mini-num { color: #3E63DD; }
-html body .mini-day.today .mini-num { color: #fff; }
+
 html body .list-day-head.sun { color: #E5484D; }
 html body .list-day-head.sat { color: #3E63DD; }
-html body .list-day-head .today-badge { background: var(--ink); color: #fff; }
+
 html body .list-item { border-radius: 10px; border-color: var(--hair); }
 
 /* 유형 고르기 창 */
 html body #typeFilterPanel { border-radius: 14px; }
 html body .tf-chip { border-radius: 10px; }
-html body #tfDone { background: var(--ink); }
 
 /* 떠 있는 버튼 */
-html body #listAddBtn { background: var(--ink); box-shadow: 0 6px 16px rgba(31, 30, 36, .28); }
+
 html body #topBtn { color: var(--ink); border-color: var(--hair); }
-html body #guideBtn,
-html body #noticeBtn { color: var(--sub); }
 
 /* 창 뒤 어두운 배경: 보랏빛 대신 중성 회색 */
 html body .modal { background: rgba(24, 23, 28, .42); }
@@ -4240,21 +3584,9 @@ html body .modal { background: rgba(24, 23, 28, .42); }
   left: 0;
   right: 0;
   top: 0;
-  height: 340px;
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
-  /* 오로라: 왼쪽 보라 · 오른쪽 분홍이 크게 겹쳐 번지고, 아래로 아주 천천히 흰색으로
-     (경계가 보이지 않게 색마다 여러 단계로 서서히 투명해짐) */
-  background:
-    radial-gradient(ellipse 85% 75% at 92% -8%,
-      rgba(255, 196, 222, .42) 0%, rgba(255, 196, 222, .27) 30%, rgba(255, 196, 222, .12) 55%, rgba(255, 196, 222, 0) 80%),
-    radial-gradient(ellipse 95% 80% at 6% -8%,
-      rgba(184, 168, 255, .42) 0%, rgba(184, 168, 255, .27) 30%, rgba(184, 168, 255, .12) 55%, rgba(184, 168, 255, 0) 80%),
-    radial-gradient(ellipse 60% 50% at 50% -5%,
-      rgba(222, 200, 250, .28) 0%, rgba(222, 200, 250, 0) 75%),
-    linear-gradient(180deg,
-      rgba(246, 242, 253, 1) 0%, rgba(246, 242, 253, .7) 35%, rgba(246, 242, 253, .3) 65%, rgba(255, 255, 255, 0) 100%);
 }
 html body header { position: relative; z-index: 1; padding-top: 62px; }
 html body #upcomingSection { position: relative; z-index: 1; }
@@ -4270,10 +3602,7 @@ html body #upcomingSection { position: relative; z-index: 1; }
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  box-shadow: -9px 6px 0 0 #EFC560;
   transform: rotate(-12deg);
-  filter: drop-shadow(0 0 6px rgba(239, 197, 96, .35));
-  animation: skyMoonGlow 7s ease-in-out infinite;
 }
 @keyframes skyMoonGlow {
   50% { filter: drop-shadow(0 0 14px rgba(239, 197, 96, .85)); }
@@ -4302,8 +3631,6 @@ html body #upcomingSection { position: relative; z-index: 1; }
   width: 70px;
   height: 1.5px;
   border-radius: 2px;
-  background: linear-gradient(90deg, rgba(150, 128, 230, 0), rgba(150, 128, 230, .75) 75%, #fff);
-  box-shadow: 0 0 6px rgba(170, 150, 240, .6);
   opacity: 0;
   transform: rotate(-20deg);
   transform-origin: right center;
@@ -4351,7 +3678,6 @@ html body #closeInputBtn {
   justify-content: center;
   color: var(--sub);
 }
-html body #actionModal #actionEditBtn { color: var(--ink); }
 
 /* 년월 고르기: [이동]은 남색 */
 html body #applyMonthBtn { background: var(--navy); color: #fff; box-shadow: none; }
@@ -4397,7 +3723,6 @@ html body header::after {
   right: 0;
   bottom: 0;
   height: 1px;
-  background: linear-gradient(90deg, rgba(31, 30, 36, .55), rgba(31, 30, 36, .12) 85%, transparent);
   pointer-events: none;
 }
 html body #searchBtn {
@@ -4408,9 +3733,6 @@ html body #searchBtn {
   font-size: 0;
   justify-content: center;
   border-radius: 50%;
-  background: rgba(255, 255, 255, .7);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
 }
 html body #searchBtn .tab-ic { width: 15px; height: 15px; }
 
@@ -4420,19 +3742,7 @@ html body #searchBtn .tab-ic { width: 15px; height: 15px; }
    - 달빛 번짐 · 반짝임은 줄이고 금색은 차분하게
    - 진한 배경 위 글씨(제목 · UPCOMING)는 흰색 계열
 ========================================================= */
-#skyDecor {
-  height: 330px;
-  background:
-    radial-gradient(ellipse 70% 70% at 96% -10%, rgba(200, 150, 215, .20), transparent 70%),
-    radial-gradient(ellipse 85% 80% at 0% -10%, rgba(105, 95, 210, .28), transparent 72%),
-    linear-gradient(180deg,
-      #15193D 0%,
-      #1F2457 26%,
-      #3A3F84 44%,
-      #9596CB 60%,
-      #DAD9EF 74%,
-      rgba(255, 255, 255, 0) 100%);
-}
+
 /* 별 · 달 · 별똥별: 은은하게 */
 #skyDecor .sky-star { animation-name: skyTwinkleSoft; }
 @keyframes skyTwinkleSoft {
@@ -4480,7 +3790,6 @@ html body #viewTabs::after { background: rgba(255, 255, 255, .25); }
 
 /* 달 이동 줄: 평소엔 투명(하늘이 이어지게), 위에 붙었을 때만 흰색 */
 html body #navControls { background: transparent; }
-html body #navControls.stuck { background: #fff; }
 
 /* 달 이동 줄 순서: [전체] · ‹ 년월 › · [오늘] (년월은 가운데) */
 html body #navControls { display: grid; grid-template-columns: 1fr auto 1fr; gap: 6px; }
