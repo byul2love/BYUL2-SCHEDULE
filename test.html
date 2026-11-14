@@ -3871,25 +3871,227 @@ header {
 }
 #typeFilter { margin-right: 6px; }
 #todayBtn { margin-left: 6px; }
+
+/* =========================================================
+   헤더 없애기 (A안): 밤하늘 띠를 걷어내고
+   제목 → 다가오는 일정 → 달 이동 줄 → 달력 순서로.
+   달 이동 줄은 스크롤하면 화면 위에 얇게 붙음
+========================================================= */
+:root {
+  --paper: #F6F5FB;
+  --title-ink: #25204D;     /* 제목 MOONBYUL */
+  --gold: #F2B13C;          /* 제목 달 · 별 (밝은 바탕에서 보이게 조금 진한 금색) */
+}
+body { background: var(--paper); }
+
+/* 제목 줄: 왼쪽 제목, 오른쪽 검색 */
+header,
+body header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--title-ink);
+  padding: 20px 16px 14px;
+  margin: 0;
+  overflow: visible;
+}
+header::before,
+header::after { display: none; content: none; }
+
+#siteTitle,
+body #siteTitle {
+  width: auto;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  text-align: left;
+  font-size: clamp(18px, 5.3vw, 28px);
+  line-height: 1.1;
+  white-space: nowrap;
+  color: var(--title-ink);
+}
+#siteTitle .title-line,
+body #siteTitle .title-line {
+  display: inline;
+  transform: none;
+}
+#siteTitle .title-line1 { color: var(--title-ink); }
+#siteTitle .title-line2 { color: var(--accent); }
+#siteTitle .title-moon,
+#siteTitle .title-star { fill: var(--gold); }
+#siteTitle .title-star path { stroke: var(--gold); }
+#siteTitle .title-star .rays { fill: none; }
+
+/* 검색: 흰 동그라미 버튼 */
+#searchBtn,
+body #searchBtn {
+  position: static;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 34px;
+  padding: 0 12px;
+  margin: 0;
+  background: var(--surface);
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  color: var(--sub);
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 1px 2px rgba(60, 40, 140, .06);
+  transform: none;
+}
+
+/* 다가오는 일정: 제목 바로 아래 */
+#upcomingSection { padding-top: 2px; }
+
+/* 달 이동 줄 */
+#navSentinel { height: 1px; margin-bottom: -1px; }
+#navControls,
+body #navControls {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: auto;
+  margin: 0;
+  padding: 10px 14px 6px;
+  background: var(--paper);
+  transition: box-shadow .2s ease, padding .2s ease;
+}
+#navControls .nav-month,
+#navControls .nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+}
+#navControls .nav-actions { gap: 6px; flex: none; }
+
+#prevBtn,
+#nextBtn,
+body #prevBtn,
+body #nextBtn {
+  width: 30px;
+  min-width: 30px;
+  height: 34px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  color: var(--sub);
+  font-size: 22px;
+}
+#prevBtn:active,
+#nextBtn:active { background: var(--accent-soft); }
+@media (hover: hover) and (pointer: fine) {
+  #prevBtn:hover,
+  #nextBtn:hover { background: var(--accent-soft); }
+}
+
+#monthText,
+body #monthText {
+  min-width: 0;
+  padding: 0 2px;
+  background: transparent;
+  border: none;
+  color: var(--ink);
+  font-size: clamp(18px, 5.6vw, 22px);
+  font-weight: 800;
+  letter-spacing: -.3px;
+  white-space: nowrap;
+  transition: font-size .2s ease;
+}
+
+#typeFilter,
+body #typeFilter {
+  margin: 0;
+  height: 32px;
+  padding: 0 12px;
+  background-color: var(--surface);
+  border: 1px solid var(--hair);
+  border-radius: 999px;
+  color: var(--sub);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+#typeFilter.filtered {
+  background-color: var(--accent-soft);
+  border-color: transparent;
+  color: var(--accent);
+}
+
+#todayBtn,
+body #todayBtn {
+  margin: 0;
+  height: 32px;
+  padding: 0 13px;
+  background: var(--accent-soft);
+  border: none;
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+/* 스크롤해서 위에 붙었을 때만 보이는 검색 버튼 */
+#navSearchBtn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: var(--surface);
+  border: 1px solid var(--hair);
+  border-radius: 50%;
+  color: var(--sub);
+  cursor: pointer;
+}
+#navSearchBtn .tab-ic { width: 14px; height: 14px; }
+
+/* 위에 붙었을 때: 얇게 + 그림자 */
+#navControls.stuck {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  background: #fff;
+  box-shadow: 0 1px 0 var(--hair), 0 4px 14px rgba(60, 40, 140, .07);
+}
+#navControls.stuck #monthText { font-size: 17px; }
+#navControls.stuck #navSearchBtn { display: inline-flex; }
+
+/* 아주 좁은 폰: 검색 버튼은 돋보기만 */
+@media (max-width: 360px) {
+  #searchBtn,
+  body #searchBtn { font-size: 0; gap: 0; width: 34px; padding: 0; justify-content: center; }
+  #searchBtn .tab-ic { width: 14px; height: 14px; }
+}
+
+/* PC: 가운데 1200px 안에서 같은 모양 */
+@media (min-width: 601px) {
+  header,
+  body header { padding: 28px 16px 18px; }
+  #siteTitle,
+  body #siteTitle { font-size: 30px; }
+  #navControls,
+  body #navControls { padding-left: 16px; padding-right: 16px; }
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
 <body>
 
 <header>
-  <div class="stars" id="stars" aria-hidden="true"></div>
-  <button id="searchBtn"><svg class="tab-ic" viewBox="0 0 16 16" aria-hidden="true"><circle class="ring" cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>검색</button>
   <div id="siteTitle"><span class="title-line title-line1"><svg class="title-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>MOONBYUL</span><span class="title-line title-line2"> SCHEDULE<svg class="title-star" viewBox="-7 -7 38 38" aria-hidden="true"><path class="rays" d="M19.9 1.7L22 -1.2M25.4 16.8L28.8 17.9M12 26.1L12 29.6M-1.4 16.8L-4.8 17.9M4.1 1.7L2 -1.2"/><path d="M12 1.5l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 8.7l7.1-.6z"/></svg></span></div>
-<div id="navControls">
-
-  <button id="typeFilter" type="button" aria-haspopup="true" aria-expanded="false">전체</button>
-
-  <button id="prevBtn" aria-label="이전 달">‹</button>
-  <span id="monthText"></span>
-  <button id="nextBtn" aria-label="다음 달">›</button>
-  <button id="todayBtn">Today</button>
-
-</div>
+  <button id="searchBtn"><svg class="tab-ic" viewBox="0 0 16 16" aria-hidden="true"><circle class="ring" cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>검색</button>
 </header>
 
 <!-- 유형 여러 개 고르기 (왼쪽 위 [전체] 버튼을 누르면 뜸) -->
@@ -3912,6 +4114,21 @@ header {
     </div>
   </div>
   <div id="upcomingList"></div>
+</div>
+
+<!-- 달 이동 줄: 스크롤하면 화면 위에 붙음 -->
+<div id="navSentinel" aria-hidden="true"></div>
+<div id="navControls">
+  <div class="nav-month">
+    <button id="prevBtn" aria-label="이전 달">‹</button>
+    <span id="monthText"></span>
+    <button id="nextBtn" aria-label="다음 달">›</button>
+  </div>
+  <div class="nav-actions">
+    <button id="typeFilter" type="button" aria-haspopup="true" aria-expanded="false">전체</button>
+    <button id="todayBtn">오늘</button>
+    <button id="navSearchBtn" type="button" aria-label="검색"><svg class="tab-ic" viewBox="0 0 16 16" aria-hidden="true"><circle class="ring" cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg></button>
+  </div>
 </div>
 
 <div id="weekdays"></div>
@@ -6289,6 +6506,18 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; history.back
 if("serviceWorker" in navigator && location.protocol === "https:"){
   navigator.serviceWorker.register("sw.js").catch(() => {});
 }
+
+// 달 이동 줄이 화면 위에 붙으면 얇게 바꾸기 (+ 검색 버튼 보이기)
+(() => {
+  const nav = document.getElementById("navControls");
+  const sentinel = document.getElementById("navSentinel");
+  const navSearch = document.getElementById("navSearchBtn");
+  if(navSearch) navSearch.onclick = () => document.getElementById("searchBtn").click();
+  if(!nav || !sentinel || !("IntersectionObserver" in window)) return;
+  new IntersectionObserver(([e]) => {
+    nav.classList.toggle("stuck", !e.isIntersecting && e.boundingClientRect.top < 0);
+  }).observe(sentinel);
+})();
 </script>
 </body>
 </html>
