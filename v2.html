@@ -179,33 +179,34 @@ main{padding:0 12px calc(110px + var(--safe-b));max-width:1080px;margin:0 auto}
 .cal{padding:8px 6px 10px;touch-action:pan-y;overflow:hidden}
 .wk{display:grid;grid-template-columns:repeat(7,1fr);font-size:11px;font-weight:700;color:var(--sub);text-align:center;padding:6px 0 6px;letter-spacing:.5px}
 .wk .s0{color:var(--sun)}.wk .s6{color:var(--sat)}
-.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));row-gap:2px;transition:transform .22s ease,opacity .22s ease}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));transition:transform .22s ease,opacity .22s ease}
 .grid.out-l{transform:translateX(-18%);opacity:0}
 .grid.out-r{transform:translateX(18%);opacity:0}
 .grid.in{transition:none}
-.cell{position:relative;min-width:0;min-height:58px;padding:5px 2px 4px;border-radius:14px;display:flex;flex-direction:column;align-items:center;gap:5px}
-.cell .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:500}
+.cell{position:relative;min-width:0;min-height:96px;padding:5px 3px 6px;display:flex;flex-direction:column;align-items:stretch;gap:3px;cursor:pointer;border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.cell:nth-child(7n+1){border-left:0}
+.cell .n{width:28px;height:28px;margin:0 auto 1px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:500;flex:none}
 .cell.s0 .n{color:var(--sun)}.cell.s6 .n{color:var(--sat)}
-.cell.other{opacity:.3}
+.cell.s0,.cell.s6{background:color-mix(in srgb,var(--card2) 55%,transparent)}
+.cell.other>*{opacity:.35}
 .cell.today .n{background:var(--accent);color:var(--accent-ink);font-weight:800;box-shadow:0 0 18px -2px color-mix(in srgb,var(--accent) 60%,transparent)}
-.cell.sel{background:var(--accent-soft);box-shadow:0 0 0 1px var(--accent-line) inset}
+.cell.sel{background:var(--accent-soft);box-shadow:0 0 0 1.5px var(--accent-line) inset}
 .cell.sel:not(.today) .n{font-weight:800;color:var(--accent)}
-.cell.special .n::after{content:"★";position:absolute;top:2px;right:4px;font-size:9px;color:var(--accent)}
-.marks{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;width:100%;padding:0 3px;max-width:44px}
-.mark{height:5px;flex:0 0 calc(50% - 2px);border-radius:3px;background:var(--m)}
-.mark:only-child{flex-basis:70%}
-.more{font-size:9px;line-height:1;color:var(--sub);font-weight:700;width:100%;text-align:center}
-.pills{display:none}
+.cell.special .n::after{content:"★";position:absolute;top:3px;right:4px;font-size:10px;color:var(--accent)}
+.ev{
+  display:block;width:100%;text-align:left;font-size:11px;line-height:1.32;font-weight:500;
+  padding:3px 4px 3px 5px;border-radius:5px;border-left:3px solid var(--m);
+  background:color-mix(in srgb,var(--m) 26%,var(--card));color:var(--text);
+  word-break:break-all;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;
+}
+:root[data-theme="light"] .ev{background:color-mix(in srgb,var(--m) 32%,#fff)}
+.cell.special .ev{border:1.5px dashed var(--m)}
+.ev .lk{width:10px;height:10px;vertical-align:-1px;margin-right:2px;opacity:.7;stroke-width:2.4}
+.ev:active{filter:brightness(1.15)}
+.more{font-size:11px;line-height:1.3;color:var(--accent);font-weight:700;text-align:center;padding:3px 0 0}
+.cal{padding:6px 0 0;overflow:hidden}
+.wk{padding:6px 0 8px}
 
-/* 그날 일정 */
-.day{margin-top:12px;padding:18px 14px 14px}
-.day-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.day-head h2{margin:0;font-family:var(--serif);font-size:19px;font-weight:700}
-.day-head .rel{font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:2px 9px;border-radius:999px}
-.day-head .rel.past{color:var(--sub);background:var(--chip)}
-.add-mini{margin-left:auto;display:flex;align-items:center;gap:3px;font-size:13px;font-weight:700;color:var(--accent);padding:6px 11px;border-radius:999px;border:1px solid var(--accent-line)}
-.add-mini svg{width:16px;height:16px}
-.happy{font-size:13px;font-weight:700;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);padding:9px 12px;border-radius:12px;margin-bottom:10px;font-family:var(--serif)}
 .empty{color:var(--sub);font-size:14px;text-align:center;padding:24px 0 16px}
 .empty svg{width:34px;height:34px;display:block;margin:0 auto 8px;opacity:.6}
 
@@ -345,6 +346,7 @@ mark{background:color-mix(in srgb,var(--accent) 35%,transparent);color:inherit;b
   .item:hover{background:var(--card2-hover)}
   .cell:hover{background:var(--card2)}
   .cell.sel:hover{background:var(--accent-soft)}
+  .ev:hover{filter:brightness(1.08)}
   .mb-nav:hover{background:var(--line)}
 }
 @media (max-width:400px){
@@ -361,13 +363,9 @@ mark{background:color-mix(in srgb,var(--accent) 35%,transparent);color:inherit;b
   .top{padding-inline:24px}
   .upcoming{margin:0;padding:2px 0 6px}
   .monthbar{padding-inline:max(16px,calc(50vw - 528px))}
-  #calView{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);gap:14px;align-items:start}
-  .day{margin-top:0;position:sticky;top:70px;max-height:calc(100dvh - 90px);overflow:auto}
-  .cell{min-height:98px;align-items:stretch;padding:6px 4px}
-  .cell .n{margin:0 auto 0 2px;width:28px;height:28px;font-size:13px}
-  .marks{display:none}
-  .pills{display:flex;flex-direction:column;gap:2px;width:100%}
-  .pill{text-align:left;font-size:11px;line-height:1.35;padding:1px 6px;border-radius:5px;background:var(--m);color:var(--tag-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+  .cell{min-height:120px;padding:6px 6px 8px}
+  .cell .n{margin:0 0 2px 0}
+  .ev{font-size:12px;-webkit-line-clamp:2}
   .sheet{align-items:center}
   .sheet .pn{border-radius:26px;border-bottom:1px solid var(--line);max-height:min(86dvh,820px);transform:translateY(30px) scale(.98);opacity:0;transition:transform .2s,opacity .2s}
   .sheet.open .pn{transform:none;opacity:1}
@@ -421,7 +419,6 @@ mark{background:color-mix(in srgb,var(--accent) 35%,transparent);color:inherit;b
       <div class="wk" id="wk"></div>
       <div class="grid" id="grid"></div>
     </div>
-    <div class="panel day" id="day"></div>
   </section>
   <section id="listView" hidden>
     <div class="list" id="list"></div>
@@ -638,6 +635,7 @@ let copied = null;
 let current = null;       // 상세 창에 열린 일정
 let editing = null;       // 수정 중인 일정 (없으면 추가)
 let saving = false;
+const expanded = new Set();   // "+N개 더보기"로 펼친 날짜
 
 const typeOk = t => types.size === 0 || types.has(t);
 const itemsOn = k => (byDate[k] || []).filter(it => typeOk(it.type));
@@ -672,7 +670,7 @@ function render(){
   $("listView").hidden = view !== "list";
   $("filterBadge").hidden = types.size === 0;
   $("filterBadge").textContent = types.size;
-  if(view === "cal"){ renderGrid(); renderDay(); } else renderList();
+  if(view === "cal") renderGrid(); else renderList();
 }
 
 function renderUpcoming(){
@@ -716,15 +714,22 @@ function renderGrid(){
     if(k === tk) cls.push("today");
     if(k === sel && !other) cls.push("sel");
     if(isSpecial(k)) cls.push("special");
+    const open = expanded.has(k);
+    const shown = open ? items : items.slice(0, 4);
     const label = `${d.getMonth()+1}월 ${d.getDate()}일${items.length ? `, 일정 ${items.length}개` : ""}`;
-    cells.push(h("button",{class:cls.join(" "), "data-key":k, "aria-label":label, onclick:() => pickDay(k)},
+    cells.push(h("div",{class:cls.join(" "), "data-key":k, role:"button", tabindex:"0", "aria-label":label,
+        onclick:() => pickDay(k), onkeydown:e => { if(e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")){ e.preventDefault(); pickDay(k); } }},
       h("span",{class:"n"}, d.getDate()),
-      items.length ? h("div",{class:"marks"},
-        items.slice(0,4).map(it => h("span",{class:"mark", style:{"--m":colorOf(it.type)}})),
-        items.length > 4 ? h("span",{class:"more"}, `+${items.length-4}`) : null) : null,
-      items.length ? h("div",{class:"pills"},
-        items.slice(0,3).map(it => h("span",{class:"pill", style:{"--m":colorOf(it.type)}}, it.title)),
-        items.length > 3 ? h("span",{class:"more", style:{"text-align":"left","padding-left":"4px"}}, `+${items.length-3}개`) : null) : null
+      shown.map(it => h("button",{class:"ev", style:{"--m":colorOf(it.type)}, onclick:e => {
+        e.stopPropagation();
+        if(other) goTo(k); else if(sel !== k){ sel = k; renderGrid(); }
+        openDetail(it);
+      }}, safeUrl(it.url) ? svg(ICON.link,"ic lk") : null, it.title)),
+      items.length > 4 ? h("button",{class:"more", onclick:e => {
+        e.stopPropagation();
+        open ? expanded.delete(k) : expanded.add(k);
+        renderGrid();
+      }}, open ? "접기" : `+ ${items.length-4}개 더보기`) : null
     ));
   }
   $("grid").replaceChildren(...cells);
@@ -755,23 +760,6 @@ function itemRow(it){
   );
 }
 
-function renderDay(){
-  const d = parseKey(sel);
-  const [rl, rc] = relLabel(sel);
-  const items = itemsOn(sel);
-  put($("day"),
-    h("div",{class:"day-head"},
-      h("h2",{}, `${d.getMonth()+1}월 ${d.getDate()}일 ${WD[d.getDay()]}요일`),
-      h("span",{class:`rel ${rc}`}, rl),
-      h("button",{class:"add-mini", onclick:() => openForm(null, sel)}, svg(ICON.plus), "추가")
-    ),
-    isSpecial(sel) ? h("div",{class:"happy"}, "☾ HAPPY MOONBYUL DAY ★") : null,
-    !loaded ? h("div",{class:"empty"},"불러오는 중…")
-    : items.length ? h("div",{class:"items"}, items.map(itemRow))
-    : h("div",{class:"empty"}, svg(ICON.moon), "일정이 없는 날이에요")
-  );
-}
-
 function renderList(){
   const prefix = `${vy}-${pad(vm+1)}-`;
   const tk = todayKey();
@@ -796,16 +784,13 @@ function goTo(k){
   vy = d.getFullYear(); vm = d.getMonth(); sel = k;
   render();
 }
+/* 날짜를 누르면 선택, 선택된 날짜를 한 번 더 누르면 그날 일정 추가 (기존 사이트와 같음) */
 function pickDay(k){
   const d = parseKey(k);
   if(d.getMonth() !== vm || d.getFullYear() !== vy){ goTo(k); return; }
+  if(sel === k){ openForm(null, k); return; }
   sel = k;
-  renderGrid(); renderDay();
-  // 폰에서는 그날 일정이 화면 아래에 가려 있으면 살짝 올려 보여줌
-  if(innerWidth < 860){
-    const r = $("day").getBoundingClientRect();
-    if(r.top > innerHeight - 140) scrollBy({ top: r.top - innerHeight + 220, behavior:"smooth" });
-  }
+  renderGrid();
 }
 function shiftMonth(n, animate = true){
   const grid = $("grid");
