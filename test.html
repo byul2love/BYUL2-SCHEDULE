@@ -11,7 +11,7 @@
 <meta property="og:title" content="🌙 MOONBYUL SCHEDULE 🌟">
 <meta property="og:description" content="문별의 일정을 한눈에">
 <meta property="og:url" content="https://byul2love.github.io/BYUL2-SCHEDULE/test.html">
-<meta property="og:image" content="https://byul2love.github.io/BYUL2-SCHEDULE/icons/og-image-v2.jpg">
+<meta property="og:image" content="https://byul2love.github.io/BYUL2-SCHEDULE/icons/og-image-v3.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="MOONBYUL SCHEDULE">
@@ -19,7 +19,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <!-- 홈 화면에 추가하면 앱처럼 (주소창 없이) 열리게 -->
 <link rel="manifest" href="test.webmanifest">
-<meta name="theme-color" content="#15132B">
+<meta name="theme-color" content="#1D1A42">
 <link rel="icon" href="icons/test/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icons/test/apple-touch-icon.png">
 <meta name="mobile-web-app-capable" content="yes">
@@ -4042,22 +4042,6 @@ body #todayBtn {
   font-weight: 700;
 }
 
-/* 스크롤해서 위에 붙었을 때만 보이는 검색 버튼 */
-#navSearchBtn {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  background: var(--surface);
-  border: 1px solid var(--hair);
-  border-radius: 50%;
-  color: var(--sub);
-  cursor: pointer;
-}
-#navSearchBtn .tab-ic { width: 14px; height: 14px; }
-
 /* 위에 붙었을 때: 얇게 + 그림자 */
 #navControls.stuck {
   padding-top: 6px;
@@ -4066,7 +4050,6 @@ body #todayBtn {
   box-shadow: 0 1px 0 var(--hair), 0 4px 14px rgba(60, 40, 140, .07);
 }
 #navControls.stuck #monthText { font-size: 17px; }
-#navControls.stuck #navSearchBtn { display: inline-flex; }
 
 /* 아주 좁은 폰: 검색 버튼은 돋보기만 */
 @media (max-width: 360px) {
@@ -4137,8 +4120,7 @@ html body #siteTitle .title-star .rays { fill: none; }
 
 /* 버튼: 흰 바탕 + 연한 테두리, 모서리 10px */
 html body #searchBtn,
-html body #typeFilter,
-html body #navSearchBtn {
+html body #typeFilter {
   background: var(--surface);
   border: 1px solid var(--hair);
   color: var(--sub);
@@ -4551,6 +4533,38 @@ html body #navControls .nav-actions { justify-self: end; }
   html body #typeFilter,
   html body #todayBtn { padding: 0 10px; }
 }
+
+/* =========================================================
+   밤하늘 헤더와 맞추기
+   - 강조색: 먹색 → 헤더의 깊은 남색
+   - 스크롤해서 위에 붙는 달 이동 줄: 남색 바탕 + 흰 글씨
+========================================================= */
+:root { --navy: #262058; }
+html body #todayBtn,
+html body #listAddBtn,
+html body #tfDone { background: var(--navy); }
+html body #listAddBtn { box-shadow: 0 6px 16px rgba(38, 32, 88, .3); }
+html body #calendar .day.today .day-number,
+html body .mini-day.today .mini-num,
+html body .list-day-head .today-badge,
+html body .upcoming-card.is-today .upcoming-dday { background: var(--navy); color: #fff; }
+html body #typeFilter.filtered { background: var(--navy); border-color: var(--navy); color: #fff; }
+html body .mp-month.on { background: var(--navy); border-color: var(--navy); }
+html body .day.selected::after { border-color: var(--navy); }
+
+html body #navControls.stuck {
+  background: #1D1A42;
+  box-shadow: 0 4px 14px rgba(20, 16, 50, .25);
+}
+html body #navControls.stuck #monthText { color: #F4F2FA; }
+html body #navControls.stuck #prevBtn,
+html body #navControls.stuck #nextBtn { color: rgba(255, 255, 255, .7); }
+html body #navControls.stuck #typeFilter {
+  background: rgba(255, 255, 255, .1);
+  border-color: rgba(255, 255, 255, .22);
+  color: #E9E6F5;
+}
+html body #navControls.stuck #todayBtn { background: #fff; color: var(--navy); }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -4609,7 +4623,6 @@ html body #navControls .nav-actions { justify-self: end; }
   </div>
   <div class="nav-actions">
     <button id="todayBtn">오늘</button>
-    <button id="navSearchBtn" type="button" aria-label="검색"><svg class="tab-ic" viewBox="0 0 16 16" aria-hidden="true"><circle class="ring" cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg></button>
   </div>
 </div>
 
@@ -6991,12 +7004,10 @@ if("serviceWorker" in navigator && location.protocol === "https:"){
   navigator.serviceWorker.register("sw.js").catch(() => {});
 }
 
-// 달 이동 줄이 화면 위에 붙으면 얇게 바꾸기 (+ 검색 버튼 보이기)
+// 달 이동 줄이 화면 위에 붙으면 얇게 바꾸기
 (() => {
   const nav = document.getElementById("navControls");
   const sentinel = document.getElementById("navSentinel");
-  const navSearch = document.getElementById("navSearchBtn");
-  if(navSearch) navSearch.onclick = () => document.getElementById("searchBtn").click();
   if(!nav || !sentinel || !("IntersectionObserver" in window)) return;
   new IntersectionObserver(([e]) => {
     nav.classList.toggle("stuck", !e.isIntersecting && e.boundingClientRect.top < 0);
