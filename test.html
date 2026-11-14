@@ -3956,6 +3956,32 @@ html.reordering body {
   color: #E9E6F5;
   border: 1px solid rgba(255, 255, 255, .22);
 }
+
+/* 일정 칩: 흰 바탕 + 연한 테두리 + 왼쪽 유형 색 (모서리 살짝만 둥글게, 여백 줄여 줄 수 그대로) */
+html body #calendar .schedule {
+  border-top: 1px solid #DDE0EF;
+  border-right: 1px solid #DDE0EF;
+  border-bottom: 1px solid #DDE0EF;
+  border-radius: 5px;
+  padding: 3px 3px 3px 5px;
+  text-align: left;
+}
+html body #calendar .schedule,
+html body #calendar .schedule .title { color: var(--navy); font-weight: 600; }
+/* 목록 보기도 같은 느낌 */
+html body .list-item {
+  border: 1px solid var(--hair);
+  border-left: 4px solid var(--c);
+}
+html body .list-type {
+  background: #fff;
+  border: 1px solid #DDE0EF;
+  color: var(--navy);
+}
+
+/* 다가오는 일정 카드: 왼쪽 색 선 없애고 테두리만 */
+html body .upcoming-card,
+html body .upcoming-card:first-child { border: 1px solid #E3E5F1; border-left: 1px solid #E3E5F1; }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -4022,7 +4048,7 @@ html.reordering body {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.14-b</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.15-a</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
@@ -4575,8 +4601,8 @@ visibleSchedules.forEach((it,idx)=>{
   s.dataset.id=it.id;
 
   const typeColor = typeColors[it.type] || "#e0e7ff";
-  s.style.background = `color-mix(in srgb, ${typeColor} 18%, white)`;   // 바탕은 연하게, 유형 색은 왼쪽 선으로
-  s.style.borderLeft = `2.5px solid ${typeColor}`;
+  s.style.background = "#fff";   // 흰 칩 + 왼쪽 유형 색 선
+  s.style.borderLeft = `3px solid ${typeColor}`;
 
   if(isSpecialAnniversary(key)){
     s.style.border = `1.5px dashed ${typeColor}`;
