@@ -4120,6 +4120,14 @@ html body #siteTitle {
   font-weight: 900;
   letter-spacing: -.2px;
 }
+/* 사이트 이름 크게 (좁은 폰에서도 돋보기 버튼과 안 겹치게 화면 폭에 맞춤) */
+html body #siteTitle { font-size: clamp(19px, 6.3vw, 34px); }
+@media (min-width: 361px) {
+  html body #siteTitle { font-size: clamp(23px, 6.6vw, 34px); }
+}
+@media (min-width: 601px) {
+  html body #siteTitle { font-size: 46px; }
+}
 html body #siteTitle .title-line1 { color: var(--ink); }
 html body #siteTitle .title-line2 { color: var(--violet); font-style: italic; }
 html body #siteTitle .title-moon,
@@ -4531,6 +4539,18 @@ html body #viewTabs::after { background: rgba(255, 255, 255, .25); }
 /* 달 이동 줄: 평소엔 투명(하늘이 이어지게), 위에 붙었을 때만 흰색 */
 html body #navControls { background: transparent; }
 html body #navControls.stuck { background: #fff; }
+
+/* 달 이동 줄 순서: [전체] · ‹ 년월 › · [오늘] (년월은 가운데) */
+html body #navControls { display: grid; grid-template-columns: 1fr auto 1fr; gap: 6px; }
+html body #navControls #typeFilter { justify-self: start; }
+html body #navControls .nav-month { justify-self: center; }
+html body #navControls .nav-actions { justify-self: end; }
+@media (max-width: 360px) {
+  html body #prevBtn,
+  html body #nextBtn { width: 24px; min-width: 24px; }
+  html body #typeFilter,
+  html body #todayBtn { padding: 0 10px; }
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -4581,13 +4601,13 @@ html body #navControls.stuck { background: #fff; }
 <!-- 달 이동 줄: 스크롤하면 화면 위에 붙음 -->
 <div id="navSentinel" aria-hidden="true"></div>
 <div id="navControls">
+  <button id="typeFilter" type="button" aria-haspopup="true" aria-expanded="false">전체</button>
   <div class="nav-month">
     <button id="prevBtn" aria-label="이전 달">‹</button>
     <span id="monthText"></span>
     <button id="nextBtn" aria-label="다음 달">›</button>
   </div>
   <div class="nav-actions">
-    <button id="typeFilter" type="button" aria-haspopup="true" aria-expanded="false">전체</button>
     <button id="todayBtn">오늘</button>
     <button id="navSearchBtn" type="button" aria-label="검색"><svg class="tab-ic" viewBox="0 0 16 16" aria-hidden="true"><circle class="ring" cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg></button>
   </div>
