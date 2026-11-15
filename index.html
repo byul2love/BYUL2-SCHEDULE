@@ -27,7 +27,7 @@
 <meta name="apple-mobile-web-app-title" content="MOONBYUL">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,900;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Jua&family=Noto+Sans+KR:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,900;1,900&display=swap");
 
 :root {
   --purple: #6C5CE7;
@@ -4002,6 +4002,58 @@ html body #actionModal .type-badge {
 html body #actionModal .detail-head::before {
   background: color-mix(in srgb, var(--c) 70%, white) !important;
 }
+
+/* 본문 글꼴: IBM Plex Sans KR (한글 · 영어 · 숫자 모두). 제목 · 년월은 세리프 그대로
+   없는 글자는 Noto Sans KR로 */
+html body,
+html body button,
+html body input,
+html body textarea,
+html body select {
+  font-family: "IBM Plex Sans KR", "Noto Sans KR", sans-serif;
+}
+
+/* 글씨 굵기 한 단계씩 가볍게 (700 → 600, 600 → 500, 500 → 400) */
+html body #upcomingTitle,
+html body .upcoming-dday,
+html body .upcoming-card .upcoming-title,
+html body #typeFilter,
+html body #todayBtn,
+html body #viewTabs button,
+html body #guideBtn,
+html body #noticeBtn,
+html body #actionModal .type-badge,
+html body #modalTitle,
+html body .modal-title-text,
+html body .list-day-head,
+html body .list-type,
+html body .list-title,
+html body .today-badge,
+html body #addBtn,
+html body #saveEditBtn,
+html body #applyMonthBtn,
+html body #tfDone,
+html body #noticeOkBtn,
+html body #guideOkBtn,
+html body #kakaoNotice button,
+html body #kakaoNotice p b { font-weight: 600 !important; }
+
+html body .weekday,
+html body .day-number,
+html body #calendar .schedule,
+html body #calendar .schedule .title,
+html body .list-left,
+html body .modal-actions button,
+html body #actionModal #modalLink,
+html body .tf-chip,
+html body #guideModal .notice-date,
+html body label { font-weight: 500 !important; }
+
+html body .upcoming-card .upcoming-date,
+html body #modalDate,
+html body #modalContent,
+html body .list-snippet,
+html body .notice-item li { font-weight: 400 !important; }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
