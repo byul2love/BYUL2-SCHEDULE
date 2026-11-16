@@ -4253,19 +4253,19 @@ html body #upcomingModal .upc-title {
 html body .schedule-more { color: #5A5F86 !important; font-weight: 500; }
 html body .schedule-more:hover { color: #22285C !important; }
 
-/* 별똥별 여러 개: 하늘 여기저기서 번갈아 하나씩 (한 번에 같이 떨어지지 않게 약 4초 간격) */
-html body #skyDecor .sky-shoot { animation: skyShootShort 15s ease-out 3s infinite; }
+/* 별똥별 여러 개: 하늘 여기저기서 번갈아 하나씩 (5초 간격, 20초에 한 바퀴) */
+html body #skyDecor .sky-shoot { animation: skyShootShort 20s ease-out 3s infinite; }
 /* 15초마다 하나씩이라 원래 별똥별 움직임(11초용)보다 짧게 · 비스듬히 (제목 글씨에 안 닿게) */
 @keyframes skyShootShort {
   0%    { opacity: 0; translate: 0 0; }
-  1.5%  { opacity: .9; }
-  7%    { opacity: 0; translate: -100px 28px; }
+  1.1%  { opacity: .9; }
+  5.25% { opacity: 0; translate: -100px 28px; }
   100%  { opacity: 0; translate: -100px 28px; }
 }
-html body #skyDecor .sky-shoot.s2 { right: 58%; top: 12px; width: 56px; animation-delay: 6.75s; }
-html body #skyDecor .sky-shoot.s3 { right: 38%; top: 0px; width: 62px; animation-delay: 10.5s; }
+html body #skyDecor .sky-shoot.s2 { right: 58%; top: 12px; width: 56px; animation-delay: 8s; }
+html body #skyDecor .sky-shoot.s3 { right: 38%; top: 0px; width: 62px; animation-delay: 13s; }
 /* 오른쪽 끝 (달 옆) */
-html body #skyDecor .sky-shoot.s4 { right: -2%; top: -6px; width: 60px; animation-delay: 14.25s; }
+html body #skyDecor .sky-shoot.s4 { right: -2%; top: -6px; width: 60px; animation-delay: 18s; }
 /* 달 근처를 지날 때 달 뒤로 지나가게 */
 html body #skyDecor .sky-moon { z-index: 1; }
 @media (prefers-reduced-motion: reduce) {
@@ -4383,7 +4383,7 @@ html body .search-result-item:hover { background: #F6F7FB !important; }
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.16-g</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.16-h</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
