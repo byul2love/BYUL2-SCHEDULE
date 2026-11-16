@@ -4252,6 +4252,21 @@ html body #upcomingModal .upc-title {
 /* "+N개 더보기" · "접기": 보라 → 사이트 남색 계열 (차분하게) */
 html body .schedule-more { color: #5A5F86 !important; font-weight: 500; }
 html body .schedule-more:hover { color: #22285C !important; }
+
+/* 별똥별 여러 개: 하늘 여기저기서 번갈아 하나씩 (한 번에 같이 떨어지지 않게 5초 간격) */
+html body #skyDecor .sky-shoot { animation: skyShootShort 15s ease-out 3s infinite; }
+/* 15초마다 하나씩이라 원래 별똥별 움직임(11초용)보다 짧게 · 비스듬히 (제목 글씨에 안 닿게) */
+@keyframes skyShootShort {
+  0%    { opacity: 0; translate: 0 0; }
+  1.5%  { opacity: .9; }
+  7%    { opacity: 0; translate: -100px 28px; }
+  100%  { opacity: 0; translate: -100px 28px; }
+}
+html body #skyDecor .sky-shoot.s2 { right: 58%; top: 12px; width: 56px; animation-delay: 8s; }
+html body #skyDecor .sky-shoot.s3 { right: 38%; top: 0px; width: 62px; animation-delay: 13s; }
+@media (prefers-reduced-motion: reduce) {
+  html body #skyDecor .sky-shoot { animation: none; display: none; }
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -4270,6 +4285,8 @@ html body .schedule-more:hover { color: #22285C !important; }
   <svg class="sky-star" style="left:4%;top:44px;width:5px;height:5px;animation-delay:-7s" viewBox="0 0 24 24"><path fill="#F2B8D2" d="M12 0C12.8 7.2 16.8 11.2 24 12 16.8 12.8 12.8 16.8 12 24 11.2 16.8 7.2 12.8 0 12 7.2 11.2 11.2 7.2 12 0Z"/></svg>
   <svg class="sky-star" style="left:90%;top:56px;width:7px;height:7px;animation-delay:-2s" viewBox="0 0 24 24"><path fill="#B9A8F0" d="M12 0C12.8 7.2 16.8 11.2 24 12 16.8 12.8 12.8 16.8 12 24 11.2 16.8 7.2 12.8 0 12 7.2 11.2 11.2 7.2 12 0Z"/></svg>
   <div class="sky-shoot"></div>
+  <div class="sky-shoot s2"></div>
+  <div class="sky-shoot s3"></div>
 </div>
 
 <header>
@@ -4318,7 +4335,7 @@ html body .schedule-more:hover { color: #22285C !important; }
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.16-d</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.16-e</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
