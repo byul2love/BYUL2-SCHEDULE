@@ -4222,6 +4222,32 @@ html body #upcomingTitle .upc-caret {
 #upcomingModal .upc-row:has(input:not(:checked)) .upc-date { opacity: .4; }
 #upcomingModal .upc-empty { padding: 20px 0; text-align: center; font-size: 13px; color: #8C8A93; }
 html body #upcomingDoneBtn { background: var(--navy); color: #fff; box-shadow: none; }
+
+/* 다가오는 일정 고르기 창: 화면보다 길면 목록만 스크롤 ([완료]가 잘리지 않게), 긴 제목은 두 줄까지 */
+html body #upcomingModal .modal-content {
+  display: flex !important;
+  flex-direction: column;
+  max-height: calc(var(--stable-vh, 1svh) * 82) !important;
+}
+html body #upcomingModal .modal-title-text { flex: none; margin-bottom: 8px; }
+html body #upcomingModal .upc-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+}
+html body #upcomingModal #upcomingDoneBtn { flex: none; }
+html body #upcomingModal .upc-row { align-items: flex-start; }
+html body #upcomingModal .upc-row input,
+html body #upcomingModal .upc-date { margin-top: 1px !important; }
+html body #upcomingModal .upc-title {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.4;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -4288,7 +4314,7 @@ html body #upcomingDoneBtn { background: var(--navy); color: #fff; box-shadow: n
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.16-a</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.16-b</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
@@ -6730,7 +6756,6 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; history.back
 <div id="upcomingModal" class="modal">
   <div class="modal-content">
     <div class="modal-title-text">다가오는 일정에 표시</div>
-    <p class="upc-help">체크를 끄면 UPCOMING에서만 빠져요. 달력 · 목록에는 그대로 나와요.</p>
     <div id="upcomingPickList" class="upc-list"></div>
     <button id="upcomingDoneBtn" type="button">완료</button>
   </div>
