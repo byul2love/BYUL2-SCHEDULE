@@ -4151,26 +4151,77 @@ html body #editModal .modal-content,
 html body #monthPickerModal .modal-content,
 html body #searchModal .modal-content { border-radius: 20px !important; }
 
-/* 상세 창 '다가오는 일정에 표시' 체크 */
-html body #actionModal .upc-toggle {
+
+/* UPCOMING 버튼 (누르면 다가오는 일정 고르기 창) */
+html body #upcomingTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin: 0;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  cursor: pointer;
+}
+html body #upcomingTitle .upc-caret {
+  font-size: 15px;
+  letter-spacing: 0;
+  opacity: .7;
+  transform: translateY(-1px);
+}
+/* 다가오는 일정 고르기 창 */
+#upcomingModal .modal-content { border-radius: 20px !important; }
+#upcomingModal .upc-help { margin: 4px 0 12px; font-size: 12.5px; color: #8C8A93; line-height: 1.5; word-break: keep-all; }
+#upcomingModal .upc-list {
+  max-height: 55vh;
+  overflow-y: auto;
+  margin: 0 -4px 14px;
+  padding: 0 4px;
+  overscroll-behavior: contain;
+}
+#upcomingModal .upc-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 14px 20px 0 24px;
-  font-size: 12.5px;
-  color: #6B6F8A;
+  gap: 10px;
+  padding: 11px 2px;
+  border-bottom: .6px solid #ECEEF6;
   cursor: pointer;
-  user-select: none;
 }
-html body #actionModal .upc-toggle input {
+#upcomingModal .upc-row:last-child { border-bottom: 0; }
+#upcomingModal .upc-row input {
   flex: none;
-  width: 17px !important;
-  height: 17px !important;
+  width: 18px !important;
+  height: 18px !important;
   margin: 0 !important;
   padding: 0 !important;
   box-shadow: none !important;
   accent-color: #22285C;
 }
+#upcomingModal .upc-date { flex: none; width: 70px; font-size: 12.5px; color: #8C8A93; }
+#upcomingModal .upc-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  color: #1F1E24;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#upcomingModal .upc-title::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--c);
+  vertical-align: 1px;
+}
+#upcomingModal .upc-row:has(input:not(:checked)) .upc-title,
+#upcomingModal .upc-row:has(input:not(:checked)) .upc-date { opacity: .4; }
+#upcomingModal .upc-empty { padding: 20px 0; text-align: center; font-size: 13px; color: #8C8A93; }
+html body #upcomingDoneBtn { background: var(--navy); color: #fff; box-shadow: none; }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -4209,7 +4260,7 @@ html body #actionModal .upc-toggle input {
 
 <div id="upcomingSection">
   <div class="upcoming-head">
-    <div id="upcomingTitle" aria-label="다가오는 일정">UPCOMING</div>
+    <button id="upcomingTitle" type="button" aria-label="다가오는 일정 고르기">UPCOMING<span class="upc-caret" aria-hidden="true">›</span></button>
     <div id="viewTabs" role="tablist" aria-label="보기 방식">
       <button data-view="calendar" class="active" role="tab"><svg class="tab-ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3"/></svg>달력</button>
       <button data-view="list" role="tab"><svg class="tab-ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4h8M6 8h8M6 12h8"/><circle cx="2.8" cy="4" r=".9"/><circle cx="2.8" cy="8" r=".9"/><circle cx="2.8" cy="12" r=".9"/></svg>목록</button>
@@ -4290,7 +4341,6 @@ html body #actionModal .upc-toggle input {
         <div id="modalContent" class="modal-desc-text"></div>
         <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none;"><svg class="act-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span id="modalLinkHost" class="link-host">링크</span><span class="link-arrow" aria-hidden="true">›</span></a>
       </div>
-      <label class="upc-toggle" id="upcToggleRow"><input type="checkbox" id="upcomingToggle" checked><span>다가오는 일정에 표시</span></label>
     </div>
     <div class="modal-actions">
       <button id="actionCopyBtn"><svg class="act-ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span class="action-label">복사</span></button>
@@ -4482,7 +4532,7 @@ const UPDATES = [
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, writeBatch, updateDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 /******** Firebase 초기화 ********/
 const firebaseConfig = {
@@ -4561,6 +4611,9 @@ const closeInputBtn=document.getElementById("closeInputBtn");
 const pasteBtn=document.getElementById("pasteBtn");
 const typeFilter=document.getElementById("typeFilter");
 
+
+// 다가오는 일정(UPCOMING)에 원래 안 나오는 유형
+const upcomingExcludedTypes = ["SNS","버블","기타"];
 
 const typeColors = {
   콘서트: "#FFB3D1",
@@ -5655,6 +5708,7 @@ function pushModalState() {
 }
 
 function closeAllOverlays() {
+  document.getElementById("upcomingModal").style.display = "none";
   inputBox.style.display = "none";
   actionModal.style.display = "none";
   editModal.style.display = "none";
@@ -5767,7 +5821,6 @@ function openScheduleModal(it, key, skipPush){
   activeItemId = it.id;
 
   modalTitle.textContent = it.title;
-  document.getElementById("upcomingToggle").checked = !it.hideUpcoming;
   // 내용이 없으면 내용 칸을 아예 숨김
   modalContent.textContent = it.content || "";
   modalContent.style.display = it.content ? "" : "none";
@@ -5842,13 +5895,12 @@ function renderUpcoming(){
   const todayKey = formatDate(`${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}`);
   const todayDate = new Date(todayKey);
 
-  const upcomingExcludedTypes = ["SNS","버블","기타"];
 
   let all = [];
   for(const k in firestoreData){
     firestoreData[k].forEach(it=>{
       if(upcomingExcludedTypes.includes(it.type)) return;
-      if(it.hideUpcoming) return;   // 상세 창에서 '다가오는 일정에 표시'를 끈 일정
+      if(it.hideUpcoming) return;   // UPCOMING을 눌러 뜨는 목록에서 체크를 끈 일정
       if(typeOk(it.type)) all.push(it);
     });
   }
@@ -6034,23 +6086,61 @@ addBtn.onclick = async () => {
 };
 
 /******** 수정/삭제 ********/
-// 상세 창 '다가오는 일정에 표시' 체크: 끄면 다가오는 일정에서만 빠짐 (달력 · 목록엔 그대로)
-document.getElementById("upcomingToggle").onchange = async e => {
-  const show = e.target.checked;
-  const batch = writeBatch(db);
-  let n = 0;
+// 다가오는 일정 고르기 창 (UPCOMING을 누르면 뜸)
+const upcomingModal = document.getElementById("upcomingModal");
+const upcomingPickList = document.getElementById("upcomingPickList");
+function renderUpcomingPicker(){
+  const t = new Date();
+  const todayKey = formatDate(`${t.getFullYear()}-${t.getMonth()+1}-${t.getDate()}`);
+  const all = [];
   for(const k in firestoreData) firestoreData[k].forEach(it => {
-    if(inActiveGroup(it)){ batch.update(doc(schedulesCol, it.id), { hideUpcoming: !show }); n++; }
+    if(it.date >= todayKey && !upcomingExcludedTypes.includes(it.type)) all.push(it);
   });
-  if(!n) return;
-  try {
-    await batch.commit();
-    showToast(show ? "다가오는 일정에 다시 표시해요" : "다가오는 일정에서 뺐어요");
-  } catch {
-    e.target.checked = !show;
-    showToast("바꾸지 못했어요. 다시 시도해 주세요.");
+  all.sort((a,b) => a.date !== b.date ? (a.date < b.date ? -1 : 1) : (a.time||"").localeCompare(b.time||""));
+  upcomingPickList.innerHTML = "";
+  if(!all.length){
+    upcomingPickList.innerHTML = '<div class="upc-empty">앞으로 예정된 일정이 없어요</div>';
+    return;
   }
+  const W = ["일","월","화","수","목","금","토"];
+  all.forEach(it => {
+    const [, mm, dd] = it.date.split("-");
+    const row = document.createElement("label");
+    row.className = "upc-row";
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = !it.hideUpcoming;
+    const date = document.createElement("span");
+    date.className = "upc-date";
+    date.textContent = `${Number(mm)}.${Number(dd)} (${W[new Date(it.date).getDay()]})`;
+    const title = document.createElement("span");
+    title.className = "upc-title";
+    title.textContent = it.title;
+    title.style.setProperty("--c", typeColors[it.type] || "#ccc");
+    row.append(cb, date, title);
+    cb.onchange = async () => {
+      try {
+        await updateDoc(doc(schedulesCol, it.id), { hideUpcoming: !cb.checked });
+      } catch {
+        cb.checked = !cb.checked;
+        showToast("바꾸지 못했어요. 다시 시도해 주세요.");
+      }
+    };
+    upcomingPickList.appendChild(row);
+  });
+}
+document.getElementById("upcomingTitle").onclick = () => {
+  renderUpcomingPicker();
+  upcomingModal.style.display = "flex";
+  pushModalState();   // 폰 뒤로가기로 닫히게
 };
+document.getElementById("upcomingDoneBtn").onclick = () => {
+  upcomingModal.style.display = "none";
+  history.back();
+};
+upcomingModal.addEventListener("click", e => {
+  if(e.target === upcomingModal){ upcomingModal.style.display = "none"; history.back(); }
+});
 
 actionCopyBtn.onclick = () => {
   const items = [];
@@ -6157,7 +6247,7 @@ saveEditBtn.onclick = async () => {
     content: editDescInput.value || "",
     date: key,
     time: editTimeInput.value || "",
-    hideUpcoming: !!target.hideUpcoming,   // 상세 창에서 정한 '다가오는 일정 표시'는 그대로
+    hideUpcoming: !!target.hideUpcoming,   // '다가오는 일정에 표시' 설정은 그대로
     groupId: activeGroupId || gid(),
     // 날짜가 그대로면 원래 순서 유지, 날짜를 옮기면 그날 맨 뒤로
     order: sameDay ? (target.order ?? 0) : (firestoreData[key]?.length || 0)
@@ -6270,7 +6360,8 @@ window.addEventListener("popstate", () => {
     searchModal.style.display === "flex" ||
     document.getElementById("monthPickerModal").style.display === "flex" ||
     document.getElementById("noticeModal").style.display === "flex" ||
-    document.getElementById("guideModal").style.display === "flex"
+    document.getElementById("guideModal").style.display === "flex" ||
+    document.getElementById("upcomingModal").style.display === "flex"
   ) {
     closeAllOverlays();
   }
@@ -6632,6 +6723,16 @@ cancelMonthBtn.onclick=()=>{ monthPickerModal.style.display="none"; history.back
     </select>
     <button id="applyMonthBtn">이동</button>
     <button id="cancelMonthBtn">취소</button>
+  </div>
+</div>
+
+<!-- UPCOMING을 누르면 뜨는 창: 다가오는 일정에 보일 일정 고르기 -->
+<div id="upcomingModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-title-text">다가오는 일정에 표시</div>
+    <p class="upc-help">체크를 끄면 UPCOMING에서만 빠져요. 달력 · 목록에는 그대로 나와요.</p>
+    <div id="upcomingPickList" class="upc-list"></div>
+    <button id="upcomingDoneBtn" type="button">완료</button>
   </div>
 </div>
 
