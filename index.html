@@ -4248,6 +4248,72 @@ html body #upcomingModal .upc-title {
   word-break: keep-all;
   overflow-wrap: anywhere;
 }
+
+/* "+N개 더보기" · "접기": 보라 → 사이트 남색 계열 (차분하게) */
+html body .schedule-more { color: #5A5F86 !important; font-weight: 500; }
+html body .schedule-more:hover { color: #22285C !important; }
+
+/* 별똥별 여러 개: 하늘 여기저기서 번갈아 하나씩 (5초 간격, 20초에 한 바퀴) */
+html body #skyDecor .sky-shoot { animation: skyShootShort 20s ease-out 3s infinite; }
+/* 15초마다 하나씩이라 원래 별똥별 움직임(11초용)보다 짧게 · 비스듬히 (제목 글씨에 안 닿게) */
+@keyframes skyShootShort {
+  0%    { opacity: 0; translate: 0 0; }
+  1.1%  { opacity: .9; }
+  5.25% { opacity: 0; translate: -100px 28px; }
+  100%  { opacity: 0; translate: -100px 28px; }
+}
+html body #skyDecor .sky-shoot.s2 { right: 58%; top: 12px; width: 56px; animation-delay: 8s; }
+html body #skyDecor .sky-shoot.s3 { right: 38%; top: 0px; width: 62px; animation-delay: 13s; }
+/* 오른쪽 끝 (달 옆) */
+html body #skyDecor .sky-shoot.s4 { right: -2%; top: -6px; width: 60px; animation-delay: 18s; }
+/* 달 근처를 지날 때 달 뒤로 지나가게 */
+html body #skyDecor .sky-moon { z-index: 1; }
+@media (prefers-reduced-motion: reduce) {
+  html body #skyDecor .sky-shoot { animation: none; display: none; }
+}
+
+/* 링크 아이콘: 🔗 이모지 → 가는 선 아이콘 (남색) */
+.lk-ic {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+html body .schedule .link-icon {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  color: #5A5F86;
+  font-size: 0;
+}
+html body .list-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #22285C !important;
+  background: #fff !important;
+  border: 0 !important;
+  box-shadow: inset 0 0 0 .6px #D9DCEB !important;
+  border-radius: 50% !important;
+}
+html body .list-link .lk-ic { width: 13px; height: 13px; }
+
+/* [전체] 유형 창 [전체 선택] · 검색 결과 줄: 회색 상자 → 흰 바탕 + 얇은 테두리 */
+html body #tfAll {
+  background: #fff !important;
+  border: 0 !important;
+  box-shadow: inset 0 0 0 .6px #D9DCEB !important;
+  color: #4A4E6E !important;
+}
+html body .search-result-item {
+  background: #fff !important;
+  box-shadow: inset 0 0 0 .6px #D9DCEB !important;
+}
+html body .search-result-item:hover { background: #F6F7FB !important; }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -4266,6 +4332,9 @@ html body #upcomingModal .upc-title {
   <svg class="sky-star" style="left:4%;top:44px;width:5px;height:5px;animation-delay:-7s" viewBox="0 0 24 24"><path fill="#F2B8D2" d="M12 0C12.8 7.2 16.8 11.2 24 12 16.8 12.8 12.8 16.8 12 24 11.2 16.8 7.2 12.8 0 12 7.2 11.2 11.2 7.2 12 0Z"/></svg>
   <svg class="sky-star" style="left:90%;top:56px;width:7px;height:7px;animation-delay:-2s" viewBox="0 0 24 24"><path fill="#B9A8F0" d="M12 0C12.8 7.2 16.8 11.2 24 12 16.8 12.8 12.8 16.8 12 24 11.2 16.8 7.2 12.8 0 12 7.2 11.2 11.2 7.2 12 0Z"/></svg>
   <div class="sky-shoot"></div>
+  <div class="sky-shoot s2"></div>
+  <div class="sky-shoot s3"></div>
+  <div class="sky-shoot s4"></div>
 </div>
 
 <header>
@@ -4447,7 +4516,7 @@ html body #upcomingModal .upc-title {
           <li>달력을 왼쪽 · 오른쪽으로 밀거나 ‹ › 버튼으로 달 넘기기</li>
           <li>가운데 년월(예: 2026년 10월)을 누르면 원하는 달로 바로 이동</li>
           <li>[오늘]을 누르면 오늘 날짜로 돌아오기</li>
-          <li>달력 칸의 🔗 아이콘을 누르면 상세 창 없이 링크로 바로 이동</li>
+          <li>달력 칸의 링크 아이콘을 누르면 상세 창 없이 링크로 바로 이동</li>
         </ul>
       </div>
       <div class="notice-item">
@@ -4888,7 +4957,7 @@ visibleSchedules.forEach((it,idx)=>{
 
     linkIcon.className="link-icon";
 
-    linkIcon.textContent="🔗";
+    linkIcon.innerHTML="<svg class=\"lk-ic\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1\"/><path d=\"M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1\"/></svg>";   // 링크: 가는 선 아이콘
 
 
     // 링크 아이콘 덜 민감하게:
@@ -5317,7 +5386,7 @@ function renderList(){
         a.href = itemUrl;
         a.target = "_blank";
         a.rel = "noopener noreferrer";
-        a.textContent = "🔗";
+        a.innerHTML = "<svg class=\"lk-ic\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1\"/><path d=\"M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1\"/></svg>";   // 링크: 가는 선 아이콘
         a.setAttribute("aria-label", "링크 열기");
         a.onclick = e => e.stopPropagation();
         row.appendChild(a);
