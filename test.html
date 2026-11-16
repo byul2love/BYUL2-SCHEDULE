@@ -4248,6 +4248,10 @@ html body #upcomingModal .upc-title {
   word-break: keep-all;
   overflow-wrap: anywhere;
 }
+
+/* "+N개 더보기" · "접기": 보라 → 사이트 남색 계열 (차분하게) */
+html body .schedule-more { color: #5A5F86 !important; font-weight: 500; }
+html body .schedule-more:hover { color: #22285C !important; }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -4314,7 +4318,7 @@ html body #upcomingModal .upc-title {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.16-c</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.16-d</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
