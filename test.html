@@ -4314,7 +4314,7 @@ html body #upcomingModal .upc-title {
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.16-b</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.16-c</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
@@ -4558,7 +4558,7 @@ const UPDATES = [
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, writeBatch, updateDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
 /******** Firebase 초기화 ********/
 const firebaseConfig = {
@@ -6144,14 +6144,8 @@ function renderUpcomingPicker(){
     title.textContent = it.title;
     title.style.setProperty("--c", typeColors[it.type] || "#ccc");
     row.append(cb, date, title);
-    cb.onchange = async () => {
-      try {
-        await updateDoc(doc(schedulesCol, it.id), { hideUpcoming: !cb.checked });
-      } catch {
-        cb.checked = !cb.checked;
-        showToast("바꾸지 못했어요. 다시 시도해 주세요.");
-      }
-    };
+    cb.dataset.id = it.id;
+    cb.dataset.was = it.hideUpcoming ? "0" : "1";   // 창을 열 때의 상태 ([완료]를 눌러야 저장)
     upcomingPickList.appendChild(row);
   });
 }
@@ -6160,7 +6154,20 @@ document.getElementById("upcomingTitle").onclick = () => {
   upcomingModal.style.display = "flex";
   pushModalState();   // 폰 뒤로가기로 닫히게
 };
-document.getElementById("upcomingDoneBtn").onclick = () => {
+// [완료]를 눌렀을 때만 저장 (그 전에 뒤로가기 · 바깥을 눌러 닫으면 바꾼 체크는 없던 일로)
+document.getElementById("upcomingDoneBtn").onclick = async () => {
+  const changed = [...upcomingPickList.querySelectorAll("input[type=checkbox]")]
+    .filter(cb => (cb.checked ? "1" : "0") !== cb.dataset.was);
+  if(changed.length){
+    const batch = writeBatch(db);
+    changed.forEach(cb => batch.update(doc(schedulesCol, cb.dataset.id), { hideUpcoming: !cb.checked }));
+    try {
+      await batch.commit();
+    } catch {
+      showToast("저장하지 못했어요. 다시 시도해 주세요.");
+      return;
+    }
+  }
   upcomingModal.style.display = "none";
   history.back();
 };
