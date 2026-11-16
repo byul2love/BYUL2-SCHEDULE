@@ -4150,6 +4150,27 @@ html body #selectedDate {
 html body #editModal .modal-content,
 html body #monthPickerModal .modal-content,
 html body #searchModal .modal-content { border-radius: 20px !important; }
+
+/* 상세 창 '다가오는 일정에 표시' 체크 */
+html body #actionModal .upc-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 20px 0 24px;
+  font-size: 12.5px;
+  color: #6B6F8A;
+  cursor: pointer;
+  user-select: none;
+}
+html body #actionModal .upc-toggle input {
+  flex: none;
+  width: 17px !important;
+  height: 17px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  accent-color: #22285C;
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
@@ -4216,7 +4237,7 @@ html body #searchModal .modal-content { border-radius: 20px !important; }
 <div id="listView"></div>
 
 <!-- 맨 아래 작은 글씨: 업데이트 소식 다시 보기 -->
-<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.15-o</div></div>
+<div id="siteFooter"><button id="guideBtn" type="button">사용법</button><span class="footer-dot">·</span><button id="noticeBtn" type="button">업데이트 소식</button><div id="siteVersion">v11.16-a</div></div>
 <button id="listAddBtn" aria-label="일정 추가">＋</button>
 <button id="topBtn" aria-label="맨 위로">↑</button>
 
@@ -4269,6 +4290,7 @@ html body #searchModal .modal-content { border-radius: 20px !important; }
         <div id="modalContent" class="modal-desc-text"></div>
         <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none;"><svg class="act-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span id="modalLinkHost" class="link-host">링크</span><span class="link-arrow" aria-hidden="true">›</span></a>
       </div>
+      <label class="upc-toggle" id="upcToggleRow"><input type="checkbox" id="upcomingToggle" checked><span>다가오는 일정에 표시</span></label>
     </div>
     <div class="modal-actions">
       <button id="actionCopyBtn"><svg class="act-ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span class="action-label">복사</span></button>
@@ -5745,6 +5767,7 @@ function openScheduleModal(it, key, skipPush){
   activeItemId = it.id;
 
   modalTitle.textContent = it.title;
+  document.getElementById("upcomingToggle").checked = !it.hideUpcoming;
   // 내용이 없으면 내용 칸을 아예 숨김
   modalContent.textContent = it.content || "";
   modalContent.style.display = it.content ? "" : "none";
@@ -5825,6 +5848,7 @@ function renderUpcoming(){
   for(const k in firestoreData){
     firestoreData[k].forEach(it=>{
       if(upcomingExcludedTypes.includes(it.type)) return;
+      if(it.hideUpcoming) return;   // 상세 창에서 '다가오는 일정에 표시'를 끈 일정
       if(typeOk(it.type)) all.push(it);
     });
   }
@@ -6010,6 +6034,24 @@ addBtn.onclick = async () => {
 };
 
 /******** 수정/삭제 ********/
+// 상세 창 '다가오는 일정에 표시' 체크: 끄면 다가오는 일정에서만 빠짐 (달력 · 목록엔 그대로)
+document.getElementById("upcomingToggle").onchange = async e => {
+  const show = e.target.checked;
+  const batch = writeBatch(db);
+  let n = 0;
+  for(const k in firestoreData) firestoreData[k].forEach(it => {
+    if(inActiveGroup(it)){ batch.update(doc(schedulesCol, it.id), { hideUpcoming: !show }); n++; }
+  });
+  if(!n) return;
+  try {
+    await batch.commit();
+    showToast(show ? "다가오는 일정에 다시 표시해요" : "다가오는 일정에서 뺐어요");
+  } catch {
+    e.target.checked = !show;
+    showToast("바꾸지 못했어요. 다시 시도해 주세요.");
+  }
+};
+
 actionCopyBtn.onclick = () => {
   const items = [];
 
@@ -6115,6 +6157,7 @@ saveEditBtn.onclick = async () => {
     content: editDescInput.value || "",
     date: key,
     time: editTimeInput.value || "",
+    hideUpcoming: !!target.hideUpcoming,   // 상세 창에서 정한 '다가오는 일정 표시'는 그대로
     groupId: activeGroupId || gid(),
     // 날짜가 그대로면 원래 순서 유지, 날짜를 옮기면 그날 맨 뒤로
     order: sameDay ? (target.order ?? 0) : (firestoreData[key]?.length || 0)
