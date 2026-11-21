@@ -4327,6 +4327,16 @@ html body #navControls.stuck {
   overflow-anchor: none;
 }
 #navSentinel { overflow-anchor: none; }
+
+/* PC(넓은 화면): 달력 칸 글씨만 키움 (휴대폰 기준 크기라 넓은 칸에서 너무 작았음) */
+@media (min-width: 601px) {
+  html body .weekday { font-size: 14px !important; }
+  html body .day-number { font-size: 16px !important; }
+  html body #calendar .schedule,
+  html body #calendar .schedule .title { font-size: 12.5px !important; line-height: 1.35 !important; }
+  html body .schedule-more { font-size: 12.5px !important; }
+  html body .schedule .link-icon { width: 11px; height: 11px; }
+}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
